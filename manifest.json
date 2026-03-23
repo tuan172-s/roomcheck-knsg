@@ -1,0 +1,10 @@
+{
+  "name": "RoomCheck – Kiểm tra phòng họp",
+  "short_name": "RoomCheck",
+  "description": "Checklist kiểm tra thiết bị phòng họp – Power Automate + SharePoint",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0b0f1a",
+  "theme_color": "#0e1621",
+  "orientation": "portrait-primary"
+}
