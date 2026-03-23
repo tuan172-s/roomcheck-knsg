@@ -809,43 +809,153 @@ const RC = {
   photos: [],
 };
 
+// DEF_ROOMS
 const DEF_ROOMS = [
-  {id:'P101',label:'Phòng 101 – Tầng 1'},
-  {id:'P201',label:'Phòng 201 – Tầng 2'},
-  {id:'P301',label:'Phòng 301 – Tầng 3'},
-  {id:'BOARD',label:'Board Room'},
-  {id:'TRAIN',label:'Training Room'},
+  {
+    "id": "P101",
+    "label": "Phòng EVO"
+  },
+  {
+    "id": "P201",
+    "label": "Phòng ISO Lầu 1"
+  },
+  {
+    "id": "P301",
+    "label": "Phòng BOD"
+  },
+  {
+    "id": "BOARD",
+    "label": "Phòng Nipper"
+  },
+  {
+    "id": "TRAIN",
+    "label": "Phòng OEM"
+  },
+  {
+    "id": "rm_1774257834168",
+    "label": "Phòng Clipper"
+  },
+  {
+    "id": "rm_1774257835817",
+    "label": "Phòng họp KT"
+  }
 ];
 
+// DEF_SECTIONS
 const DEF_SECTIONS = [
-  {id:'tv',label:'Tivi / Màn hình',emoji:'📺',items:[
-    {id:'tv_pwr',icon:'🔌',label:'Tivi bật/tắt bình thường',note:'Kiểm tra nút nguồn & remote',type:'check'},
-    {id:'tv_img',icon:'🖥️',label:'Hiển thị hình ảnh rõ nét',note:'Không nhiễu, không chết điểm ảnh',type:'check'},
-    {id:'tv_snd',icon:'🔊',label:'Âm thanh hoạt động',note:'Test volume lên/xuống',type:'check'},
-    {id:'tv_rem',icon:'📱',label:'Remote hoạt động',note:'Kiểm tra pin nếu không phản hồi',type:'check'},
-  ]},
-  {id:'wifi',label:'Kết nối WiFi',emoji:'📶',items:[
-    {id:'wifi_con',icon:'🔗',label:'Kết nối WiFi thành công',note:'Kết nối SSID chính phòng họp',type:'check'},
-    {id:'wifi_net',icon:'🌐',label:'Truy cập Internet được',note:'Mở bất kỳ website kiểm tra',type:'check'},
-    {id:'wifi_spd',icon:'⚡',label:'Tốc độ WiFi (Mbps)',note:'Đo bằng Speedtest / Fast.com',type:'speed'},
-    {id:'wifi_stb',icon:'📡',label:'Tín hiệu ổn định',note:'Không bị ngắt kết nối',type:'check'},
-  ]},
-  {id:'hdmi',label:'Kết nối HDMI',emoji:'🔌',items:[
-    {id:'hdmi_cbl',icon:'🔋',label:'Cáp HDMI có sẵn & nguyên vẹn',note:'Kiểm tra đầu cắm không gãy',type:'check'},
-    {id:'hdmi_con',icon:'💻',label:'Kết nối laptop → Tivi',note:'Cắm HDMI, chọn đúng input',type:'check'},
-    {id:'hdmi_dsp',icon:'🖼️',label:'Màn hình laptop hiện lên Tivi',note:'Kiểm tra độ phân giải',type:'check'},
-    {id:'hdmi_aud',icon:'🎵',label:'Âm thanh qua HDMI',note:'Chọn HDMI làm audio output',type:'check'},
-    {id:'hdmi_adp',icon:'🔄',label:'Adapter USB-C/VGA (nếu có)',note:'Kiểm tra adapter dự phòng',type:'check'},
-  ]},
-  {id:'room',label:'Tiện ích phòng họp',emoji:'🏢',items:[
-    {id:'rm_ac',icon:'❄️',label:'Điều hòa hoạt động',note:'Nhiệt độ & remote OK',type:'check'},
-    {id:'rm_lgt',icon:'💡',label:'Đèn chiếu sáng đủ',note:'Tất cả bóng đèn hoạt động',type:'check'},
-    {id:'rm_cln',icon:'🧹',label:'Phòng sạch sẽ, gọn gàng',note:'Bàn ghế sắp xếp đúng chỗ',type:'check'},
-    {id:'rm_brd',icon:'📋',label:'Bảng trắng & Marker',note:'Bảng sạch, marker còn mực',type:'check'},
-    {id:'rm_pwr',icon:'🔌',label:'Ổ cắm điện hoạt động',note:'Kiểm tra ổ cắm bàn họp',type:'check'},
-  ]},
+  {
+    "id": "tv",
+    "label": "Tivi / Màn hình",
+    "emoji": "📺",
+    "items": [
+      {
+        "id": "tv_pwr",
+        "icon": "🔌",
+        "label": "Tivi bật/tắt bình thường",
+        "note": "Kiểm tra nút nguồn & remote",
+        "type": "check"
+      },
+      {
+        "id": "tv_img",
+        "icon": "🖥️",
+        "label": "Hiển thị hình ảnh rõ nét",
+        "note": "Không nhiễu, không chết điểm ảnh",
+        "type": "check"
+      },
+      {
+        "id": "tv_snd",
+        "icon": "🔊",
+        "label": "Âm thanh hoạt động",
+        "note": "Test volume lên/xuống",
+        "type": "check"
+      },
+      {
+        "id": "tv_rem",
+        "icon": "📱",
+        "label": "Remote hoạt động",
+        "note": "Kiểm tra pin nếu không phản hồi",
+        "type": "check"
+      }
+    ]
+  },
+  {
+    "id": "wifi",
+    "label": "Kết nối WiFi",
+    "emoji": "📶",
+    "items": [
+      {
+        "id": "wifi_con",
+        "icon": "🔗",
+        "label": "Kết nối WiFi thành công",
+        "note": "Kết nối SSID chính phòng họp",
+        "type": "check"
+      },
+      {
+        "id": "wifi_net",
+        "icon": "🌐",
+        "label": "Truy cập Internet được",
+        "note": "Mở bất kỳ website kiểm tra",
+        "type": "check"
+      },
+      {
+        "id": "wifi_spd",
+        "icon": "⚡",
+        "label": "Tốc độ WiFi (Mbps)",
+        "note": "Đo bằng Speedtest / Fast.com",
+        "type": "speed"
+      },
+      {
+        "id": "wifi_stb",
+        "icon": "📡",
+        "label": "Tín hiệu ổn định",
+        "note": "Không bị ngắt kết nối",
+        "type": "check"
+      }
+    ]
+  },
+  {
+    "id": "hdmi",
+    "label": "Kết nối HDMI",
+    "emoji": "🔌",
+    "items": [
+      {
+        "id": "hdmi_cbl",
+        "icon": "🔋",
+        "label": "Cáp HDMI có sẵn & nguyên vẹn",
+        "note": "Kiểm tra đầu cắm không gãy",
+        "type": "check"
+      },
+      {
+        "id": "hdmi_con",
+        "icon": "💻",
+        "label": "Kết nối laptop → Tivi",
+        "note": "Cắm HDMI, chọn đúng input",
+        "type": "check"
+      },
+      {
+        "id": "hdmi_dsp",
+        "icon": "🖼️",
+        "label": "Màn hình laptop hiện lên Tivi",
+        "note": "Kiểm tra độ phân giải",
+        "type": "check"
+      },
+      {
+        "id": "hdmi_aud",
+        "icon": "🎵",
+        "label": "Âm thanh qua HDMI",
+        "note": "Chọn HDMI làm audio output",
+        "type": "check"
+      },
+      {
+        "id": "hdmi_adp",
+        "icon": "🔄",
+        "label": "HDMI Không dây (nếu có)",
+        "note": "Kiểm tra HDMI không dây",
+        "type": "check"
+      }
+    ]
+  }
 ];
-
 // ═══════════════════════════════════════════════════════════
 // BOOT
 // ═══════════════════════════════════════════════════════════
