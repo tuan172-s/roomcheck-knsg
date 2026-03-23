@@ -773,6 +773,23 @@ input[type=file]{display:none}
 
 <script>
 // ═══════════════════════════════════════════════════════════
+// ⚙️  CẤU HÌNH CỐ ĐỊNH — chỉ admin chỉnh, nhúng sẵn vào file
+//     Sau khi điền, commit lên GitHub → mọi thiết bị dùng ngay
+// ═══════════════════════════════════════════════════════════
+const HARDCODED_CFG = {
+  // Flow 1: nhận kết quả kiểm tra → ghi vào SharePoint List
+  webhook:    'https://default630ee4a429e34488ba823deed213e2.18.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/f2bff02a04df4cd1897de4203a2cf110/triggers/manual/paths/invoke?api-version=1',
+
+  // Flow 2: trả về danh sách phòng + checklist từ SharePoint
+  // Để trống '' nếu chưa có Flow 2 (dùng cấu hình mặc định)
+  cfgWebhook: 'PASTE_FLOW2_URL_HERE',
+
+  org:  'Công ty CP Kềm Nghĩa Sài Gòn',
+  site: 'https://kemnghiavn.sharepoint.com/sites/KNS-IT',
+};
+// ═══════════════════════════════════════════════════════════
+
+// ═══════════════════════════════════════════════════════════
 // STATE
 // ═══════════════════════════════════════════════════════════
 const RC = {
@@ -828,10 +845,27 @@ window.addEventListener('DOMContentLoaded', boot);
 async function boot() {
   startClock();
   setSplashMsg('Đang đọc cấu hình…');
-  RC.cfg = loadLocal('rc3_cfg');
-  loadLocalSchema();
 
-  await sleep(600); // brief splash
+  // Dùng HARDCODED_CFG nếu đã điền URL → mọi thiết bị dùng ngay, không cần nhập lại
+  const isConfigured = HARDCODED_CFG.webhook &&
+    HARDCODED_CFG.webhook !== 'PASTE_FLOW1_URL_HERE';
+
+  if (isConfigured) {
+    const saved = loadLocal('rc3_cfg') || {};
+    RC.cfg = {
+      ...saved,
+      webhook:    HARDCODED_CFG.webhook,
+      cfgWebhook: HARDCODED_CFG.cfgWebhook || saved.cfgWebhook || '',
+      org:        HARDCODED_CFG.org  || saved.org  || '',
+      site:       HARDCODED_CFG.site || saved.site || '',
+      offline: false,
+    };
+  } else {
+    RC.cfg = loadLocal('rc3_cfg');
+  }
+
+  loadLocalSchema();
+  await sleep(500);
 
   if (!RC.cfg) { show('scr-setup'); return; }
 
