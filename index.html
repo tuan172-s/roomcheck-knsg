@@ -859,14 +859,8 @@ async function doSubmit(){
       toast('📤 Đang gửi lên SharePoint…','info');
 
       // Get MS token to attach as proof of identity
-      const token = await getToken();
-	  if (!token) {
-		throw new Error('Không lấy được token đăng nhập');
-	  }
-
-	  const headers = {
-		'Content-Type': 'application/json',
-		'Authorization': `Bearer ${token}`
+      const headers = {
+		'Content-Type': 'application/json'
 	  };
 
 	  const r = await fetch(cfg.webhook, {
