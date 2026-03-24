@@ -671,10 +671,42 @@ function renderChecklist() {
   updateProgress();
 }
 function renderItem(it) {
-  const spd = it.type==='speed' ? `<div class="spd-row">
-    <input class="spd-in" id="sp_${it.id}" type="number" min="0" placeholder="0" oninput="onSpd('${it.id}')">
-    <span class="spd-unit">Mbps</span><span id="spe_${it.id}"></span>
-  </div>` : '';
+  const isSpeed = it.type === 'speed';
+
+  if (isSpeed) {
+    return `<div class="ci" id="ci_${it.id}">
+      <div class="ci-row">
+        <span class="ci-ico">${it.icon||'🔹'}</span>
+        <div class="ci-info">
+          <div class="ci-name">${esc(it.label)}</div>
+          ${it.note ? `<div class="ci-note">${esc(it.note)}</div>` : ''}
+        </div>
+      </div>
+      <div class="spd-row">
+        <input
+          class="spd-in"
+          id="sp_${it.id}"
+          type="number"
+          min="0"
+          placeholder="0"
+          oninput="onSpd('${it.id}')"
+        >
+        <span class="spd-unit">Mbps</span>
+        <span id="spe_${it.id}"></span>
+      </div>
+    </div>`;
+  }
+
+  const toggles = `<div class="togs">
+        <button class="tog tp" id="tp_${it.id}" onclick="setR('${it.id}','pass')" title="Đạt">✓</button>
+        <button class="tog tf" id="tf_${it.id}" onclick="setR('${it.id}','fail')" title="Lỗi">✗</button>
+        <button class="tog tn" id="tn_${it.id}" onclick="setR('${it.id}','na')" title="N/A">—</button>
+      </div>`;
+
+  const failNote = `<div class="fn-wrap" id="fn_${it.id}">
+      <textarea class="fn-ta" id="fnt_${it.id}" placeholder="Mô tả lỗi / hành động xử lý…" oninput="RC.notes['${it.id}']=this.value"></textarea>
+    </div>`;
+
   return `<div class="ci" id="ci_${it.id}">
     <div class="ci-row">
       <span class="ci-ico">${it.icon||'🔹'}</span>
@@ -682,15 +714,9 @@ function renderItem(it) {
         <div class="ci-name">${esc(it.label)}</div>
         ${it.note?`<div class="ci-note">${esc(it.note)}</div>`:''}
       </div>
-      <div class="togs">
-        <button class="tog tp" id="tp_${it.id}" onclick="setR('${it.id}','pass')" title="Đạt">✓</button>
-        <button class="tog tf" id="tf_${it.id}" onclick="setR('${it.id}','fail')" title="Lỗi">✗</button>
-        <button class="tog tn" id="tn_${it.id}" onclick="setR('${it.id}','na')"   title="N/A">—</button>
-      </div>
-    </div>${spd}
-    <div class="fn-wrap" id="fn_${it.id}">
-      <textarea class="fn-ta" id="fnt_${it.id}" placeholder="Mô tả lỗi / hành động xử lý…" oninput="RC.notes['${it.id}']=this.value"></textarea>
+      ${toggles}
     </div>
+    ${failNote}
   </div>`;
 }
 function toggleSec(id){ document.getElementById('sc_'+id).classList.toggle('open'); }
@@ -707,14 +733,33 @@ function setR(id,val){
   updateSecUI(); updateProgress();
 }
 function onSpd(id){
-  const v=parseFloat(document.getElementById('sp_'+id).value);
-  RC.speeds[id]=v;
-  const el=document.getElementById('spe_'+id);
-  if(isNaN(v)||v<=0){el.textContent='';el.className='';return;}
-  if(v>=50){el.textContent='Tốt';el.className='spd-tag stg';}
-  else if(v>=10){el.textContent='TB';el.className='spd-tag sto';}
-  else{el.textContent='Yếu';el.className='spd-tag stb';}
-  RC.results[id] = null;
+  const v = parseFloat(document.getElementById('sp_' + id).value);
+  const el = document.getElementById('spe_' + id);
+
+  if (isNaN(v) || v <= 0) {
+    delete RC.speeds[id];
+    el.textContent = '';
+    el.className = '';
+    updateSecUI();
+    updateProgress();
+    return;
+  }
+
+  RC.speeds[id] = v;
+
+  if (v >= 50) {
+    el.textContent = 'Tốt';
+    el.className = 'spd-tag stg';
+  } else if (v >= 10) {
+    el.textContent = 'TB';
+    el.className = 'spd-tag sto';
+  } else {
+    el.textContent = 'Yếu';
+    el.className = 'spd-tag stb';
+  }
+
+  updateSecUI();
+  updateProgress();
 }
 function updateSecUI(){
   RC.sections.forEach(sec=>{
@@ -824,7 +869,7 @@ async function doSubmit(){
       // speed không dùng pass/fail
       result: isSpeed ? 'value' : (RC.results[it.id] || 'unchecked'),
 
-      // chỗ này là field để Flow map vào cột DisplayText
+      // để Flow / SharePoint hiển thị đúng
       displayText: isSpeed ? speedText : it.label,
 
       note: isSpeed ? '' : (RC.notes[it.id] || ''),
