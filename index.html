@@ -714,7 +714,7 @@ function onSpd(id){
   if(v>=50){el.textContent='Tốt';el.className='spd-tag stg';}
   else if(v>=10){el.textContent='TB';el.className='spd-tag sto';}
   else{el.textContent='Yếu';el.className='spd-tag stb';}
-  setR(id,v>=10?'pass':'fail');
+  RC.results[id] = null;
 }
 function updateSecUI(){
   RC.sections.forEach(sec=>{
@@ -772,8 +772,14 @@ function delPhoto(id){RC.photos=RC.photos.filter(p=>p.id!==id);renderPhotos();}
 
 // ── SUBMIT ──
 async function doSubmit(){
-  const all=RC.sections.flatMap(s=>s.items.map(i=>i.id));
-  if(!all.filter(id=>RC.results[id]).length){toast('Hãy kiểm tra ít nhất 1 mục','err');return;}
+  const all = RC.sections.flatMap(s => s.items.map(i => i.id));
+  const checkItems = RC.sections.flatMap(s => s.items.filter(i => i.type !== 'speed'));
+  const checkIds = checkItems.map(i => i.id);
+
+  if(!checkIds.filter(id => RC.results[id]).length){
+    toast('Hãy kiểm tra ít nhất 1 mục','err');
+    return;
+  }
   if(!document.getElementById('roomSel').value){
     toast('Vui lòng chọn phòng','err');
     return;
@@ -794,27 +800,39 @@ async function doSubmit(){
     show('s-login'); return;
   }
 
-  const passC=all.filter(id=>RC.results[id]==='pass').length;
-  const failC=all.filter(id=>RC.results[id]==='fail').length;
-  const naC=all.filter(id=>RC.results[id]==='na').length;
+  const passC = checkIds.filter(id => RC.results[id] === 'pass').length;
+  const failC = checkIds.filter(id => RC.results[id] === 'fail').length;
+  const naC = checkIds.filter(id => RC.results[id] === 'na').length;
   const now=new Date();
   const clientCheckId = crypto.randomUUID();
 
   const details = RC.sections.map((sec, secIdx) => ({
-    sectionId: sec.id,
-    sectionLabel: sec.label,
-    sectionOrder: secIdx + 1,
-    items: sec.items.map((it, itemIdx) => ({
+  sectionId: sec.id,
+  sectionLabel: sec.label,
+  sectionOrder: secIdx + 1,
+  items: sec.items.map((it, itemIdx) => {
+    const isSpeed = it.type === 'speed';
+    const speedVal = isSpeed ? (RC.speeds[it.id] ?? null) : null;
+    const speedText = isSpeed && speedVal != null ? `${speedVal} Mbps` : '';
+
+    return {
       id: it.id,
       label: it.label,
       type: it.type || 'check',
       itemOrder: itemIdx + 1,
-      result: RC.results[it.id] || 'unchecked',
-      note: RC.notes[it.id] || '',
-      valueNumber: it.type === 'speed' ? (RC.speeds[it.id] ?? null) : null,
-      valueText: it.type === 'speed' && RC.speeds[it.id] != null ? `${RC.speeds[it.id]} Mbps` : ''
-    }))
-  }));
+
+      // speed không dùng pass/fail
+      result: isSpeed ? 'value' : (RC.results[it.id] || 'unchecked'),
+
+      // chỗ này là field để Flow map vào cột DisplayText
+      displayText: isSpeed ? speedText : it.label,
+
+      note: isSpeed ? '' : (RC.notes[it.id] || ''),
+      valueNumber: speedVal,
+      valueText: speedText
+    };
+  })
+}));
 
   const photos = await Promise.all(
     RC.photos.map(async p => ({
@@ -824,7 +842,7 @@ async function doSubmit(){
     }))
   );
   
-  const uncheckedC = all.filter(id => !RC.results[id]).length;
+  const uncheckedC = checkIds.filter(id => !RC.results[id]).length;
 
   const payload = {
     clientCheckId,
@@ -867,7 +885,7 @@ async function doSubmit(){
 		method: 'POST',
 		headers,
 		body: JSON.stringify(payload)
-	  });
+	});
       if(!r.ok && r.status!==202) throw new Error('HTTP '+r.status);
       toast('✅ Gửi thành công lên SharePoint!','ok');
     }catch(e){
