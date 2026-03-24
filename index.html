@@ -545,9 +545,6 @@ async function boot() {
     });
     await RC.msalApp.initialize();
 
-    // Handle redirect callback
-    await RC.msalApp.handleRedirectPromise();
-
     // Check existing account
     const redirectResult = await RC.msalApp.handleRedirectPromise();
 
