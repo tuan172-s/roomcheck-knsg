@@ -3,134 +3,115 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#0e1621">
+<meta name="theme-color" content="#0b0f1a">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="RoomCheck">
 <title>RoomCheck – Kiểm tra phòng họp</title>
 <link rel="manifest" href="manifest.json">
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg:      #0b0f1a;
-  --s1:      #111827;
-  --s2:      #1a2236;
-  --s3:      #243050;
-  --border:  #1e2d45;
-  --border2: #2a3f5f;
-  --text:    #dde4f0;
-  --dim:     #7a8aa0;
-  --muted:   #2d3f58;
-  --blue:    #4d9fff;
-  --blue-lo: rgba(77,159,255,.1);
-  --blue-glow: 0 0 28px rgba(77,159,255,.2);
-  --teal:    #2dd4bf;
-  --green:   #34d399;
-  --red:     #f87171;
-  --amber:   #fbbf24;
-  --sans: 'Outfit', sans-serif;
-  --mono: 'Fira Code', monospace;
-  --r: 14px;
+:root{
+  --bg:#0b0f1a;--s1:#111827;--s2:#1a2236;--s3:#243050;
+  --border:#1e2d45;--border2:#2a3f5f;
+  --text:#dde4f0;--dim:#7a8aa0;--muted:#2d3f58;
+  --blue:#4d9fff;--teal:#2dd4bf;--green:#34d399;--red:#f87171;--amber:#fbbf24;
+  --glow:0 0 28px rgba(77,159,255,.2);
+  --sans:'Outfit',sans-serif;--mono:'Fira Code',monospace;--r:14px;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html{-webkit-tap-highlight-color:transparent;scroll-behavior:smooth}
+html{-webkit-tap-highlight-color:transparent}
 body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100svh;overflow-x:hidden}
-
-/* mesh bg */
 body::before{
   content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   background:
-    radial-gradient(ellipse 60% 40% at 20% 0%, rgba(77,159,255,.06) 0%,transparent 60%),
-    radial-gradient(ellipse 50% 35% at 85% 100%, rgba(45,212,191,.05) 0%,transparent 60%);
+    radial-gradient(ellipse 60% 40% at 20% 0%,rgba(77,159,255,.06) 0%,transparent 60%),
+    radial-gradient(ellipse 50% 35% at 85% 100%,rgba(45,212,191,.05) 0%,transparent 60%);
 }
-.wrap{position:relative;z-index:1;max-width:500px;margin:0 auto;min-height:100svh;display:flex;flex-direction:column}
+.app{position:relative;z-index:1;max-width:500px;margin:0 auto;min-height:100svh;display:flex;flex-direction:column}
 
-/* ── screens ── */
-.screen{display:none;flex-direction:column;flex:1;animation:fadeUp .3s ease}
-.screen.on{display:flex}
-@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+/* screens */
+.scr{display:none;flex-direction:column;flex:1;animation:fadeUp .3s ease}
+.scr.on{display:flex}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
 
 /* ── SPLASH ── */
-#scr-splash{align-items:center;justify-content:center;gap:24px;padding:40px}
-.splash-logo{
-  width:72px;height:72px;border-radius:22px;
+#s-splash{align-items:center;justify-content:center;gap:20px;padding:40px;text-align:center}
+.splash-ico{
+  width:80px;height:80px;border-radius:24px;
   background:linear-gradient(135deg,var(--blue),var(--teal));
-  display:flex;align-items:center;justify-content:center;font-size:36px;
-  box-shadow:var(--blue-glow);
-  animation:pulse 2s ease infinite;
+  display:flex;align-items:center;justify-content:center;font-size:40px;
+  box-shadow:var(--glow);animation:pulse 2s ease infinite;
 }
-@keyframes pulse{0%,100%{box-shadow:var(--blue-glow)}50%{box-shadow:0 0 40px rgba(77,159,255,.4)}}
-.splash-title{font-size:28px;font-weight:800;letter-spacing:-1px}
-.splash-sub{font-size:13px;color:var(--dim);font-family:var(--mono);margin-top:-12px}
-.splash-loader{display:flex;flex-direction:column;align-items:center;gap:10px}
-.loader-bar{width:180px;height:3px;background:var(--s3);border-radius:3px;overflow:hidden}
-.loader-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--teal));border-radius:3px;animation:loadAnim 1.8s ease infinite}
-@keyframes loadAnim{0%{width:0;margin-left:0}60%{width:100%;margin-left:0}100%{width:0;margin-left:100%}}
-.loader-msg{font-size:12px;color:var(--dim);font-family:var(--mono)}
+@keyframes pulse{0%,100%{box-shadow:var(--glow)}50%{box-shadow:0 0 44px rgba(77,159,255,.4)}}
+.splash-title{font-size:30px;font-weight:800;letter-spacing:-1px}
+.splash-sub{font-size:12px;color:var(--dim);font-family:var(--mono)}
+.splash-bar{width:160px;height:3px;background:var(--s3);border-radius:3px;overflow:hidden;margin:4px auto 0}
+.splash-fill{height:100%;background:linear-gradient(90deg,var(--blue),var(--teal));border-radius:3px;animation:barAnim 1.6s ease infinite}
+@keyframes barAnim{0%{width:0;margin-left:0}60%{width:100%;margin-left:0}100%{width:0;margin-left:100%}}
+.splash-msg{font-size:11px;color:var(--dim);font-family:var(--mono);margin-top:8px}
 
-/* ── SETUP ── */
-#scr-setup{padding:0;overflow-y:auto}
-.setup-inner{padding:28px 20px 44px}
-.setup-head{margin-bottom:28px}
-.setup-head h1{font-size:24px;font-weight:800;letter-spacing:-.5px;margin-bottom:6px}
-.setup-head p{font-size:13px;color:var(--dim);line-height:1.6}
+/* ── LOGIN ── */
+#s-login{align-items:center;justify-content:center;padding:32px 24px;gap:0}
+.login-card{
+  width:100%;background:var(--s1);border:1px solid var(--border);
+  border-radius:22px;padding:32px 24px;text-align:center;
+}
+.login-ico{font-size:48px;margin-bottom:16px}
+.login-title{font-size:22px;font-weight:800;margin-bottom:8px}
+.login-desc{font-size:13px;color:var(--dim);line-height:1.7;margin-bottom:28px}
+.ms-btn{
+  width:100%;padding:16px;border-radius:13px;border:none;
+  background:linear-gradient(135deg,#0078d4,#005a9e);
+  color:#fff;font-size:15px;font-weight:700;
+  font-family:var(--sans);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  transition:all .2s;box-shadow:0 4px 20px rgba(0,120,212,.3);
+}
+.ms-btn:hover{transform:translateY(-1px);box-shadow:0 6px 28px rgba(0,120,212,.4)}
+.ms-btn:active{transform:none}
+.ms-btn:disabled{opacity:.5;cursor:not-allowed;transform:none}
+.ms-logo{width:20px;height:20px;flex-shrink:0}
+.login-note{font-size:11px;color:var(--muted);margin-top:16px;line-height:1.6}
 
-.card{background:var(--s1);border:1px solid var(--border);border-radius:18px;overflow:hidden;margin-bottom:14px}
-.card-head{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
-.card-head h3{font-size:14px;font-weight:700;flex:1}
-.card-body{padding:16px 18px}
-
-.field{margin-bottom:13px}
+/* ── SETUP (first time / admin) ── */
+#s-setup{overflow-y:auto}
+.setup-inner{padding:24px 20px 44px}
+.setup-back{
+  display:flex;align-items:center;gap:8px;
+  font-size:13px;color:var(--dim);cursor:pointer;margin-bottom:20px;
+  background:none;border:none;font-family:var(--sans);
+}
+.setup-back:hover{color:var(--text)}
+.setup-h1{font-size:22px;font-weight:800;margin-bottom:6px}
+.setup-p{font-size:13px;color:var(--dim);line-height:1.6;margin-bottom:24px}
+.card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);margin-bottom:14px}
+.card-hd{padding:13px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.card-hd h3{font-size:13px;font-weight:700}
+.card-bd{padding:14px 16px}
+.field{margin-bottom:12px}
 .field:last-child{margin-bottom:0}
 .field label{display:block;font-size:10px;font-family:var(--mono);color:var(--dim);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:6px}
-.field input,.field select,.field textarea{
+.field input,.field textarea{
   width:100%;padding:11px 13px;
   background:var(--s2);border:1px solid var(--border);
-  border-radius:10px;color:var(--text);
-  font-size:13px;font-family:var(--sans);
-  outline:none;transition:border-color .2s,box-shadow .2s;
-  -webkit-appearance:none;
+  border-radius:10px;color:var(--text);font-size:13px;font-family:var(--sans);
+  outline:none;transition:border-color .2s;-webkit-appearance:none;
 }
 .field input:focus,.field textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(77,159,255,.1)}
 .field input::placeholder,.field textarea::placeholder{color:var(--muted)}
-.field textarea{resize:none;min-height:60px;line-height:1.5}
-
-.hint-box{
-  background:rgba(77,159,255,.07);border:1px solid rgba(77,159,255,.18);
-  border-radius:10px;padding:12px 14px;
-  font-size:11px;color:var(--dim);line-height:1.75;margin-top:10px;
-}
-.hint-box code{font-family:var(--mono);color:var(--blue);background:rgba(77,159,255,.1);padding:1px 5px;border-radius:4px;font-size:10px}
-.hint-box strong{color:var(--text)}
-
-.step-list{counter-reset:step;display:flex;flex-direction:column;gap:10px}
-.step-item{display:flex;gap:12px;font-size:12px;line-height:1.6;color:var(--dim)}
-.step-item::before{
-  counter-increment:step;content:counter(step);
-  min-width:22px;height:22px;border-radius:50%;
-  background:linear-gradient(135deg,var(--blue),var(--teal));
-  color:#0b0f1a;font-weight:700;font-size:11px;
-  display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;
-}
-.step-item span{color:var(--text)}
-
+.hint{background:rgba(77,159,255,.07);border:1px solid rgba(77,159,255,.18);border-radius:10px;padding:12px 14px;font-size:11px;color:var(--dim);line-height:1.75;margin-top:10px}
+.hint code{font-family:var(--mono);color:var(--blue);background:rgba(77,159,255,.1);padding:1px 5px;border-radius:4px}
 .btn-main{
   width:100%;padding:16px;border-radius:13px;border:none;
   background:linear-gradient(135deg,var(--blue),var(--teal));
   color:#0b0f1a;font-size:15px;font-weight:800;
-  font-family:var(--sans);cursor:pointer;letter-spacing:-.2px;
-  transition:all .2s;box-shadow:var(--blue-glow);
-  display:flex;align-items:center;justify-content:center;gap:8px;
+  font-family:var(--sans);cursor:pointer;
+  transition:all .2s;box-shadow:var(--glow);
 }
-.btn-main:hover{transform:translateY(-1px);box-shadow:0 8px 32px rgba(77,159,255,.35)}
-.btn-main:active{transform:none}
+.btn-main:hover{transform:translateY(-1px)}
 .btn-main:disabled{opacity:.45;cursor:not-allowed;transform:none}
-.btn-ghost{
-  width:100%;padding:14px;border-radius:13px;
-  border:1px solid var(--border);background:transparent;
-  color:var(--dim);font-size:13px;font-family:var(--sans);cursor:pointer;margin-top:8px;
-  transition:all .2s;
-}
+.btn-ghost{width:100%;padding:13px;border-radius:13px;border:1px solid var(--border);background:transparent;color:var(--dim);font-size:13px;font-family:var(--sans);cursor:pointer;margin-top:8px;transition:all .2s}
 .btn-ghost:hover{border-color:var(--border2);color:var(--text)}
 
 /* ── TOPBAR ── */
@@ -140,51 +121,21 @@ body::before{
   border-bottom:1px solid var(--border);
   position:sticky;top:0;z-index:50;
 }
-.tb-row1{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
-.tb-brand{display:flex;align-items:center;gap:10px}
-.tb-ico{
-  width:34px;height:34px;border-radius:10px;
-  background:linear-gradient(135deg,var(--blue),var(--teal));
-  display:flex;align-items:center;justify-content:center;font-size:17px;
-  box-shadow:0 0 14px rgba(77,159,255,.3);flex-shrink:0;
-}
-.tb-name{font-size:15px;font-weight:800;letter-spacing:-.3px}
-.tb-status{display:flex;align-items:center;gap:5px;margin-top:1px}
-.status-dot{width:6px;height:6px;border-radius:50%;background:var(--muted);flex-shrink:0;transition:all .3s}
-.status-dot.ok{background:var(--green);box-shadow:0 0 6px var(--green)}
-.status-dot.err{background:var(--red)}
-.status-dot.wait{background:var(--amber);animation:blink .8s ease infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.4}}
-.status-lbl{font-size:10px;font-family:var(--mono);color:var(--dim)}
-
-.tb-actions{display:flex;gap:7px}
-.ico-btn{
-  width:36px;height:36px;border-radius:10px;
-  border:1px solid var(--border);background:var(--s2);
-  color:var(--dim);cursor:pointer;font-size:15px;
-  display:flex;align-items:center;justify-content:center;
-  transition:all .2s;
-}
+.tb1{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-ico{width:34px;height:34px;border-radius:10px;background:linear-gradient(135deg,var(--blue),var(--teal));display:flex;align-items:center;justify-content:center;font-size:17px;box-shadow:0 0 14px rgba(77,159,255,.3)}
+.brand-name{font-size:15px;font-weight:800;letter-spacing:-.3px}
+.brand-user{font-size:10px;font-family:var(--mono);color:var(--dim);margin-top:2px}
+.tb-acts{display:flex;gap:7px}
+.ico-btn{width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:var(--s2);color:var(--dim);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;transition:all .2s}
 .ico-btn:hover{border-color:var(--blue);color:var(--blue)}
-
-/* room + clock row */
-.tb-row2{display:flex;align-items:center;gap:10px}
-.room-sel-wrap{
-  flex:1;display:flex;align-items:center;gap:10px;
-  background:var(--s2);border:1px solid var(--border);
-  border-radius:11px;padding:9px 12px;
-}
-.room-sel-wrap select{
-  flex:1;background:transparent;border:none;color:var(--text);
-  font-size:13px;font-weight:700;font-family:var(--sans);
-  outline:none;cursor:pointer;
-}
-.room-sel-wrap select option{background:var(--s2)}
-.clock-box{text-align:right;flex-shrink:0}
-.clock-t{font-family:var(--mono);font-size:18px;font-weight:500;color:var(--blue);line-height:1}
-.clock-d{font-size:9px;color:var(--dim);font-family:var(--mono);margin-top:3px}
-
-/* progress */
+.room-row{display:flex;align-items:center;gap:10px}
+.room-wrap{flex:1;display:flex;align-items:center;gap:10px;background:var(--s2);border:1px solid var(--border);border-radius:11px;padding:9px 12px}
+.room-wrap select{flex:1;background:transparent;border:none;color:var(--text);font-size:13px;font-weight:700;font-family:var(--sans);outline:none;cursor:pointer}
+.room-wrap select option{background:var(--s2)}
+.clk-box{text-align:right;flex-shrink:0}
+.clk-t{font-family:var(--mono);font-size:18px;font-weight:500;color:var(--blue);line-height:1}
+.clk-d{font-size:9px;color:var(--dim);font-family:var(--mono);margin-top:3px}
 .prog-wrap{margin-top:10px}
 .prog-meta{display:flex;justify-content:space-between;font-size:10px;color:var(--dim);font-family:var(--mono);margin-bottom:4px}
 .prog-track{height:3px;background:var(--s3);border-radius:3px;overflow:hidden}
@@ -192,480 +143,292 @@ body::before{
 
 /* ── TABS ── */
 .tabs{display:flex;padding:14px 18px 0;gap:2px}
-.tab{
-  flex:1;padding:9px;text-align:center;
-  font-size:11px;font-weight:700;font-family:var(--mono);
-  cursor:pointer;border-bottom:2px solid transparent;color:var(--dim);
-  transition:all .2s;letter-spacing:.3px;
-}
+.tab{flex:1;padding:9px;text-align:center;font-size:11px;font-weight:700;font-family:var(--mono);cursor:pointer;border-bottom:2px solid transparent;color:var(--dim);transition:all .2s;letter-spacing:.3px}
 .tab.on{color:var(--blue);border-bottom-color:var(--blue)}
-
 .pane{display:none;overflow-y:auto;flex:1}
 .pane.on{display:block}
 
 /* ── CHECKLIST ── */
 .cl-body{padding:14px 18px;display:flex;flex-direction:column;gap:13px}
-
-.sec{
-  background:var(--s1);border:1px solid var(--border);
-  border-radius:var(--r);overflow:hidden;
-  transition:border-color .3s;
-}
+.sec{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;transition:border-color .3s}
 .sec.ok{border-color:rgba(52,211,153,.35)}
 .sec.warn{border-color:rgba(251,191,36,.3)}
 .sec.fail{border-color:rgba(248,113,113,.3)}
-
-.sec-hd{
-  display:flex;align-items:center;gap:11px;
-  padding:12px 15px;cursor:pointer;
-  border-bottom:1px solid transparent;transition:border-color .2s;
-  user-select:none;
-}
+.sec-hd{display:flex;align-items:center;gap:11px;padding:12px 15px;cursor:pointer;border-bottom:1px solid transparent;transition:border-color .2s;user-select:none}
 .sec.open .sec-hd{border-bottom-color:var(--border)}
 .sec-em{font-size:20px;flex-shrink:0}
 .sec-info{flex:1;min-width:0}
 .sec-lbl{font-size:13px;font-weight:700}
 .sec-sub{font-size:10px;color:var(--dim);font-family:var(--mono);margin-top:2px}
 .sec-bdg{font-size:10px;font-family:var(--mono);font-weight:600;padding:3px 9px;border-radius:20px;flex-shrink:0}
-.bdg-p{background:var(--s3);color:var(--dim)}
-.bdg-ok{background:rgba(52,211,153,.13);color:var(--green)}
-.bdg-fail{background:rgba(248,113,113,.13);color:var(--red)}
-.bdg-part{background:rgba(251,191,36,.13);color:var(--amber)}
+.bp{background:var(--s3);color:var(--dim)}
+.bok{background:rgba(52,211,153,.13);color:var(--green)}
+.bfail{background:rgba(248,113,113,.13);color:var(--red)}
+.bpart{background:rgba(251,191,36,.13);color:var(--amber)}
 .chev{color:var(--muted);transition:transform .3s;flex-shrink:0}
 .sec.open .chev{transform:rotate(180deg)}
-
 .sec-items{display:none}
 .sec.open .sec-items{display:block}
-
-/* check item */
 .ci{padding:12px 15px;border-bottom:1px solid rgba(30,45,69,.5)}
 .ci:last-child{border-bottom:none}
 .ci-row{display:flex;align-items:center;gap:9px}
 .ci-ico{font-size:15px;flex-shrink:0;width:20px;text-align:center}
 .ci-info{flex:1;min-width:0}
 .ci-name{font-size:13px;font-weight:600;line-height:1.3}
-.ci-note{font-size:11px;color:var(--dim);margin-top:2px;line-height:1.4}
-
-/* toggle */
+.ci-note{font-size:11px;color:var(--dim);margin-top:2px}
 .togs{display:flex;gap:5px;flex-shrink:0}
-.tog{
-  width:38px;height:38px;border-radius:10px;
-  border:1.5px solid;background:transparent;cursor:pointer;
-  font-size:14px;font-weight:700;
-  display:flex;align-items:center;justify-content:center;
-  transition:all .15s;-webkit-tap-highlight-color:transparent;
-  font-family:var(--sans);
-}
+.tog{width:38px;height:38px;border-radius:10px;border:1.5px solid;background:transparent;cursor:pointer;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;transition:all .15s;-webkit-tap-highlight-color:transparent;font-family:var(--sans)}
 .tog.tp{border-color:rgba(52,211,153,.22);color:rgba(52,211,153,.3)}
 .tog.tp.on{border-color:var(--green);background:rgba(52,211,153,.1);color:var(--green);box-shadow:0 0 10px rgba(52,211,153,.18)}
 .tog.tf{border-color:rgba(248,113,113,.22);color:rgba(248,113,113,.3)}
 .tog.tf.on{border-color:var(--red);background:rgba(248,113,113,.1);color:var(--red);box-shadow:0 0 10px rgba(248,113,113,.18)}
 .tog.tn{border-color:rgba(122,138,160,.18);color:rgba(122,138,160,.3)}
 .tog.tn.on{border-color:var(--dim);background:rgba(122,138,160,.08);color:var(--dim)}
-
-/* speed input */
 .spd-row{display:flex;align-items:center;gap:8px;margin-top:9px}
-.spd-in{
-  flex:1;padding:9px 12px;background:var(--s2);
-  border:1px solid var(--border);border-radius:9px;
-  color:var(--text);font-size:16px;font-weight:600;
-  font-family:var(--mono);outline:none;
-  transition:border-color .2s;
-}
+.spd-in{flex:1;padding:9px 12px;background:var(--s2);border:1px solid var(--border);border-radius:9px;color:var(--text);font-size:16px;font-weight:600;font-family:var(--mono);outline:none;transition:border-color .2s}
 .spd-in:focus{border-color:var(--blue)}
-.spd-unit{font-size:11px;color:var(--dim);font-family:var(--mono);flex-shrink:0}
+.spd-unit{font-size:11px;color:var(--dim);font-family:var(--mono)}
 .spd-tag{font-size:10px;font-weight:600;padding:3px 8px;border-radius:6px;font-family:var(--mono)}
-.st-g{background:rgba(52,211,153,.12);color:var(--green)}
-.st-o{background:rgba(251,191,36,.12);color:var(--amber)}
-.st-b{background:rgba(248,113,113,.12);color:var(--red)}
-
-/* fail note */
+.stg{background:rgba(52,211,153,.12);color:var(--green)}
+.sto{background:rgba(251,191,36,.12);color:var(--amber)}
+.stb{background:rgba(248,113,113,.12);color:var(--red)}
 .fn-wrap{margin-top:8px;display:none}
-.fn-ta{
-  width:100%;padding:9px 12px;background:var(--s2);
-  border:1px solid rgba(248,113,113,.25);border-radius:9px;
-  color:var(--text);font-size:12px;font-family:var(--sans);
-  outline:none;resize:none;min-height:52px;transition:border-color .2s;
-}
-.fn-ta:focus{border-color:rgba(248,113,113,.5)}
+.fn-ta{width:100%;padding:9px 12px;background:var(--s2);border:1px solid rgba(248,113,113,.25);border-radius:9px;color:var(--text);font-size:12px;font-family:var(--sans);outline:none;resize:none;min-height:52px}
 .fn-ta::placeholder{color:var(--muted)}
 
 /* photos */
-.ph-sec{
-  margin:0 18px 14px;
-  background:var(--s1);border:1px solid var(--border);
-  border-radius:var(--r);padding:15px;
-}
+.ph-sec{margin:0 18px 14px;background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:15px}
 .ph-lbl{font-size:10px;font-family:var(--mono);color:var(--dim);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:11px}
 .ph-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
-.ph-thumb{
-  aspect-ratio:1;border-radius:10px;overflow:hidden;
-  position:relative;background:var(--s2);border:1px solid var(--border);
-}
+.ph-thumb{aspect-ratio:1;border-radius:10px;overflow:hidden;position:relative;background:var(--s2);border:1px solid var(--border)}
 .ph-thumb img{width:100%;height:100%;object-fit:cover;display:block}
-.ph-del{
-  position:absolute;top:4px;right:4px;
-  width:22px;height:22px;border-radius:50%;
-  background:rgba(0,0,0,.75);border:none;color:#fff;
-  cursor:pointer;font-size:13px;
-  display:flex;align-items:center;justify-content:center;
-}
-.ph-add{
-  aspect-ratio:1;border-radius:10px;
-  border:1.5px dashed var(--s3);background:transparent;
-  display:flex;flex-direction:column;align-items:center;justify-content:center;
-  gap:5px;cursor:pointer;color:var(--dim);
-  font-size:10px;font-family:var(--sans);transition:all .2s;
-}
+.ph-del{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;background:rgba(0,0,0,.75);border:none;color:#fff;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center}
+.ph-add{aspect-ratio:1;border-radius:10px;border:1.5px dashed var(--s3);background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;color:var(--dim);font-size:10px;font-family:var(--sans);transition:all .2s}
 .ph-add:hover{border-color:var(--blue);color:var(--blue)}
-.ph-add .ph-ico{font-size:22px}
 input[type=file]{display:none}
 
-/* general note + inspector */
-.form-extras{padding:0 18px;display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+/* extras */
+.extras{padding:0 18px;display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
+.ext-input{width:100%;padding:11px 13px;background:var(--s1);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:13px;font-family:var(--sans);outline:none;transition:border-color .2s}
+.ext-input:focus{border-color:var(--blue)}
+.ext-input::placeholder{color:var(--muted)}
+.ext-ta{width:100%;padding:11px 13px;background:var(--s1);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:13px;font-family:var(--sans);outline:none;resize:none;min-height:68px}
+.ext-ta::placeholder{color:var(--muted)}
 
 /* submit */
-.sub-wrap{padding:0 18px 32px}
-.sub-btn{
-  width:100%;padding:17px;border-radius:var(--r);border:none;
-  background:linear-gradient(135deg,var(--blue),var(--teal));
-  color:#0b0f1a;font-size:15px;font-weight:800;
-  font-family:var(--sans);cursor:pointer;letter-spacing:-.2px;
-  display:flex;align-items:center;justify-content:center;gap:9px;
-  transition:all .2s;box-shadow:var(--blue-glow);
-}
+.sub-wrap{padding:0 18px 36px}
+.sub-btn{width:100%;padding:17px;border-radius:var(--r);border:none;background:linear-gradient(135deg,var(--blue),var(--teal));color:#0b0f1a;font-size:15px;font-weight:800;font-family:var(--sans);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;transition:all .2s;box-shadow:var(--glow)}
 .sub-btn:hover{transform:translateY(-1px);box-shadow:0 8px 36px rgba(77,159,255,.35)}
 .sub-btn:active{transform:none}
 .sub-btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
 
 /* ── HISTORY ── */
 .hist-body{padding:14px 18px;display:flex;flex-direction:column;gap:11px}
-.hc{
-  background:var(--s1);border:1px solid var(--border);
-  border-radius:var(--r);padding:13px 15px;
-}
+.hc{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:13px 15px}
 .hc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:9px}
 .hc-room{font-size:14px;font-weight:700}
 .hc-time{font-size:10px;color:var(--dim);font-family:var(--mono);margin-top:3px}
 .hc-chips{display:flex;gap:6px;flex-wrap:wrap}
 .chip{font-size:10px;font-weight:600;padding:3px 8px;border-radius:6px;font-family:var(--mono)}
-.c-p{background:rgba(52,211,153,.1);color:var(--green)}
-.c-f{background:rgba(248,113,113,.1);color:var(--red)}
-.c-n{background:var(--s3);color:var(--dim)}
-.c-i{background:rgba(77,159,255,.1);color:var(--blue)}
-.c-s{background:rgba(251,191,36,.1);color:var(--amber)}
+.cp{background:rgba(52,211,153,.1);color:var(--green)}
+.cf{background:rgba(248,113,113,.1);color:var(--red)}
+.cn{background:var(--s3);color:var(--dim)}
+.ci2{background:rgba(77,159,255,.1);color:var(--blue)}
+.cs{background:rgba(251,191,36,.1);color:var(--amber)}
 .hc-note{font-size:11px;color:var(--dim);margin-top:8px;padding-top:8px;border-top:1px solid var(--border);line-height:1.5}
 .empty{text-align:center;padding:60px 20px;color:var(--dim)}
 .empty-ico{font-size:44px;margin-bottom:12px}
-.empty p{font-size:13px}
 
 /* ── ADMIN ── */
 .adm-body{padding:14px 18px;display:flex;flex-direction:column;gap:13px}
-
-/* webhook status */
-.wh-status{
-  display:flex;align-items:center;gap:10px;
-  background:var(--s1);border:1px solid var(--border);
-  border-radius:var(--r);padding:13px 15px;
-}
-.wh-icon{font-size:22px}
-.wh-info{flex:1}
-.wh-title{font-size:13px;font-weight:700}
-.wh-url{font-size:10px;font-family:var(--mono);color:var(--dim);margin-top:2px;word-break:break-all}
-.wh-edit-btn{
-  padding:7px 12px;border-radius:8px;
-  border:1px solid var(--border);background:transparent;
-  color:var(--dim);font-size:11px;font-family:var(--mono);
-  cursor:pointer;transition:all .2s;flex-shrink:0;
-}
-.wh-edit-btn:hover{border-color:var(--blue);color:var(--blue)}
-
-/* room list */
 .r-list{display:flex;flex-direction:column;gap:6px}
-.r-row{
-  display:flex;align-items:center;gap:9px;
-  background:var(--s2);border:1px solid var(--border);
-  border-radius:9px;padding:9px 12px;
-}
-.r-row input{
-  flex:1;background:transparent;border:none;
-  color:var(--text);font-size:13px;font-weight:600;
-  font-family:var(--sans);outline:none;
-}
-.del-btn{
-  width:28px;height:28px;border-radius:8px;
-  border:1px solid rgba(248,113,113,.25);background:transparent;
-  color:rgba(248,113,113,.5);cursor:pointer;font-size:14px;
-  display:flex;align-items:center;justify-content:center;flex-shrink:0;
-  transition:all .15s;
-}
-.del-btn:hover{border-color:var(--red);color:var(--red);background:rgba(248,113,113,.07)}
-.add-row{
-  display:flex;align-items:center;gap:8px;
-  padding:9px 12px;border-radius:9px;
-  border:1.5px dashed var(--border);background:transparent;
-  color:var(--dim);font-size:12px;font-family:var(--sans);
-  cursor:pointer;transition:all .2s;width:100%;
-}
-.add-row:hover{border-color:var(--blue);color:var(--blue)}
-
-/* section builder */
+.r-row{display:flex;align-items:center;gap:9px;background:var(--s2);border:1px solid var(--border);border-radius:9px;padding:9px 12px}
+.r-row input{flex:1;background:transparent;border:none;color:var(--text);font-size:13px;font-weight:600;font-family:var(--sans);outline:none}
+.del-btn{width:28px;height:28px;border-radius:8px;border:1px solid rgba(248,113,113,.25);background:transparent;color:rgba(248,113,113,.5);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.del-btn:hover{border-color:var(--red);color:var(--red)}
+.add-row-btn{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:9px;border:1.5px dashed var(--border);background:transparent;color:var(--dim);font-size:12px;font-family:var(--sans);cursor:pointer;transition:all .2s;width:100%}
+.add-row-btn:hover{border-color:var(--blue);color:var(--blue)}
 .sb-list{display:flex;flex-direction:column;gap:11px}
-.sb-sec{
-  background:var(--s2);border:1px solid var(--border);
-  border-radius:11px;overflow:hidden;
-}
-.sb-sec-hd{
-  display:flex;align-items:center;gap:9px;
-  padding:10px 13px;border-bottom:1px solid var(--border);
-}
+.sb-sec{background:var(--s2);border:1px solid var(--border);border-radius:11px;overflow:hidden}
+.sb-hd{display:flex;align-items:center;gap:9px;padding:10px 13px;border-bottom:1px solid var(--border)}
+.sb-hd input{flex:1;background:transparent;border:none;color:var(--text);font-size:13px;font-weight:700;font-family:var(--sans);outline:none}
 .sb-em{font-size:19px;cursor:pointer;flex-shrink:0}
-.sb-sec-hd input{
-  flex:1;background:transparent;border:none;
-  color:var(--text);font-size:13px;font-weight:700;
-  font-family:var(--sans);outline:none;
-}
-.del-sec{
-  padding:4px 10px;border-radius:7px;
-  border:1px solid rgba(248,113,113,.25);background:transparent;
-  color:rgba(248,113,113,.5);font-size:10px;font-family:var(--mono);
-  cursor:pointer;flex-shrink:0;transition:all .15s;
-}
+.del-sec{padding:4px 10px;border-radius:7px;border:1px solid rgba(248,113,113,.25);background:transparent;color:rgba(248,113,113,.5);font-size:10px;font-family:var(--mono);cursor:pointer;flex-shrink:0;transition:all .15s}
 .del-sec:hover{border-color:var(--red);color:var(--red)}
-
 .sb-items{padding:9px 13px;display:flex;flex-direction:column;gap:5px}
-.sb-cols{
-  display:grid;
-  grid-template-columns:32px 1.8fr 1.4fr 80px 28px;
-  gap:4px;padding:0 0 4px;
-  font-size:9px;font-family:var(--mono);color:var(--muted);
-  text-transform:uppercase;letter-spacing:.8px;
-}
-.sb-row{
-  display:grid;
-  grid-template-columns:32px 1.8fr 1.4fr 80px 28px;
-  gap:4px;align-items:center;
-}
-.sb-row input,.sb-row select{
-  background:var(--s1);border:1px solid var(--border);
-  border-radius:7px;color:var(--text);
-  font-family:var(--sans);outline:none;
-  padding:7px 8px;font-size:12px;
-  transition:border-color .15s;width:100%;
-  -webkit-appearance:none;
-}
-.sb-row input:focus,.sb-row select:focus{border-color:var(--blue)}
+.sb-cols{display:grid;grid-template-columns:32px 1.8fr 1.4fr 80px 28px;gap:4px;padding:0 0 4px;font-size:9px;font-family:var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.8px}
+.sb-row{display:grid;grid-template-columns:32px 1.8fr 1.4fr 80px 28px;gap:4px;align-items:center}
+.sb-row input,.sb-row select{background:var(--s1);border:1px solid var(--border);border-radius:7px;color:var(--text);font-family:var(--sans);outline:none;padding:7px 8px;font-size:12px;width:100%;-webkit-appearance:none}
 .sb-row input.em-in{text-align:center;font-size:15px;padding:5px}
 .sb-row select{font-size:10px;font-family:var(--mono);color:var(--dim)}
-.add-item{
-  display:flex;align-items:center;gap:6px;
-  padding:7px 10px;border-radius:8px;
-  border:1.5px dashed var(--border);background:transparent;
-  color:var(--dim);font-size:11px;font-family:var(--sans);
-  cursor:pointer;transition:all .2s;width:100%;margin-top:4px;
-}
+.add-item{display:flex;align-items:center;gap:6px;padding:7px 10px;border-radius:8px;border:1.5px dashed var(--border);background:transparent;color:var(--dim);font-size:11px;font-family:var(--sans);cursor:pointer;transition:all .2s;width:100%;margin-top:4px}
 .add-item:hover{border-color:var(--teal);color:var(--teal)}
-.add-sec-btn{
-  width:100%;padding:12px;border-radius:10px;
-  border:1.5px dashed var(--border);background:transparent;
-  color:var(--dim);font-size:13px;font-family:var(--sans);
-  cursor:pointer;transition:all .2s;
-}
+.add-sec-btn{width:100%;padding:12px;border-radius:10px;border:1.5px dashed var(--border);background:transparent;color:var(--dim);font-size:13px;font-family:var(--sans);cursor:pointer;transition:all .2s}
 .add-sec-btn:hover{border-color:var(--blue);color:var(--blue)}
-
-.save-cfg-btn{
-  width:100%;padding:15px;border-radius:var(--r);border:none;
-  background:linear-gradient(135deg,var(--green),var(--teal));
-  color:#0b0f1a;font-size:14px;font-weight:800;
-  font-family:var(--sans);cursor:pointer;transition:all .2s;
-}
+.save-cfg-btn{width:100%;padding:15px;border-radius:var(--r);border:none;background:linear-gradient(135deg,var(--green),var(--teal));color:#0b0f1a;font-size:14px;font-weight:800;font-family:var(--sans);cursor:pointer;transition:all .2s}
 .save-cfg-btn:hover{transform:translateY(-1px)}
 .save-cfg-btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
 
-/* ── MODAL ── */
-.modal-overlay{
-  position:fixed;inset:0;z-index:100;
-  background:rgba(0,0,0,.75);backdrop-filter:blur(10px);
-  display:flex;align-items:flex-end;
-  opacity:0;pointer-events:none;transition:opacity .3s;
-}
-.modal-overlay.on{opacity:1;pointer-events:auto}
-.modal{
-  width:100%;max-width:500px;margin:0 auto;
-  background:var(--s1);border:1px solid var(--border2);
-  border-radius:22px 22px 0 0;padding:22px 20px 40px;
-  transform:translateY(100%);transition:transform .35s cubic-bezier(.4,0,.2,1);
-}
-.modal-overlay.on .modal{transform:none}
-.modal-handle{width:38px;height:4px;background:var(--border2);border-radius:2px;margin:0 auto 20px}
-.modal h3{font-size:17px;font-weight:800;margin-bottom:4px}
-.modal-sub{font-size:12px;color:var(--dim);margin-bottom:18px;line-height:1.6}
-
 /* ── TOAST ── */
-.toast-stack{
-  position:fixed;bottom:22px;left:50%;transform:translateX(-50%);
-  z-index:200;display:flex;flex-direction:column;gap:8px;
-  width:90%;max-width:420px;pointer-events:none;
-}
-.toast{
-  padding:12px 16px;border-radius:12px;
-  font-size:13px;font-weight:600;font-family:var(--sans);
-  display:flex;align-items:center;gap:10px;
-  animation:tIn .25s ease;box-shadow:0 8px 32px rgba(0,0,0,.5);
-  pointer-events:auto;
-}
+.toast-stack{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:200;display:flex;flex-direction:column;gap:8px;width:90%;max-width:420px;pointer-events:none}
+.toast{padding:12px 16px;border-radius:12px;font-size:13px;font-weight:600;font-family:var(--sans);display:flex;align-items:center;gap:10px;animation:tIn .25s ease;box-shadow:0 8px 32px rgba(0,0,0,.5);pointer-events:auto}
 @keyframes tIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 .toast.ok{background:rgba(52,211,153,.93);color:#0b0f1a}
 .toast.err{background:rgba(248,113,113,.93);color:#fff}
 .toast.info{background:rgba(77,159,255,.93);color:#0b0f1a}
 
-/* scrollbar */
 ::-webkit-scrollbar{width:3px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
 </style>
 </head>
 <body>
-<div class="wrap">
+<div class="app">
 
 <!-- ════ SPLASH ════ -->
-<div class="screen on" id="scr-splash">
-  <div class="splash-logo">📋</div>
-  <div style="text-align:center">
+<div class="scr on" id="s-splash">
+  <div class="splash-ico">📋</div>
+  <div>
     <div class="splash-title">RoomCheck</div>
     <div class="splash-sub">// meeting room checklist</div>
   </div>
-  <div class="splash-loader">
-    <div class="loader-bar"><div class="loader-fill"></div></div>
-    <div class="loader-msg" id="splashMsg">Đang khởi động…</div>
+  <div>
+    <div class="splash-bar"><div class="splash-fill"></div></div>
+    <div class="splash-msg" id="splashMsg">Đang khởi động…</div>
+  </div>
+</div>
+
+<!-- ════ LOGIN ════ -->
+<div class="scr" id="s-login">
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:24px">
+    <div class="login-card">
+      <div class="login-ico">🔐</div>
+      <div class="login-title">Đăng nhập nội bộ</div>
+      <div class="login-desc">
+        Sử dụng tài khoản Microsoft 365 công ty để xác thực.<br>
+        Chỉ nhân viên trong tenant mới gửi được dữ liệu lên SharePoint.
+      </div>
+      <button class="ms-btn" id="loginBtn" onclick="msLogin()">
+        <svg class="ms-logo" viewBox="0 0 21 21" fill="none">
+          <rect x="1" y="1" width="9" height="9" fill="#f25022"/>
+          <rect x="11" y="1" width="9" height="9" fill="#7fba00"/>
+          <rect x="1" y="11" width="9" height="9" fill="#00a4ef"/>
+          <rect x="11" y="11" width="9" height="9" fill="#ffb900"/>
+        </svg>
+        Đăng nhập với Microsoft 365
+      </button>
+      <div class="login-note">
+        🔒 Token xác thực do Microsoft cấp — app không lưu mật khẩu.<br>
+        Sau lần đầu, thiết bị sẽ tự động đăng nhập.
+      </div>
+    </div>
   </div>
 </div>
 
 <!-- ════ SETUP ════ -->
-<div class="screen" id="scr-setup">
+<div class="scr" id="s-setup">
   <div class="setup-inner">
-    <div class="setup-head">
-      <h1>⚙️ Thiết lập kết nối</h1>
-      <p>Cấu hình một lần duy nhất. Sau đó upload file lên SharePoint và chia sẻ link — nhân viên mở là dùng ngay.</p>
-    </div>
+    <button class="setup-back" onclick="show('s-main')">← Quay lại</button>
+    <div class="setup-h1">⚙️ Cài đặt kết nối</div>
+    <div class="setup-p">Chỉ admin cần làm bước này một lần. Sau đó commit file lên GitHub — mọi người mở link là dùng ngay.</div>
 
-    <!-- Power Automate -->
     <div class="card">
-      <div class="card-head">
-        <span style="font-size:18px">⚡</span>
-        <h3>Power Automate Webhook URL</h3>
-      </div>
-      <div class="card-body">
+      <div class="card-hd"><span style="font-size:16px">🔑</span><h3>Azure App Registration</h3></div>
+      <div class="card-bd">
         <div class="field">
-          <label>URL (từ Power Automate Flow)</label>
-          <textarea id="s_webhook" rows="3" placeholder="https://prod-xx.westus.logic.azure.com/workflows/..."></textarea>
+          <label>Client ID</label>
+          <input id="cfg_clientId" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx">
         </div>
         <div class="field">
-          <label>Config Webhook URL <span style="color:var(--muted)">(để load phòng & checklist)</span></label>
-          <textarea id="s_cfgWebhook" rows="2" placeholder="https://prod-xx.westus.logic.azure.com/workflows/... (Flow riêng)"></textarea>
+          <label>Tenant ID</label>
+          <input id="cfg_tenantId" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx">
         </div>
-        <div class="hint-box">
-          <strong>Cách lấy URL:</strong> Xem tab <strong>🔧 Quản lý</strong> → mục <em>Hướng dẫn tạo Flow</em> sau khi setup xong.<br>
-          Hoặc xem file <strong>README.md</strong> đi kèm.
+        <div class="hint">
+          💡 Vào <code>portal.azure.com</code> → App registrations → New registration<br>
+          • Supported account types: <strong>Single tenant</strong><br>
+          • Redirect URI: <strong>Single-page application</strong> → URL GitHub Pages của bạn<br>
+          • API permissions: <code>openid</code>, <code>profile</code> (không cần Sites.ReadWrite!)
         </div>
       </div>
     </div>
 
-    <!-- Tên tổ chức -->
     <div class="card">
-      <div class="card-head">
-        <span style="font-size:18px">🏢</span>
-        <h3>Thông tin cơ bản</h3>
-      </div>
-      <div class="card-body">
+      <div class="card-hd"><span style="font-size:16px">⚡</span><h3>Power Automate Webhook</h3></div>
+      <div class="card-bd">
         <div class="field">
-          <label>Tên công ty / tổ chức</label>
-          <input id="s_org" placeholder="VD: Công ty ABC" type="text">
+          <label>Flow 1 URL (lưu kết quả)</label>
+          <textarea id="cfg_webhook" rows="3" placeholder="https://prod-xx.westus.logic.azure.com/workflows/..."></textarea>
         </div>
-        <div class="field">
-          <label>Site SharePoint (để biết đang kết nối đâu)</label>
-          <input id="s_site" placeholder="https://company.sharepoint.com/sites/IT" type="url">
+        <div class="hint">
+          ⚠️ Flow 1 đặt <strong>"Who can trigger: Anyone"</strong> — nhưng app sẽ gửi kèm
+          <code>Bearer token</code> Microsoft. Trong Flow, thêm Condition kiểm tra
+          header <code>Authorization</code> có tồn tại → nếu không có thì Response 401.
         </div>
       </div>
     </div>
 
-    <button class="btn-main" onclick="setupSave()">🚀 Lưu & Bắt đầu</button>
-    <button class="btn-ghost" onclick="setupOffline()">Dùng offline (không SharePoint)</button>
+    <button class="btn-main" onclick="setupSave()">💾 Lưu vào localStorage</button>
+    <div class="hint" style="margin-top:12px">
+      📌 Sau khi lưu, nhớ cập nhật <code>HARDCODED_CFG</code> trong file <code>index.html</code>
+      rồi commit lên GitHub để mọi thiết bị dùng chung cấu hình.
+    </div>
   </div>
 </div>
 
 <!-- ════ MAIN ════ -->
-<div class="screen" id="scr-main">
-
-  <!-- TOPBAR -->
+<div class="scr" id="s-main">
   <div class="topbar">
-    <div class="tb-row1">
-      <div class="tb-brand">
-        <div class="tb-ico">📋</div>
+    <div class="tb1">
+      <div class="brand">
+        <div class="brand-ico">📋</div>
         <div>
-          <div class="tb-name">RoomCheck</div>
-          <div class="tb-status">
-            <div class="status-dot" id="sdot"></div>
-            <span class="status-lbl" id="slbl">offline</span>
-          </div>
+          <div class="brand-name">RoomCheck</div>
+          <div class="brand-user" id="userLabel">Đang đăng nhập…</div>
         </div>
       </div>
-      <div class="tb-actions">
-        <button class="ico-btn" title="Tải lại cấu hình" onclick="reloadCfg()">🔄</button>
-        <button class="ico-btn" title="Cài đặt" onclick="goSetup()">⚙️</button>
+      <div class="tb-acts">
+        <button class="ico-btn" title="Đăng xuất" onclick="msLogout()">🚪</button>
+        <button class="ico-btn" title="Cài đặt" onclick="show('s-setup')">⚙️</button>
       </div>
     </div>
-    <div class="tb-row2">
-      <div class="room-sel-wrap">
+    <div class="room-row">
+      <div class="room-wrap">
         <span style="font-size:16px">📍</span>
         <select id="roomSel"></select>
       </div>
-      <div class="clock-box">
-        <div class="clock-t" id="clk">--:--</div>
-        <div class="clock-d" id="clkd">---</div>
+      <div class="clk-box">
+        <div class="clk-t" id="clk">--:--</div>
+        <div class="clk-d" id="clkd">---</div>
       </div>
     </div>
     <div class="prog-wrap">
-      <div class="prog-meta">
-        <span id="pTxt">0 / 0</span>
-        <span id="pPct">0%</span>
-      </div>
+      <div class="prog-meta"><span id="pTxt">0 / 0 mục</span><span id="pPct">0%</span></div>
       <div class="prog-track"><div class="prog-bar" id="pBar" style="width:0%"></div></div>
     </div>
   </div>
 
-  <!-- TABS -->
   <div class="tabs">
     <div class="tab on" id="tb-check" onclick="tab('check')">✅ Kiểm tra</div>
-    <div class="tab" id="tb-hist" onclick="tab('hist')">📁 Lịch sử</div>
-    <div class="tab" id="tb-adm" onclick="tab('adm')">🔧 Quản lý</div>
+    <div class="tab" id="tb-hist"  onclick="tab('hist')">📁 Lịch sử</div>
+    <div class="tab" id="tb-adm"   onclick="tab('adm')">🔧 Quản lý</div>
   </div>
 
-  <!-- ── CHECK PANE ── -->
+  <!-- CHECK -->
   <div class="pane on" id="pn-check">
     <div class="cl-body" id="clBody"></div>
-
     <div class="ph-sec">
       <div class="ph-lbl">📸 Hình ảnh bằng chứng</div>
       <div class="ph-grid" id="phGrid">
-        <label class="ph-add" for="phIn">
-          <span class="ph-ico">📷</span><span>Chụp / chọn ảnh</span>
-        </label>
+        <label class="ph-add" for="phIn"><span style="font-size:22px">📷</span><span>Chụp / chọn ảnh</span></label>
       </div>
       <input type="file" id="phIn" accept="image/*" capture="environment" multiple>
     </div>
-
-    <div class="form-extras">
-      <div class="field" style="margin:0">
-        <label>👤 Người kiểm tra</label>
-        <input id="inspector" placeholder="Họ tên" style="padding:11px 13px;background:var(--s1);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:13px;font-family:var(--sans);outline:none;width:100%;">
-      </div>
-      <div class="field" style="margin:0">
-        <label>📝 Ghi chú tổng quát</label>
-        <textarea id="genNote" class="fn-ta" style="display:block;min-height:68px;border-color:var(--border);" placeholder="Ghi chú thêm về tình trạng phòng họp…"></textarea>
+    <div class="extras">
+      <div>
+        <div style="font-size:10px;font-family:var(--mono);color:var(--dim);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:6px">📝 Ghi chú tổng quát</div>
+        <textarea class="ext-ta" id="genNote" placeholder="Ghi chú thêm về tình trạng phòng họp…"></textarea>
       </div>
     </div>
-
     <div class="sub-wrap">
       <button class="sub-btn" id="subBtn" onclick="doSubmit()">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
@@ -674,422 +437,224 @@ input[type=file]{display:none}
     </div>
   </div>
 
-  <!-- ── HISTORY PANE ── -->
+  <!-- HISTORY -->
   <div class="pane" id="pn-hist">
     <div class="hist-body" id="histBody"></div>
   </div>
 
-  <!-- ── ADMIN PANE ── -->
+  <!-- ADMIN -->
   <div class="pane" id="pn-adm">
     <div class="adm-body">
-
-      <!-- Webhook status -->
-      <div class="wh-status">
-        <span class="wh-icon">⚡</span>
-        <div class="wh-info">
-          <div class="wh-title">Power Automate Webhook</div>
-          <div class="wh-url" id="whUrlDisplay">Chưa cấu hình</div>
-        </div>
-        <button class="wh-edit-btn" onclick="goSetup()">Sửa</button>
-      </div>
-
-      <!-- Hướng dẫn tạo Flow -->
       <div class="card">
-        <div class="card-head">
-          <span style="font-size:16px">📖</span>
-          <h3>Hướng dẫn tạo Power Automate Flow</h3>
-        </div>
-        <div class="card-body">
-          <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:10px">Flow 1: Nhận kết quả kiểm tra</div>
-          <div class="step-list">
-            <div class="step-item"><span>Vào <strong>make.powerautomate.com</strong> → <em>Create</em> → <em>Instant cloud flow</em></span></div>
-            <div class="step-item"><span>Chọn trigger: <strong>"When an HTTP request is received"</strong></span></div>
-            <div class="step-item"><span>Thêm action: <strong>"SharePoint – Create item"</strong> → chọn Site + List <code>RoomCheckResults</code></span></div>
-            <div class="step-item"><span>Map các field: Room, Inspector, CheckDate, Status, PassCount, FailCount, GeneralNote, ResultsJSON...</span></div>
-            <div class="step-item"><span>Thêm action (nếu có ảnh): <strong>"SharePoint – Create file"</strong> → lưu vào Document Library</span></div>
-            <div class="step-item"><span><strong>Save Flow</strong> → copy <em>HTTP POST URL</em> → dán vào mục Webhook URL trong Setup</span></div>
-          </div>
-
-          <div style="font-size:12px;font-weight:700;color:var(--text);margin:14px 0 10px">Flow 2: Trả về cấu hình (phòng + checklist)</div>
-          <div class="step-list">
-            <div class="step-item"><span>Tạo Flow mới, trigger <strong>"When an HTTP request is received"</strong></span></div>
-            <div class="step-item"><span>Thêm action: <strong>"SharePoint – Get items"</strong> từ List <code>RoomCheckConfig</code></span></div>
-            <div class="step-item"><span>Thêm action: <strong>"Response"</strong> → trả về JSON với body: <code>@{outputs('Get_items')?['body']}</code></span></div>
-            <div class="step-item"><span>Copy URL → dán vào <em>Config Webhook URL</em> trong Setup</span></div>
-          </div>
-
-          <div class="hint-box" style="margin-top:12px">
-            💡 <strong>Không có Flow 2?</strong> Không sao — cấu hình phòng và checklist vẫn lưu được local và chỉnh trong tab Quản lý này.
-          </div>
-        </div>
-      </div>
-
-      <!-- Room list -->
-      <div class="card">
-        <div class="card-head">
-          <h3>🏢 Danh sách phòng họp</h3>
-          <span id="rCnt" style="font-size:10px;font-family:var(--mono);color:var(--dim)">0 phòng</span>
-        </div>
-        <div class="card-body">
+        <div class="card-hd"><h3>🏢 Danh sách phòng họp</h3><span id="rCnt" style="font-size:10px;font-family:var(--mono);color:var(--dim)"></span></div>
+        <div class="card-bd">
           <div class="r-list" id="rList"></div>
-          <button class="add-row" onclick="addRoom()">＋ Thêm phòng họp</button>
+          <button class="add-row-btn" onclick="addRoom()">＋ Thêm phòng</button>
         </div>
       </div>
-
-      <!-- Section builder -->
       <div class="card">
-        <div class="card-head">
-          <h3>📋 Nhóm & mục kiểm tra</h3>
-          <span id="sCnt" style="font-size:10px;font-family:var(--mono);color:var(--dim)">0 nhóm</span>
-        </div>
-        <div class="card-body" style="padding-bottom:8px">
+        <div class="card-hd"><h3>📋 Nhóm & mục kiểm tra</h3><span id="sCnt" style="font-size:10px;font-family:var(--mono);color:var(--dim)"></span></div>
+        <div class="card-bd" style="padding-bottom:8px">
           <div class="sb-list" id="sbList"></div>
-          <button class="add-sec-btn" style="margin-top:10px" onclick="addSec()">＋ Thêm nhóm mục kiểm tra</button>
+          <button class="add-sec-btn" style="margin-top:10px" onclick="addSec()">＋ Thêm nhóm</button>
         </div>
       </div>
-
-      <!-- JSON schema export (for Power Automate) -->
-      <div class="card">
-        <div class="card-head">
-          <span style="font-size:16px">📄</span>
-          <h3>JSON Schema (dán vào Power Automate)</h3>
-        </div>
-        <div class="card-body">
-          <div style="font-size:11px;color:var(--dim);margin-bottom:10px">Dán JSON này vào trường <em>"Request Body JSON Schema"</em> trong trigger của Flow 1:</div>
-          <textarea id="schemaOut" style="width:100%;min-height:120px;background:var(--s2);border:1px solid var(--border);border-radius:9px;color:var(--dim);font-size:10px;font-family:var(--mono);padding:10px;outline:none;resize:none;" readonly></textarea>
-          <button class="add-row" style="margin-top:8px" onclick="copySchema()">📋 Copy JSON Schema</button>
-        </div>
-      </div>
-
-      <button class="save-cfg-btn" id="saveCfgBtn" onclick="adminSave()">💾 Lưu cấu hình (thiết bị này)</button>
-      <button class="save-cfg-btn" style="background:linear-gradient(135deg,#f59e0b,#ef4444);margin-top:8px" onclick="exportCfg()">📤 Xuất cấu hình → cập nhật file GitHub</button>
-
-      <div class="hint-box" style="margin-top:12px">
-        <strong>💡 Cách lưu cho mọi thiết bị:</strong><br>
-        1. Chỉnh phòng/checklist ở trên<br>
-        2. Nhấn <strong>"Xuất cấu hình"</strong> → copy đoạn JSON<br>
-        3. Mở file <code>index.html</code> trên GitHub → tìm <code>DEF_ROOMS</code> hoặc <code>DEF_SECTIONS</code> → thay bằng JSON vừa copy<br>
-        4. Commit → tất cả thiết bị tự động cập nhật
-      </div>
+      <button class="save-cfg-btn" id="saveCfgBtn" onclick="adminSave()">💾 Lưu cấu hình</button>
+      <button class="save-cfg-btn" style="background:linear-gradient(135deg,#f59e0b,#ef4444);margin-top:8px" onclick="exportCfg()">📤 Xuất JSON → cập nhật GitHub</button>
     </div>
   </div>
+</div><!-- /s-main -->
 
-</div><!-- /scr-main -->
-</div><!-- /wrap -->
-
-<!-- Modal (webhook edit là goto setup) -->
+</div><!-- /app -->
 <div class="toast-stack" id="toasts"></div>
 
 <script>
 // ═══════════════════════════════════════════════════════════
-// ⚙️  CẤU HÌNH CỐ ĐỊNH — chỉ admin chỉnh, nhúng sẵn vào file
-//     Sau khi điền, commit lên GitHub → mọi thiết bị dùng ngay
+// ⚙️  HARDCODED CONFIG — Admin điền 1 lần, commit lên GitHub
 // ═══════════════════════════════════════════════════════════
 const HARDCODED_CFG = {
-  // Flow 1: nhận kết quả kiểm tra → ghi vào SharePoint List
-  webhook:    'https://default630ee4a429e34488ba823deed213e2.18.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/f2bff02a04df4cd1897de4203a2cf110/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=GwQpWi22KW9tW8yczW9L9pgDsJtePcUN_r6deUuWReg',
-
-  // Flow 2: trả về danh sách phòng + checklist từ SharePoint
-  // Để trống '' nếu chưa có Flow 2 (dùng cấu hình mặc định)
-  cfgWebhook: 'PASTE_FLOW2_URL_HERE',
-
-  org:  'Tên công ty của bạn',
-  site: 'https://company.sharepoint.com/sites/TenSite',
+  clientId:  '163ad118-4f2d-4061-80c9-8260393d92e1',   // Azure App Client ID
+  tenantId:  '630ee4a4-29e3-4488-ba82-3deed213e218',   // Azure Tenant ID
+  webhook:   'https://default630ee4a429e34488ba823deed213e2.18.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/f2bff02a04df4cd1897de4203a2cf110/triggers/manual/paths/invoke?api-version=1',   // Power Automate Flow 1 URL
+  org:       'Kềm Nghĩa Sài Gòn',
 };
 // ═══════════════════════════════════════════════════════════
 
-// ═══════════════════════════════════════════════════════════
-// STATE
-// ═══════════════════════════════════════════════════════════
-const RC = {
-  cfg: null,
-  rooms: [],
-  sections: [],
-  results: {}, notes: {}, speeds: {},
-  photos: [],
-};
-
-// DEF_ROOMS
 const DEF_ROOMS = [
-  {
-    "id": "P101",
-    "label": "Phòng EVO"
-  },
-  {
-    "id": "P201",
-    "label": "Phòng ISO Lầu 1"
-  },
-  {
-    "id": "P301",
-    "label": "Phòng BOD"
-  },
-  {
-    "id": "BOARD",
-    "label": "Phòng Nipper"
-  },
-  {
-    "id": "TRAIN",
-    "label": "Phòng OEM"
-  },
-  {
-    "id": "rm_1774257834168",
-    "label": "Phòng Clipper"
-  },
-  {
-    "id": "rm_1774257835817",
-    "label": "Phòng họp KT"
-  }
+  {id:'EVO',label:'Phòng họp EVO'},
+  {id:'ISO L1',label:'Phòng họp ISO Lầu 1'},
+  {id:'BOD',label:'Phòng họp BOD'},
+  {id:'Nipper',label:'Phòng họp Nipper'},
+  {id:'OEM',label:'Phòng OEM'},
+  {id:'Clipper',label:'Phòng họp Clipper'},
+  {id:'IE',label:'Phòng họp IE'},
+  {id:'KyThuat',label:'Phòng họp Kỹ Thuật'},
 ];
-
-// DEF_SECTIONS
 const DEF_SECTIONS = [
-  {
-    "id": "tv",
-    "label": "Tivi / Màn hình",
-    "emoji": "📺",
-    "items": [
-      {
-        "id": "tv_pwr",
-        "icon": "🔌",
-        "label": "Tivi bật/tắt bình thường",
-        "note": "Kiểm tra nút nguồn & remote",
-        "type": "check"
-      },
-      {
-        "id": "tv_img",
-        "icon": "🖥️",
-        "label": "Hiển thị hình ảnh rõ nét",
-        "note": "Không nhiễu, không chết điểm ảnh",
-        "type": "check"
-      },
-      {
-        "id": "tv_snd",
-        "icon": "🔊",
-        "label": "Âm thanh hoạt động",
-        "note": "Test volume lên/xuống",
-        "type": "check"
-      },
-      {
-        "id": "tv_rem",
-        "icon": "📱",
-        "label": "Remote hoạt động",
-        "note": "Kiểm tra pin nếu không phản hồi",
-        "type": "check"
-      }
-    ]
-  },
-  {
-    "id": "wifi",
-    "label": "Kết nối WiFi",
-    "emoji": "📶",
-    "items": [
-      {
-        "id": "wifi_con",
-        "icon": "🔗",
-        "label": "Kết nối WiFi thành công",
-        "note": "Kết nối SSID chính phòng họp",
-        "type": "check"
-      },
-      {
-        "id": "wifi_net",
-        "icon": "🌐",
-        "label": "Truy cập Internet được",
-        "note": "Mở bất kỳ website kiểm tra",
-        "type": "check"
-      },
-      {
-        "id": "wifi_spd",
-        "icon": "⚡",
-        "label": "Tốc độ WiFi (Mbps)",
-        "note": "Đo bằng Speedtest / Fast.com",
-        "type": "speed"
-      },
-      {
-        "id": "wifi_stb",
-        "icon": "📡",
-        "label": "Tín hiệu ổn định",
-        "note": "Không bị ngắt kết nối",
-        "type": "check"
-      }
-    ]
-  },
-  {
-    "id": "hdmi",
-    "label": "Kết nối HDMI",
-    "emoji": "🔌",
-    "items": [
-      {
-        "id": "hdmi_cbl",
-        "icon": "🔋",
-        "label": "Cáp HDMI có sẵn & nguyên vẹn",
-        "note": "Kiểm tra đầu cắm không gãy",
-        "type": "check"
-      },
-      {
-        "id": "hdmi_con",
-        "icon": "💻",
-        "label": "Kết nối laptop → Tivi",
-        "note": "Cắm HDMI, chọn đúng input",
-        "type": "check"
-      },
-      {
-        "id": "hdmi_dsp",
-        "icon": "🖼️",
-        "label": "Màn hình laptop hiện lên Tivi",
-        "note": "Kiểm tra độ phân giải",
-        "type": "check"
-      },
-      {
-        "id": "hdmi_aud",
-        "icon": "🎵",
-        "label": "Âm thanh qua HDMI",
-        "note": "Chọn HDMI làm audio output",
-        "type": "check"
-      },
-      {
-        "id": "hdmi_adp",
-        "icon": "🔄",
-        "label": "HDMI Không dây (nếu có)",
-        "note": "Kiểm tra HDMI không dây",
-        "type": "check"
-      }
-    ]
-  }
+  {id:'tv',label:'Tivi / Màn hình',emoji:'📺',items:[
+    {id:'tv_pwr',icon:'🔌',label:'Tivi bật/tắt bình thường',note:'Kiểm tra nút nguồn & remote',type:'check'},
+    {id:'tv_img',icon:'🖥️',label:'Hiển thị hình ảnh rõ nét',note:'Không nhiễu, không chết điểm ảnh',type:'check'},
+    {id:'tv_snd',icon:'🔊',label:'Âm thanh hoạt động',note:'Test volume lên/xuống',type:'check'},
+    {id:'tv_rem',icon:'📱',label:'Remote hoạt động',note:'Kiểm tra pin nếu không phản hồi',type:'check'},
+  ]},
+  {id:'wifi',label:'Kết nối WiFi',emoji:'📶',items:[
+    {id:'wifi_con',icon:'🔗',label:'Kết nối WiFi thành công',note:'Kết nối SSID chính phòng họp',type:'check'},
+    {id:'wifi_net',icon:'🌐',label:'Truy cập Internet được',note:'Mở website bất kỳ kiểm tra',type:'check'},
+    {id:'wifi_spd',icon:'⚡',label:'Tốc độ WiFi (Mbps)',note:'Đo bằng Speedtest / Fast.com',type:'speed'},
+    {id:'wifi_stb',icon:'📡',label:'Tín hiệu ổn định',note:'Không bị ngắt kết nối',type:'check'},
+  ]},
+  {id:'hdmi',label:'Kết nối HDMI',emoji:'🔌',items:[
+    {id:'hdmi_cbl',icon:'🔋',label:'Cáp HDMI có sẵn & nguyên vẹn',note:'Đầu cắm không gãy',type:'check'},
+    {id:'hdmi_con',icon:'💻',label:'Kết nối laptop → Tivi',note:'Cắm HDMI, chọn đúng input',type:'check'},
+    {id:'hdmi_dsp',icon:'🖼️',label:'Màn hình laptop hiện lên Tivi',note:'Kiểm tra độ phân giải',type:'check'},
+    {id:'hdmi_aud',icon:'🎵',label:'Âm thanh qua HDMI',note:'Chọn HDMI làm audio output',type:'check'},
+    {id:'hdmi_adp',icon:'🔄',label:'HDMI không dây (nếu có)',note:'Kiểm tra HDMI không dây',type:'check'},
+  ]},
 ];
-// ═══════════════════════════════════════════════════════════
-// BOOT
-// ═══════════════════════════════════════════════════════════
-window.addEventListener('DOMContentLoaded', boot);
 
+// ── STATE ──
+const RC = { rooms:[], sections:[], results:{}, notes:{}, speeds:{}, photos:[], msalApp:null, account:null, token:null };
+
+// ── BOOT ──
+window.addEventListener('DOMContentLoaded', boot);
 async function boot() {
   startClock();
-  setSplashMsg('Đang đọc cấu hình…');
-
-  // Dùng HARDCODED_CFG nếu đã điền URL → mọi thiết bị dùng ngay, không cần nhập lại
-  const isConfigured = HARDCODED_CFG.webhook &&
-    HARDCODED_CFG.webhook !== 'PASTE_FLOW1_URL_HERE';
-
-  if (isConfigured) {
-    const saved = loadLocal('rc3_cfg') || {};
-    RC.cfg = {
-      ...saved,
-      webhook:    HARDCODED_CFG.webhook,
-      cfgWebhook: HARDCODED_CFG.cfgWebhook || saved.cfgWebhook || '',
-      org:        HARDCODED_CFG.org  || saved.org  || '',
-      site:       HARDCODED_CFG.site || saved.site || '',
-      offline: false,
-    };
-  } else {
-    RC.cfg = loadLocal('rc3_cfg');
-  }
-
+  setSplash('Đang khởi động…');
   loadLocalSchema();
-  await sleep(500);
 
-  if (!RC.cfg) { show('scr-setup'); return; }
-
-  setSplashMsg('Kết nối SharePoint…');
-  if (RC.cfg.cfgWebhook) {
-    try {
-      await loadCfgFromWebhook();
-      setStatus('ok','SharePoint ✓');
-    } catch(e) {
-      setStatus('err','Offline – dùng local');
-    }
-  } else {
-    if (RC.cfg.offline) {
-      setStatus('err', 'Offline mode');
-    } else if (RC.cfg.webhook && RC.cfg.webhook !== 'PASTE_FLOW1_URL_HERE') {
-      setStatus('ok', 'SharePoint ✓');
-    } else {
-      setStatus('err', 'Chưa cấu hình webhook');
-    }
-  }
-
-  buildRoomSel();
-  renderChecklist();
-  renderAdmin();
-  show('scr-main');
-}
-
-// ═══════════════════════════════════════════════════════════
-// CONFIG WEBHOOK (Flow 2 – optional)
-// ═══════════════════════════════════════════════════════════
-async function loadCfgFromWebhook() {
-  const url = RC.cfg.cfgWebhook;
-  if (!url) throw new Error('no url');
-  const r = await fetch(url, { method:'POST', headers:{'Content-Type':'application/json'}, body:'{}' });
-  if (!r.ok) throw new Error('HTTP ' + r.status);
-  const data = await r.json();
-  // Expect {rooms:[...], sections:[...]}
-  if (data.rooms?.length)    { RC.rooms = data.rooms; }
-  if (data.sections?.length) { RC.sections = data.sections; }
-  saveLocalSchema();
-}
-
-// ═══════════════════════════════════════════════════════════
-// SETUP
-// ═══════════════════════════════════════════════════════════
-function setupSave() {
-  const webhook    = document.getElementById('s_webhook').value.trim();
-  const cfgWebhook = document.getElementById('s_cfgWebhook').value.trim();
-  const org        = document.getElementById('s_org').value.trim();
-  const site       = document.getElementById('s_site').value.trim();
-  if (!webhook) { toast('Vui lòng nhập Webhook URL', 'err'); return; }
-  RC.cfg = { webhook, cfgWebhook, org, site, offline:false };
-  saveLocal('rc3_cfg', RC.cfg);
-  boot();
-}
-function setupOffline() {
-  RC.cfg = { offline:true };
-  saveLocal('rc3_cfg', RC.cfg);
-  loadLocalSchema();
-  buildRoomSel(); renderChecklist(); renderAdmin();
-  setStatus('err','Offline mode');
-  show('scr-main');
-}
-function goSetup() {
-  const c = RC.cfg || {};
-  document.getElementById('s_webhook').value    = c.webhook || '';
-  document.getElementById('s_cfgWebhook').value = c.cfgWebhook || '';
-  document.getElementById('s_org').value        = c.org || '';
-  document.getElementById('s_site').value       = c.site || '';
-  show('scr-setup');
-}
-async function reloadCfg() {
-  if (RC.cfg?.offline) { toast('Đang ở chế độ offline','info'); return; }
-  if (!RC.cfg?.cfgWebhook) { toast('Chưa có Config Webhook URL','info'); return; }
-  toast('Đang tải cấu hình mới…','info');
-  setStatus('wait','Đang tải…');
-  try {
-    await loadCfgFromWebhook();
+  const cfg = getCfg();
+  if (!cfg.clientId || cfg.clientId === 'PASTE_CLIENT_ID_HERE') {
+    // Chưa cấu hình → vào thẳng app ở chế độ offline
     buildRoomSel(); renderChecklist(); renderAdmin();
-    setStatus('ok','SharePoint ✓');
-    toast('✅ Đã cập nhật cấu hình mới!','ok');
+    show('s-main');
+    document.getElementById('userLabel').textContent = 'Chưa cấu hình (offline)';
+    toast('⚠️ Chưa cấu hình Client ID – xem tab Quản lý → Cài đặt','info');
+    return;
+  }
+
+  setSplash('Đang tải thư viện xác thực…');
+  try {
+    await loadScript('https://alcdn.msauth.net/browser/2.38.0/js/msal-browser.min.js');
+    RC.msalApp = new msal.PublicClientApplication({
+      auth: {
+        clientId: cfg.clientId,
+        authority: 'https://login.microsoftonline.com/' + cfg.tenantId,
+        redirectUri: location.href.split('?')[0].split('#')[0],
+      },
+      cache: { cacheLocation:'localStorage', storeAuthStateInCookie:true },
+    });
+    await RC.msalApp.initialize();
+
+    // Handle redirect callback
+    await RC.msalApp.handleRedirectPromise();
+
+    // Check existing account
+    const accounts = RC.msalApp.getAllAccounts();
+    if (accounts.length > 0) {
+      RC.account = accounts[0];
+      setSplash('Xin chào ' + (RC.account.name || RC.account.username) + '…');
+      await sleep(600);
+      buildRoomSel(); renderChecklist(); renderAdmin();
+      show('s-main');
+      document.getElementById('userLabel').textContent = '👤 ' + (RC.account.name || RC.account.username);
+    } else {
+      show('s-login');
+    }
   } catch(e) {
-    setStatus('err','Lỗi kết nối');
-    toast('Lỗi: ' + e.message, 'err');
+    console.warn('MSAL error:', e);
+    buildRoomSel(); renderChecklist(); renderAdmin();
+    show('s-main');
+    document.getElementById('userLabel').textContent = 'Lỗi xác thực – offline';
+    toast('Lỗi MSAL: ' + e.message,'err');
   }
 }
 
-// ═══════════════════════════════════════════════════════════
-// ROOM SELECT
-// ═══════════════════════════════════════════════════════════
-function buildRoomSel() {
-  const s = document.getElementById('roomSel');
-  s.innerHTML = RC.rooms.map(r=>`<option value="${r.id}">${esc(r.label)}</option>`).join('');
+// ── MSAL AUTH ──
+async function msLogin() {
+  const btn = document.getElementById('loginBtn');
+  btn.disabled = true; btn.textContent = 'Đang đăng nhập…';
+  try {
+    const cfg = getCfg();
+    const result = await RC.msalApp.loginPopup({
+      scopes: ['openid','profile','User.Read'],
+      prompt: 'select_account',
+    });
+    RC.account = result.account;
+    buildRoomSel(); renderChecklist(); renderAdmin();
+    show('s-main');
+    document.getElementById('userLabel').textContent = '👤 ' + (RC.account.name || RC.account.username);
+    toast('✅ Đăng nhập thành công!','ok');
+  } catch(e) {
+    toast('Đăng nhập thất bại: ' + e.message,'err');
+    btn.disabled = false;
+    btn.innerHTML = '<svg class="ms-logo" viewBox="0 0 21 21" fill="none"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg> Đăng nhập với Microsoft 365';
+  }
 }
 
-// ═══════════════════════════════════════════════════════════
-// RENDER CHECKLIST
-// ═══════════════════════════════════════════════════════════
+async function msLogout() {
+  if (!RC.msalApp) return;
+  try {
+    await RC.msalApp.logoutPopup({ account: RC.account });
+    RC.account = null; RC.token = null;
+    show('s-login');
+    toast('Đã đăng xuất','info');
+  } catch(e) {
+    toast('Lỗi đăng xuất: ' + e.message,'err');
+  }
+}
+
+async function getToken() {
+  if (!RC.msalApp || !RC.account) return null;
+  try {
+    const r = await RC.msalApp.acquireTokenSilent({
+      scopes: ['openid','profile','User.Read'],
+      account: RC.account,
+    });
+    return r.accessToken;
+  } catch {
+    try {
+      const r = await RC.msalApp.acquireTokenPopup({
+        scopes: ['openid','profile','User.Read'],
+        account: RC.account,
+      });
+      return r.accessToken;
+    } catch { return null; }
+  }
+}
+
+// ── CONFIG ──
+function getCfg() {
+  const saved = loadLocal('rc4_cfg') || {};
+  return {
+    clientId: HARDCODED_CFG.clientId !== 'PASTE_CLIENT_ID_HERE' ? HARDCODED_CFG.clientId : (saved.clientId||''),
+    tenantId: HARDCODED_CFG.tenantId !== 'PASTE_TENANT_ID_HERE' ? HARDCODED_CFG.tenantId : (saved.tenantId||''),
+    webhook:  HARDCODED_CFG.webhook  !== 'PASTE_FLOW1_URL_HERE' ? HARDCODED_CFG.webhook  : (saved.webhook||''),
+    org: HARDCODED_CFG.org || saved.org || '',
+  };
+}
+function setupSave() {
+  saveLocal('rc4_cfg', {
+    clientId: document.getElementById('cfg_clientId').value.trim(),
+    tenantId: document.getElementById('cfg_tenantId').value.trim(),
+    webhook:  document.getElementById('cfg_webhook').value.trim(),
+  });
+  toast('✅ Đã lưu – hãy cập nhật HARDCODED_CFG trong file rồi commit GitHub','ok');
+  show('s-main');
+}
+
+// ── ROOM ──
+function buildRoomSel() {
+  document.getElementById('roomSel').innerHTML = RC.rooms.map(r=>`<option value="${r.id}">${esc(r.label)}</option>`).join('');
+}
+
+// ── CHECKLIST RENDER ──
 function renderChecklist() {
   RC.results={}; RC.notes={}; RC.speeds={};
   const body = document.getElementById('clBody');
   body.innerHTML = '';
-  RC.sections.forEach((sec, si) => {
+  RC.sections.forEach((sec,si)=>{
     const el = document.createElement('div');
-    el.className = 'sec' + (si===0?' open':'');
+    el.className = 'sec'+(si===0?' open':'');
     el.id = 'sc_'+sec.id;
     el.innerHTML = `
       <div class="sec-hd" onclick="toggleSec('${sec.id}')">
@@ -1098,26 +663,19 @@ function renderChecklist() {
           <div class="sec-lbl">${esc(sec.label)}</div>
           <div class="sec-sub" id="ss_${sec.id}">Chưa kiểm tra</div>
         </div>
-        <span class="sec-bdg bdg-p" id="sb_${sec.id}">--</span>
+        <span class="sec-bdg bp" id="sb_${sec.id}">--</span>
         <svg class="chev" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
       </div>
-      <div class="sec-items" id="si_${sec.id}">
-        ${sec.items.map(it=>renderItem(it)).join('')}
-      </div>`;
+      <div class="sec-items" id="si_${sec.id}">${sec.items.map(it=>renderItem(it)).join('')}</div>`;
     body.appendChild(el);
   });
   updateProgress();
 }
-
 function renderItem(it) {
-  let extra = '';
-  if (it.type === 'speed') {
-    extra = `<div class="spd-row">
-      <input class="spd-in" id="sp_${it.id}" type="number" min="0" placeholder="0" oninput="onSpd('${it.id}')">
-      <span class="spd-unit">Mbps</span>
-      <span id="spe_${it.id}"></span>
-    </div>`;
-  }
+  const spd = it.type==='speed' ? `<div class="spd-row">
+    <input class="spd-in" id="sp_${it.id}" type="number" min="0" placeholder="0" oninput="onSpd('${it.id}')">
+    <span class="spd-unit">Mbps</span><span id="spe_${it.id}"></span>
+  </div>` : '';
   return `<div class="ci" id="ci_${it.id}">
     <div class="ci-row">
       <span class="ci-ico">${it.icon||'🔹'}</span>
@@ -1130,295 +688,230 @@ function renderItem(it) {
         <button class="tog tf" id="tf_${it.id}" onclick="setR('${it.id}','fail')" title="Lỗi">✗</button>
         <button class="tog tn" id="tn_${it.id}" onclick="setR('${it.id}','na')"   title="N/A">—</button>
       </div>
-    </div>
-    ${extra}
+    </div>${spd}
     <div class="fn-wrap" id="fn_${it.id}">
       <textarea class="fn-ta" id="fnt_${it.id}" placeholder="Mô tả lỗi / hành động xử lý…" oninput="RC.notes['${it.id}']=this.value"></textarea>
     </div>
   </div>`;
 }
-
-function toggleSec(id) { document.getElementById('sc_'+id).classList.toggle('open'); }
-
-function setR(id, val) {
-  const prev = RC.results[id];
-  RC.results[id] = prev===val ? null : val;
+function toggleSec(id){ document.getElementById('sc_'+id).classList.toggle('open'); }
+function setR(id,val){
+  RC.results[id] = RC.results[id]===val ? null : val;
   const cur = RC.results[id];
-  ['pass','fail','na'].forEach(v => {
-    const p = v==='pass'?'tp':v==='fail'?'tf':'tn';
-    document.getElementById(p+'_'+id)?.classList.toggle('on', cur===v);
+  ['pass','fail','na'].forEach(v=>{
+    const p=v==='pass'?'tp':v==='fail'?'tf':'tn';
+    document.getElementById(p+'_'+id)?.classList.toggle('on',cur===v);
   });
-  const fw = document.getElementById('fn_'+id);
-  if (fw) fw.style.display = cur==='fail' ? 'block' : 'none';
-  if (cur==='fail') setTimeout(()=>document.getElementById('fnt_'+id)?.focus(),50);
+  const fw=document.getElementById('fn_'+id);
+  if(fw) fw.style.display=cur==='fail'?'block':'none';
+  if(cur==='fail') setTimeout(()=>document.getElementById('fnt_'+id)?.focus(),50);
   updateSecUI(); updateProgress();
 }
-
-function onSpd(id) {
-  const v = parseFloat(document.getElementById('sp_'+id).value);
-  RC.speeds[id] = v;
-  const el = document.getElementById('spe_'+id);
-  if (isNaN(v)||v<=0){el.textContent='';el.className='';return;}
-  if (v>=50) {el.textContent='Tốt';el.className='spd-tag st-g';}
-  else if (v>=10) {el.textContent='TB';el.className='spd-tag st-o';}
-  else {el.textContent='Yếu';el.className='spd-tag st-b';}
-  setR(id, v>=10?'pass':'fail');
+function onSpd(id){
+  const v=parseFloat(document.getElementById('sp_'+id).value);
+  RC.speeds[id]=v;
+  const el=document.getElementById('spe_'+id);
+  if(isNaN(v)||v<=0){el.textContent='';el.className='';return;}
+  if(v>=50){el.textContent='Tốt';el.className='spd-tag stg';}
+  else if(v>=10){el.textContent='TB';el.className='spd-tag sto';}
+  else{el.textContent='Yếu';el.className='spd-tag stb';}
+  setR(id,v>=10?'pass':'fail');
 }
-
-function updateSecUI() {
-  RC.sections.forEach(sec => {
-    const ids = sec.items.map(i=>i.id);
-    const done = ids.filter(id=>RC.results[id]);
-    const pass = ids.filter(id=>RC.results[id]==='pass');
-    const fail = ids.filter(id=>RC.results[id]==='fail');
-    const na   = ids.filter(id=>RC.results[id]==='na');
-    const card = document.getElementById('sc_'+sec.id);
-    const bdg  = document.getElementById('sb_'+sec.id);
-    const sub  = document.getElementById('ss_'+sec.id);
-    if (!card) return;
+function updateSecUI(){
+  RC.sections.forEach(sec=>{
+    const ids=sec.items.map(i=>i.id);
+    const done=ids.filter(id=>RC.results[id]);
+    const pass=ids.filter(id=>RC.results[id]==='pass');
+    const fail=ids.filter(id=>RC.results[id]==='fail');
+    const card=document.getElementById('sc_'+sec.id);
+    const bdg=document.getElementById('sb_'+sec.id);
+    const sub=document.getElementById('ss_'+sec.id);
+    if(!card) return;
     card.classList.remove('ok','warn','fail');
-    if (!done.length) {
-      bdg.textContent='--'; bdg.className='sec-bdg bdg-p'; sub.textContent='Chưa kiểm tra';
-    } else if (fail.length===0 && (pass.length+na.length)===ids.length) {
-      bdg.textContent='✓ OK'; bdg.className='sec-bdg bdg-ok'; sub.textContent='Tất cả mục đạt'; card.classList.add('ok');
-    } else if (fail.length>0) {
-      bdg.textContent=`${fail.length} lỗi`; bdg.className='sec-bdg bdg-fail'; sub.textContent=`${pass.length}/${ids.length} đạt`; card.classList.add('fail');
-    } else {
-      bdg.textContent=`${done.length}/${ids.length}`; bdg.className='sec-bdg bdg-part'; sub.textContent=`Đã kiểm ${done.length}/${ids.length}`; card.classList.add('warn');
+    if(!done.length){bdg.textContent='--';bdg.className='sec-bdg bp';sub.textContent='Chưa kiểm tra';}
+    else if(fail.length===0&&(pass.length+ids.filter(id=>RC.results[id]==='na').length)===ids.length){
+      bdg.textContent='✓ OK';bdg.className='sec-bdg bok';sub.textContent='Tất cả mục đạt';card.classList.add('ok');
+    }else if(fail.length>0){
+      bdg.textContent=`${fail.length} lỗi`;bdg.className='sec-bdg bfail';sub.textContent=`${pass.length}/${ids.length} đạt`;card.classList.add('fail');
+    }else{
+      bdg.textContent=`${done.length}/${ids.length}`;bdg.className='sec-bdg bpart';sub.textContent=`Đã kiểm ${done.length}/${ids.length}`;card.classList.add('warn');
     }
   });
 }
-
-function updateProgress() {
-  const all = RC.sections.flatMap(s=>s.items.map(i=>i.id));
-  const done = all.filter(id=>RC.results[id]).length;
-  const pct = all.length ? Math.round(done/all.length*100) : 0;
-  document.getElementById('pTxt').textContent = `${done} / ${all.length} mục`;
-  document.getElementById('pPct').textContent = pct+'%';
-  document.getElementById('pBar').style.width = pct+'%';
+function updateProgress(){
+  const all=RC.sections.flatMap(s=>s.items.map(i=>i.id));
+  const done=all.filter(id=>RC.results[id]).length;
+  const pct=all.length?Math.round(done/all.length*100):0;
+  document.getElementById('pTxt').textContent=`${done} / ${all.length} mục`;
+  document.getElementById('pPct').textContent=pct+'%';
+  document.getElementById('pBar').style.width=pct+'%';
 }
 
-// ═══════════════════════════════════════════════════════════
-// PHOTOS
-// ═══════════════════════════════════════════════════════════
-document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('phIn').addEventListener('change', function(e) {
-    Array.from(e.target.files).forEach(f => {
-      const r = new FileReader();
-      r.onload = ev => {
-        RC.photos.push({id:Date.now()+Math.random(), dataUrl:ev.target.result, name:f.name});
-        renderPhotos();
-      };
+// ── PHOTOS ──
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('phIn').addEventListener('change',function(e){
+    Array.from(e.target.files).forEach(f=>{
+      const r=new FileReader();
+      r.onload=ev=>{RC.photos.push({id:Date.now()+Math.random(),dataUrl:ev.target.result,name:f.name});renderPhotos();};
       r.readAsDataURL(f);
     });
     this.value='';
   });
 });
-
-function renderPhotos() {
-  const g = document.getElementById('phGrid');
-  g.innerHTML = '';
-  RC.photos.forEach(p => {
-    const d = document.createElement('div');
-    d.className = 'ph-thumb';
-    d.innerHTML = `<img src="${p.dataUrl}"><button class="ph-del" onclick="delPhoto('${p.id}')">×</button>`;
+function renderPhotos(){
+  const g=document.getElementById('phGrid'); g.innerHTML='';
+  RC.photos.forEach(p=>{
+    const d=document.createElement('div'); d.className='ph-thumb';
+    d.innerHTML=`<img src="${p.dataUrl}"><button class="ph-del" onclick="delPhoto('${p.id}')">×</button>`;
     g.appendChild(d);
   });
-  const a = document.createElement('label');
-  a.className='ph-add'; a.htmlFor='phIn';
-  a.innerHTML='<span class="ph-ico">📷</span><span>Thêm ảnh</span>';
+  const a=document.createElement('label'); a.className='ph-add'; a.htmlFor='phIn';
+  a.innerHTML='<span style="font-size:22px">📷</span><span>Thêm ảnh</span>';
   g.appendChild(a);
 }
-function delPhoto(id) { RC.photos=RC.photos.filter(p=>p.id!==id); renderPhotos(); }
+function delPhoto(id){RC.photos=RC.photos.filter(p=>p.id!==id);renderPhotos();}
 
-// ═══════════════════════════════════════════════════════════
-// SUBMIT → POWER AUTOMATE WEBHOOK
-// ═══════════════════════════════════════════════════════════
-async function doSubmit() {
-  const all = RC.sections.flatMap(s=>s.items.map(i=>i.id));
-  if (!all.filter(id=>RC.results[id]).length) {
-    toast('Hãy kiểm tra ít nhất 1 mục','err'); return;
+// ── SUBMIT ──
+async function doSubmit(){
+  const all=RC.sections.flatMap(s=>s.items.map(i=>i.id));
+  if(!all.filter(id=>RC.results[id]).length){toast('Hãy kiểm tra ít nhất 1 mục','err');return;}
+
+  // Require login if MSAL configured
+  const cfg=getCfg();
+  if(cfg.clientId && !RC.account){
+    toast('Vui lòng đăng nhập Microsoft 365 trước','err');
+    show('s-login'); return;
   }
-  const passC = all.filter(id=>RC.results[id]==='pass').length;
-  const failC = all.filter(id=>RC.results[id]==='fail').length;
-  const naC   = all.filter(id=>RC.results[id]==='na').length;
-  const now = new Date();
 
-  // Build payload
-  const details = RC.sections.map(sec => ({
-    sectionId: sec.id,
-    sectionLabel: sec.label,
-    items: sec.items.map(it => ({
-      id: it.id,
-      label: it.label,
-      result: RC.results[it.id] || 'skip',
-      note: RC.notes[it.id] || '',
-      speed: RC.speeds[it.id] || null,
-    }))
+  const passC=all.filter(id=>RC.results[id]==='pass').length;
+  const failC=all.filter(id=>RC.results[id]==='fail').length;
+  const naC=all.filter(id=>RC.results[id]==='na').length;
+  const now=new Date();
+
+  const details=RC.sections.map(sec=>({
+    sectionId:sec.id, sectionLabel:sec.label,
+    items:sec.items.map(it=>({id:it.id,label:it.label,result:RC.results[it.id]||'skip',note:RC.notes[it.id]||'',speed:RC.speeds[it.id]||null}))
   }));
 
-  // Compress photos to ≤300KB each for webhook
-  const photos = await Promise.all(RC.photos.map(async p => ({
-    name: p.name,
-    base64: await compressPhoto(p.dataUrl, 300),
-  })));
+  const photos=await Promise.all(RC.photos.map(async p=>({name:p.name,base64:await compressPhoto(p.dataUrl,300)})));
 
-  const payload = {
-    room:        document.getElementById('roomSel').value,
-    roomLabel:   document.getElementById('roomSel').selectedOptions[0]?.text || '',
-    inspector:   document.getElementById('inspector').value.trim() || '(không điền)',
-    checkDate:   now.toISOString(),
-    checkDateVN: now.toLocaleString('vi-VN'),
-    status:      failC===0 ? 'OK' : failC<=2 ? 'WARNING' : 'FAIL',
-    passCount:   passC,
-    failCount:   failC,
-    naCount:     naC,
-    generalNote: document.getElementById('genNote').value || '',
-    details,
-    photos,
-    org: RC.cfg?.org || '',
+  const payload={
+    room:document.getElementById('roomSel').value,
+    roomLabel:document.getElementById('roomSel').selectedOptions[0]?.text||'',
+    inspector: RC.account ? (RC.account.name||RC.account.username) : '(không đăng nhập)',
+    checkDate:now.toISOString(),
+    checkDateVN:now.toLocaleString('vi-VN'),
+    status:failC===0?'OK':failC<=2?'WARNING':'FAIL',
+    passCount:passC, failCount:failC, naCount:naC,
+    generalNote:document.getElementById('genNote').value||'',
+    details, photos,
+    org:cfg.org||'',
   };
 
-  const btn = document.getElementById('subBtn');
-  btn.disabled = true;
-  btn.innerHTML = '⏳ Đang gửi…';
+  const btn=document.getElementById('subBtn');
+  btn.disabled=true; btn.innerHTML='⏳ Đang gửi…';
 
-  // Save local always
-  const rec = {...payload, id:Date.now(), ts:now.getTime(), dateStr:now.toLocaleString('vi-VN')};
+  // Save local
+  const rec={...payload,id:Date.now(),ts:now.getTime(),dateStr:now.toLocaleString('vi-VN')};
   saveRecordLocal(rec);
 
-  if (!RC.cfg?.offline && RC.cfg?.webhook) {
-    try {
-      toast('📤 Đang gửi lên Power Automate…','info');
-      const r = await fetch(RC.cfg.webhook, {
-        method: 'POST',
-        headers: { 'Content-Type':'application/json' },
-        body: JSON.stringify(payload),
-      });
-      if (!r.ok && r.status !== 202) throw new Error('HTTP ' + r.status);
-      setStatus('ok','SharePoint ✓');
+  if(cfg.webhook){
+    try{
+      toast('📤 Đang gửi lên SharePoint…','info');
+
+      // Get MS token to attach as proof of identity
+      const token = await getToken();
+      const headers = {'Content-Type':'application/json'};
+      if(token) headers['X-MS-Token'] = token;  // Flow kiểm tra header này
+
+      const r=await fetch(cfg.webhook,{method:'POST',headers,body:JSON.stringify(payload)});
+      if(!r.ok && r.status!==202) throw new Error('HTTP '+r.status);
       toast('✅ Gửi thành công lên SharePoint!','ok');
-    } catch(e) {
-      setStatus('err','Lỗi gửi');
-      toast('Lỗi gửi: '+e.message+' — đã lưu local','err');
+    }catch(e){
+      toast('Lỗi: '+e.message+' — đã lưu local','err');
     }
-  } else {
-    toast('✅ Đã lưu kết quả (offline)','ok');
+  }else{
+    toast('✅ Đã lưu local (chưa có webhook)','ok');
   }
 
   resetForm();
-  btn.disabled = false;
-  btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg> Gửi kết quả lên SharePoint';
+  btn.disabled=false;
+  btn.innerHTML='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg> Gửi kết quả lên SharePoint';
   renderHistory();
 }
 
-// Compress image to maxKB
-async function compressPhoto(dataUrl, maxKB) {
-  return new Promise(res => {
-    const img = new Image();
-    img.onload = () => {
-      const canvas = document.createElement('canvas');
-      const max = 800;
-      let w=img.width, h=img.height;
-      if (w>max||h>max) { const r=Math.min(max/w,max/h); w=Math.round(w*r); h=Math.round(h*r); }
-      canvas.width=w; canvas.height=h;
+async function compressPhoto(dataUrl,maxKB){
+  return new Promise(res=>{
+    const img=new Image();
+    img.onload=()=>{
+      const canvas=document.createElement('canvas');
+      const max=800; let w=img.width,h=img.height;
+      if(w>max||h>max){const r=Math.min(max/w,max/h);w=Math.round(w*r);h=Math.round(h*r);}
+      canvas.width=w;canvas.height=h;
       canvas.getContext('2d').drawImage(img,0,0,w,h);
       let q=0.8;
-      const attempt = () => {
-        const d = canvas.toDataURL('image/jpeg',q);
-        if (d.length/1024*0.75 <= maxKB || q<=0.2) { res(d.split(',')[1]); return; }
-        q -= 0.1; attempt();
+      const attempt=()=>{
+        const d=canvas.toDataURL('image/jpeg',q);
+        if(d.length/1024*0.75<=maxKB||q<=0.2){res(d.split(',')[1]);return;}
+        q-=0.1;attempt();
       };
       attempt();
     };
-    img.src = dataUrl;
+    img.src=dataUrl;
   });
 }
 
-function resetForm() {
-  RC.results={}; RC.notes={}; RC.speeds={}; RC.photos=[];
+function resetForm(){
+  RC.results={};RC.notes={};RC.speeds={};RC.photos=[];
   document.getElementById('genNote').value='';
-  renderChecklist(); renderPhotos(); updateProgress();
+  renderChecklist();renderPhotos();updateProgress();
 }
 
-// ═══════════════════════════════════════════════════════════
-// LOCAL HISTORY
-// ═══════════════════════════════════════════════════════════
-function saveRecordLocal(rec) {
-  const h = loadLocal('rc3_hist') || [];
-  h.unshift(rec); if (h.length>100) h.pop();
-  saveLocal('rc3_hist', h);
-}
-function renderHistory() {
-  const h = loadLocal('rc3_hist') || [];
-  const c = document.getElementById('histBody');
-  if (!h.length) {
-    c.innerHTML=`<div class="empty"><div class="empty-ico">📭</div><p>Chưa có lịch sử kiểm tra</p></div>`; return;
-  }
-  c.innerHTML = h.slice(0,50).map(r=>`
+// ── HISTORY ──
+function saveRecordLocal(rec){const h=loadLocal('rc4_hist')||[];h.unshift(rec);if(h.length>100)h.pop();saveLocal('rc4_hist',h);}
+function renderHistory(){
+  const h=loadLocal('rc4_hist')||[];
+  const c=document.getElementById('histBody');
+  if(!h.length){c.innerHTML='<div class="empty"><div class="empty-ico">📭</div><p>Chưa có lịch sử</p></div>';return;}
+  c.innerHTML=h.slice(0,50).map(r=>`
     <div class="hc">
       <div class="hc-top">
-        <div>
-          <div class="hc-room">${esc(r.roomLabel||r.room)}</div>
-          <div class="hc-time">🕐 ${r.dateStr||r.checkDateVN} ${r.inspector?'· 👤 '+esc(r.inspector):''}</div>
-        </div>
-        <span class="sec-bdg ${r.status==='OK'?'bdg-ok':r.status==='WARNING'?'bdg-part':'bdg-fail'}">
+        <div><div class="hc-room">${esc(r.roomLabel||r.room)}</div>
+        <div class="hc-time">🕐 ${r.dateStr||r.checkDateVN} · 👤 ${esc(r.inspector||'?')}</div></div>
+        <span class="sec-bdg ${r.status==='OK'?'bok':r.status==='WARNING'?'bpart':'bfail'}">
           ${r.status==='OK'?'✓ OK':r.status==='WARNING'?'⚠ Cảnh báo':'✗ Có lỗi'}
         </span>
       </div>
       <div class="hc-chips">
-        <span class="chip c-p">✓ ${r.passCount??r.passC??0} đạt</span>
-        <span class="chip c-f">✗ ${r.failCount??r.failC??0} lỗi</span>
-        ${(r.naCount||r.naC)?`<span class="chip c-n">— ${r.naCount??r.naC} N/A</span>`:''}
-        ${r.photos?.length?`<span class="chip c-i">📷 ${r.photos.length}</span>`:''}
-        ${r.details?.flatMap(s=>s.items).find(i=>i.speed)?`<span class="chip c-s">⚡ ${r.details.flatMap(s=>s.items).find(i=>i.speed)?.speed} Mbps</span>`:''}
+        <span class="chip cp">✓ ${r.passCount??0} đạt</span>
+        <span class="chip cf">✗ ${r.failCount??0} lỗi</span>
+        ${r.naCount?`<span class="chip cn">— ${r.naCount} N/A</span>`:''}
+        ${r.photos?.length?`<span class="chip ci2">📷 ${r.photos.length}</span>`:''}
       </div>
       ${r.generalNote?`<div class="hc-note">${esc(r.generalNote)}</div>`:''}
     </div>`).join('');
 }
 
-// ═══════════════════════════════════════════════════════════
-// ADMIN
-// ═══════════════════════════════════════════════════════════
-function renderAdmin() {
-  // webhook display
-  const wh = RC.cfg?.webhook || 'Chưa cấu hình';
-  document.getElementById('whUrlDisplay').textContent =
-    wh.length > 60 ? wh.slice(0,30)+'…'+wh.slice(-20) : wh;
-
-  renderRoomList();
-  renderSecBuilder();
-  updateSchema();
+// ── ADMIN ──
+function renderAdmin(){
+  renderRoomList(); renderSecBuilder();
 }
-
-/* rooms */
-function renderRoomList() {
-  const el = document.getElementById('rList');
-  el.innerHTML = RC.rooms.map((r,i)=>`
-    <div class="r-row">
-      <span>🏢</span>
-      <input value="${esc(r.label)}" placeholder="Tên phòng họp"
-        oninput="RC.rooms[${i}].label=this.value">
+function renderRoomList(){
+  document.getElementById('rList').innerHTML=RC.rooms.map((r,i)=>`
+    <div class="r-row"><span>🏢</span>
+      <input value="${esc(r.label)}" placeholder="Tên phòng" oninput="RC.rooms[${i}].label=this.value">
       <button class="del-btn" onclick="delRoom(${i})">✕</button>
     </div>`).join('');
-  document.getElementById('rCnt').textContent = RC.rooms.length + ' phòng';
+  document.getElementById('rCnt').textContent=RC.rooms.length+' phòng';
 }
-function addRoom() {
-  RC.rooms.push({id:'rm_'+Date.now(), label:'Phòng mới'});
-  renderRoomList();
-}
-function delRoom(i) {
-  if (RC.rooms.length<=1){toast('Phải có ít nhất 1 phòng','err');return;}
-  RC.rooms.splice(i,1); renderRoomList();
-}
+function addRoom(){RC.rooms.push({id:'rm_'+Date.now(),label:'Phòng mới'});renderRoomList();}
+function delRoom(i){if(RC.rooms.length<=1){toast('Phải có ít nhất 1 phòng','err');return;}RC.rooms.splice(i,1);renderRoomList();}
 
-/* sections */
-function renderSecBuilder() {
-  const el = document.getElementById('sbList');
-  el.innerHTML = RC.sections.map((sec,si)=>`
+function renderSecBuilder(){
+  document.getElementById('sbList').innerHTML=RC.sections.map((sec,si)=>`
     <div class="sb-sec">
-      <div class="sb-sec-hd">
-        <span class="sb-em" title="Click đổi emoji" onclick="chEmoji(${si})">${sec.emoji||'📋'}</span>
+      <div class="sb-hd">
+        <span class="sb-em" onclick="chEmoji(${si})">${sec.emoji||'📋'}</span>
         <input value="${esc(sec.label)}" placeholder="Tên nhóm" oninput="RC.sections[${si}].label=this.value">
         <button class="del-sec" onclick="delSec(${si})">Xoá</button>
       </div>
@@ -1438,113 +931,39 @@ function renderSecBuilder() {
         <button class="add-item" onclick="addItem(${si})">＋ Thêm mục</button>
       </div>
     </div>`).join('');
-  document.getElementById('sCnt').textContent = RC.sections.length + ' nhóm';
+  document.getElementById('sCnt').textContent=RC.sections.length+' nhóm';
 }
-function addSec() {
-  RC.sections.push({id:'s_'+Date.now(),label:'Nhóm mới',emoji:'📋',items:[
-    {id:'i_'+Date.now(),icon:'🔹',label:'Mục kiểm tra',note:'',type:'check'}
-  ]});
-  renderSecBuilder();
-}
-function delSec(i) {
-  if(RC.sections.length<=1){toast('Phải có ít nhất 1 nhóm','err');return;}
-  RC.sections.splice(i,1); renderSecBuilder();
-}
-function addItem(si) {
-  RC.sections[si].items.push({id:'i_'+Date.now(),icon:'🔹',label:'Mục mới',note:'',type:'check'});
-  renderSecBuilder();
-}
-function delItem(si,ii) {
-  if(RC.sections[si].items.length<=1){toast('Mỗi nhóm cần ít nhất 1 mục','err');return;}
-  RC.sections[si].items.splice(ii,1); renderSecBuilder();
-}
-function chEmoji(si) {
-  const e = prompt('Nhập emoji cho nhóm:', RC.sections[si].emoji||'📋');
-  if(e){ RC.sections[si].emoji=e.trim().slice(0,2); renderSecBuilder(); }
+function addSec(){RC.sections.push({id:'s_'+Date.now(),label:'Nhóm mới',emoji:'📋',items:[{id:'i_'+Date.now(),icon:'🔹',label:'Mục kiểm tra',note:'',type:'check'}]});renderSecBuilder();}
+function delSec(i){if(RC.sections.length<=1){toast('Phải có ít nhất 1 nhóm','err');return;}RC.sections.splice(i,1);renderSecBuilder();}
+function addItem(si){RC.sections[si].items.push({id:'i_'+Date.now(),icon:'🔹',label:'Mục mới',note:'',type:'check'});renderSecBuilder();}
+function delItem(si,ii){if(RC.sections[si].items.length<=1){toast('Mỗi nhóm cần ít nhất 1 mục','err');return;}RC.sections[si].items.splice(ii,1);renderSecBuilder();}
+function chEmoji(si){const e=prompt('Nhập emoji:',RC.sections[si].emoji||'📋');if(e){RC.sections[si].emoji=e.trim().slice(0,2);renderSecBuilder();}}
+
+async function adminSave(){
+  const btn=document.getElementById('saveCfgBtn');
+  btn.disabled=true;btn.textContent='⏳ Đang lưu…';
+  saveLocalSchema(); buildRoomSel(); renderChecklist();
+  toast('✅ Đã lưu cấu hình local','ok');
+  btn.disabled=false;btn.textContent='💾 Lưu cấu hình';
 }
 
-/* JSON Schema for Power Automate */
-function updateSchema() {
-  const itemProps = {};
-  RC.sections.flatMap(s=>s.items).forEach(it=>{
-    itemProps[it.id] = {type:'string',enum:['pass','fail','na','skip']};
-  });
-  const schema = {
-    type:'object',
-    properties:{
-      room:{type:'string'},
-      roomLabel:{type:'string'},
-      inspector:{type:'string'},
-      checkDate:{type:'string'},
-      checkDateVN:{type:'string'},
-      status:{type:'string',enum:['OK','WARNING','FAIL']},
-      passCount:{type:'integer'},
-      failCount:{type:'integer'},
-      naCount:{type:'integer'},
-      generalNote:{type:'string'},
-      details:{type:'array'},
-      photos:{type:'array'},
-      org:{type:'string'},
-    }
-  };
-  document.getElementById('schemaOut').value = JSON.stringify(schema,null,2);
-}
-function copySchema() {
-  navigator.clipboard.writeText(document.getElementById('schemaOut').value)
-    .then(()=>toast('✅ Đã copy JSON Schema','ok'))
-    .catch(()=>toast('Copy thất bại, hãy chọn và copy thủ công','err'));
+function exportCfg(){
+  const out='// DEF_ROOMS\nconst DEF_ROOMS = '+JSON.stringify(RC.rooms,null,2)+';\n\n// DEF_SECTIONS\nconst DEF_SECTIONS = '+JSON.stringify(RC.sections,null,2)+';';
+  const d=document.createElement('div');
+  d.style.cssText='position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);display:flex;align-items:flex-end';
+  d.innerHTML='<div style="width:100%;max-width:500px;margin:0 auto;background:#111827;border:1px solid #2a3f5f;border-radius:22px 22px 0 0;padding:22px 20px 36px">'
+    +'<div style="width:38px;height:4px;background:#2a3f5f;border-radius:2px;margin:0 auto 18px"></div>'
+    +'<div style="font-size:15px;font-weight:800;margin-bottom:12px">📤 Xuất cấu hình</div>'
+    +'<textarea readonly id="_expTa" style="width:100%;height:180px;background:#1a2236;border:1px solid #1e2d45;border-radius:10px;color:#7a8aa0;font-size:10px;font-family:monospace;padding:12px;outline:none;resize:none">'+out.replace(/</g,'&lt;')+'</textarea>'
+    +'<button onclick="navigator.clipboard.writeText(document.getElementById(\'_expTa\').value).then(()=>{this.textContent=\'✅ Đã copy!\';setTimeout(()=>this.textContent=\'📋 Copy\',2000)})" style="width:100%;padding:14px;border-radius:11px;border:none;background:linear-gradient(135deg,#4d9fff,#2dd4bf);color:#0b0f1a;font-size:14px;font-weight:800;font-family:Outfit,sans-serif;cursor:pointer;margin-top:10px">📋 Copy toàn bộ</button>'
+    +'<button onclick="this.closest(\'div\').parentElement.remove()" style="width:100%;padding:12px;border-radius:11px;border:1px solid #1e2d45;background:transparent;color:#7a8aa0;font-size:13px;font-family:Outfit,sans-serif;cursor:pointer;margin-top:8px">Đóng</button>'
+    +'</div>';
+  d.onclick=e=>{if(e.target===d)d.remove();};
+  document.body.appendChild(d);
 }
 
-function exportCfg() {
-  const roomsJson = JSON.stringify(RC.rooms, null, 2);
-  const secsJson  = JSON.stringify(RC.sections, null, 2);
-  const output = '// DEF_ROOMS\nconst DEF_ROOMS = ' + roomsJson + ';\n\n// DEF_SECTIONS\nconst DEF_SECTIONS = ' + secsJson + ';';
-
-  const existing = document.getElementById('exportModal');
-  if (existing) existing.remove();
-  const modal = document.createElement('div');
-  modal.id = 'exportModal';
-  modal.style.cssText = 'position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);display:flex;align-items:flex-end';
-  modal.innerHTML = '<div style="width:100%;max-width:500px;margin:0 auto;background:#111827;border:1px solid #2a3f5f;border-radius:22px 22px 0 0;padding:22px 20px 36px">'
-    + '<div style="width:38px;height:4px;background:#2a3f5f;border-radius:2px;margin:0 auto 18px"></div>'
-    + '<div style="font-size:15px;font-weight:800;margin-bottom:6px">📤 Xuất cấu hình để cập nhật GitHub</div>'
-    + '<div style="font-size:11px;color:#7a8aa0;margin-bottom:14px;line-height:1.6">Copy đoạn dưới → mở <code style=\'color:#4d9fff\'>index.html</code> trên GitHub → tìm <code style=\'color:#4d9fff\'>DEF_ROOMS</code> và <code style=\'color:#4d9fff\'>DEF_SECTIONS</code> → thay thế → Commit</div>'
-    + '<textarea readonly id="exportTa" style="width:100%;height:200px;background:#1a2236;border:1px solid #1e2d45;border-radius:10px;color:#7a8aa0;font-size:10px;font-family:monospace;padding:12px;outline:none;resize:none;line-height:1.5">' + output.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</textarea>'
-    + '<button onclick="navigator.clipboard.writeText(document.getElementById(\'exportTa\').value).then(()=>{this.textContent=\'✅ Đã copy!\';setTimeout(()=>this.textContent=\'📋 Copy toàn bộ\',2000)})" style="width:100%;padding:14px;border-radius:11px;border:none;background:linear-gradient(135deg,#4d9fff,#2dd4bf);color:#0b0f1a;font-size:14px;font-weight:800;font-family:Outfit,sans-serif;cursor:pointer;margin-top:10px">📋 Copy toàn bộ</button>'
-    + '<button onclick="document.getElementById(\'exportModal\').remove()" style="width:100%;padding:12px;border-radius:11px;border:1px solid #1e2d45;background:transparent;color:#7a8aa0;font-size:13px;font-family:Outfit,sans-serif;cursor:pointer;margin-top:8px">Đóng</button>'
-    + '</div>';
-  modal.onclick = function(e){ if(e.target===modal) modal.remove(); };
-  document.body.appendChild(modal);
-}
-
-async function adminSave() {
-  const btn = document.getElementById('saveCfgBtn');
-  btn.disabled=true; btn.textContent='⏳ Đang lưu…';
-  saveLocalSchema();
-  buildRoomSel(); renderChecklist(); updateSchema();
-
-  // If cfgWebhook exists, push config there too
-  if (!RC.cfg?.offline && RC.cfg?.cfgWebhook) {
-    try {
-      await fetch(RC.cfg.cfgWebhook, {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body: JSON.stringify({action:'save', rooms:RC.rooms, sections:RC.sections}),
-      });
-      toast('✅ Đã lưu cấu hình lên SharePoint!','ok');
-    } catch(e) {
-      toast('Đã lưu local. SharePoint: '+e.message,'err');
-    }
-  } else {
-    toast('✅ Đã lưu cấu hình local','ok');
-  }
-  btn.disabled=false; btn.textContent='💾 Lưu cấu hình';
-}
-
-// ═══════════════════════════════════════════════════════════
-// TABS
-// ═══════════════════════════════════════════════════════════
-function tab(name) {
+// ── UTILS ──
+function tab(name){
   ['check','hist','adm'].forEach(n=>{
     document.getElementById('tb-'+n).classList.toggle('on',n===name);
     document.getElementById('pn-'+n).classList.toggle('on',n===name);
@@ -1552,59 +971,28 @@ function tab(name) {
   if(name==='hist') renderHistory();
   if(name==='adm') renderAdmin();
 }
-
-// ═══════════════════════════════════════════════════════════
-// UTILS
-// ═══════════════════════════════════════════════════════════
-function show(id) {
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
-  document.getElementById(id).classList.add('on');
+function show(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on');}
+function setSplash(m){const e=document.getElementById('splashMsg');if(e)e.textContent=m;}
+function toast(msg,type='info'){
+  const c=document.getElementById('toasts');
+  const el=document.createElement('div'); el.className=`toast ${type}`; el.textContent=msg;
+  c.appendChild(el); setTimeout(()=>el.remove(),4000);
 }
-function setSplashMsg(m) {
-  const el = document.getElementById('splashMsg');
-  if(el) el.textContent = m;
-}
-function setStatus(type, lbl) {
-  const d = document.getElementById('sdot');
-  const l = document.getElementById('slbl');
-  if(d) { d.className='status-dot '+(type==='ok'?'ok':type==='err'?'err':'wait'); }
-  if(l) l.textContent = lbl;
-}
-function toast(msg, type='info') {
-  const c = document.getElementById('toasts');
-  const el = document.createElement('div');
-  el.className=`toast ${type}`; el.textContent=msg;
-  c.appendChild(el);
-  setTimeout(()=>el.remove(), 4200);
-}
-function esc(s) {
-  if(!s) return '';
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
-function sleep(ms) { return new Promise(r=>setTimeout(r,ms)); }
-function saveLocal(k,v) { try{localStorage.setItem(k,JSON.stringify(v));}catch{} }
-function loadLocal(k) { try{const v=localStorage.getItem(k);return v?JSON.parse(v):null;}catch{return null;} }
-function saveLocalSchema() {
-  saveLocal('rc3_rooms', RC.rooms);
-  saveLocal('rc3_secs', RC.sections);
-}
-function loadLocalSchema() {
-  RC.rooms    = loadLocal('rc3_rooms')   || DEF_ROOMS;
-  RC.sections = loadLocal('rc3_secs')    || DEF_SECTIONS;
-}
-function clearLocalSchema() {
-  localStorage.removeItem('rc3_rooms');
-  localStorage.removeItem('rc3_secs');
-}
-function startClock() {
+function esc(s){if(!s)return '';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+function saveLocal(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch{}}
+function loadLocal(k){try{const v=localStorage.getItem(k);return v?JSON.parse(v):null;}catch{return null;}}
+function saveLocalSchema(){saveLocal('rc4_rooms',RC.rooms);saveLocal('rc4_secs',RC.sections);}
+function loadLocalSchema(){RC.rooms=loadLocal('rc4_rooms')||DEF_ROOMS;RC.sections=loadLocal('rc4_secs')||DEF_SECTIONS;}
+function loadScript(src){return new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=rej;document.head.appendChild(s);});}
+function startClock(){
   const up=()=>{
     const n=new Date();
-    const c=document.getElementById('clk');
-    const d=document.getElementById('clkd');
-    if(c) c.textContent=n.toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
-    if(d) d.textContent=n.toLocaleDateString('vi-VN',{weekday:'short',day:'2-digit',month:'2-digit'});
+    const c=document.getElementById('clk');const d=document.getElementById('clkd');
+    if(c)c.textContent=n.toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
+    if(d)d.textContent=n.toLocaleDateString('vi-VN',{weekday:'short',day:'2-digit',month:'2-digit'});
   };
-  up(); setInterval(up,1000);
+  up();setInterval(up,1000);
 }
 </script>
 </body>
