@@ -360,10 +360,10 @@ input[type=file]{display:none}
           <textarea id="cfg_webhook" rows="3" placeholder="https://prod-xx.westus.logic.azure.com/workflows/..."></textarea>
         </div>
         <div class="hint">
-          ⚠️ Flow 1 đặt <strong>"Who can trigger: Anyone"</strong> — nhưng app sẽ gửi kèm
-          <code>Bearer token</code> Microsoft. Trong Flow, thêm Condition kiểm tra
-          header <code>Authorization</code> có tồn tại → nếu không có thì Response 401.
-        </div>
+		⚠️ Flow đặt <strong>"Who can trigger: Anyone"</strong> — nhưng app sẽ gửi kèm
+		<code>Authorization: Bearer ...</code>. Trong Flow, thêm Condition kiểm tra
+		header <code>Authorization</code> có tồn tại → nếu không có thì Response 401.
+		</div>
       </div>
     </div>
 
@@ -775,7 +775,19 @@ function delPhoto(id){RC.photos=RC.photos.filter(p=>p.id!==id);renderPhotos();}
 async function doSubmit(){
   const all=RC.sections.flatMap(s=>s.items.map(i=>i.id));
   if(!all.filter(id=>RC.results[id]).length){toast('Hãy kiểm tra ít nhất 1 mục','err');return;}
+  if(!document.getElementById('roomSel').value){
+    toast('Vui lòng chọn phòng','err');
+    return;
+  }
 
+  const failWithoutNote = RC.sections.some(sec =>
+    sec.items.some(it => RC.results[it.id] === 'fail' && !(RC.notes[it.id] || '').trim())
+  );
+  if(failWithoutNote){
+    toast('Các mục lỗi cần nhập ghi chú','err');
+    return;
+  }
+  
   // Require login if MSAL configured
   const cfg=getCfg();
   if(cfg.clientId && !RC.account){
@@ -787,25 +799,53 @@ async function doSubmit(){
   const failC=all.filter(id=>RC.results[id]==='fail').length;
   const naC=all.filter(id=>RC.results[id]==='na').length;
   const now=new Date();
+  const clientCheckId = crypto.randomUUID();
 
-  const details=RC.sections.map(sec=>({
-    sectionId:sec.id, sectionLabel:sec.label,
-    items:sec.items.map(it=>({id:it.id,label:it.label,result:RC.results[it.id]||'skip',note:RC.notes[it.id]||'',speed:RC.speeds[it.id]||null}))
+  const details = RC.sections.map((sec, secIdx) => ({
+    sectionId: sec.id,
+    sectionLabel: sec.label,
+    sectionOrder: secIdx + 1,
+    items: sec.items.map((it, itemIdx) => ({
+      id: it.id,
+      label: it.label,
+      type: it.type || 'check',
+      itemOrder: itemIdx + 1,
+      result: RC.results[it.id] || 'unchecked',
+      note: RC.notes[it.id] || '',
+      valueNumber: it.type === 'speed' ? (RC.speeds[it.id] ?? null) : null,
+      valueText: it.type === 'speed' && RC.speeds[it.id] != null ? `${RC.speeds[it.id]} Mbps` : ''
+    }))
   }));
 
-  const photos=await Promise.all(RC.photos.map(async p=>({name:p.name,base64:await compressPhoto(p.dataUrl,300)})));
+  const photos = await Promise.all(
+    RC.photos.map(async p => ({
+      name: p.name,
+      base64: await compressPhoto(p.dataUrl, 300),
+      clientCheckId
+    }))
+  );
+  
+  const uncheckedC = all.filter(id => !RC.results[id]).length;
 
-  const payload={
-    room:document.getElementById('roomSel').value,
-    roomLabel:document.getElementById('roomSel').selectedOptions[0]?.text||'',
-    inspector: RC.account ? (RC.account.name||RC.account.username) : '(không đăng nhập)',
-    checkDate:now.toISOString(),
-    checkDateVN:now.toLocaleString('vi-VN'),
-    status:failC===0?'OK':failC<=2?'WARNING':'FAIL',
-    passCount:passC, failCount:failC, naCount:naC,
-    generalNote:document.getElementById('genNote').value||'',
-    details, photos,
-    org:cfg.org||'',
+  const payload = {
+    clientCheckId,
+    schemaVersion: 1,
+    room: document.getElementById('roomSel').value,
+    roomLabel: document.getElementById('roomSel').selectedOptions[0]?.text || '',
+    inspector: RC.account ? (RC.account.name || RC.account.username) : '(không đăng nhập)',
+    inspectorEmail: RC.account?.username || '',
+    checkDate: now.toISOString(),
+    checkDateVN: now.toLocaleString('vi-VN'),
+    status: failC === 0 ? 'OK' : failC <= 2 ? 'WARNING' : 'FAIL',
+    passCount: passC,
+    failCount: failC,
+    naCount: naC,
+    uncheckedCount: uncheckedC,
+    wifiSpeed: RC.speeds['wifi_spd'] ?? null,
+    generalNote: document.getElementById('genNote').value || '',
+    details,
+    photos,
+    org: cfg.org || ''
   };
 
   const btn=document.getElementById('subBtn');
@@ -821,8 +861,8 @@ async function doSubmit(){
 
       // Get MS token to attach as proof of identity
       const token = await getToken();
-      const headers = {'Content-Type':'application/json'};
-      if(token) headers['X-MS-Token'] = token;  // Flow kiểm tra header này
+      const headers = { 'Content-Type': 'application/json' };
+      if(token) headers['Authorization'] = `Bearer ${token}`;
 
       const r=await fetch(cfg.webhook,{method:'POST',headers,body:JSON.stringify(payload)});
       if(!r.ok && r.status!==202) throw new Error('HTTP '+r.status);
@@ -904,7 +944,10 @@ function renderRoomList(){
     </div>`).join('');
   document.getElementById('rCnt').textContent=RC.rooms.length+' phòng';
 }
-function addRoom(){RC.rooms.push({id:'rm_'+Date.now(),label:'Phòng mới'});renderRoomList();}
+function addRoom(){
+  RC.rooms.push({id:'room_'+Date.now(),label:'Phòng mới'});
+  renderRoomList();
+}
 function delRoom(i){if(RC.rooms.length<=1){toast('Phải có ít nhất 1 phòng','err');return;}RC.rooms.splice(i,1);renderRoomList();}
 
 function renderSecBuilder(){
@@ -933,9 +976,32 @@ function renderSecBuilder(){
     </div>`).join('');
   document.getElementById('sCnt').textContent=RC.sections.length+' nhóm';
 }
-function addSec(){RC.sections.push({id:'s_'+Date.now(),label:'Nhóm mới',emoji:'📋',items:[{id:'i_'+Date.now(),icon:'🔹',label:'Mục kiểm tra',note:'',type:'check'}]});renderSecBuilder();}
+function addSec(){
+  RC.sections.push({
+    id:'sec_'+Date.now(),
+    label:'Nhóm mới',
+    emoji:'📋',
+    items:[{
+      id:'item_'+Date.now(),
+      icon:'🔹',
+      label:'Mục kiểm tra',
+      note:'',
+      type:'check'
+    }]
+  });
+  renderSecBuilder();
+}
 function delSec(i){if(RC.sections.length<=1){toast('Phải có ít nhất 1 nhóm','err');return;}RC.sections.splice(i,1);renderSecBuilder();}
-function addItem(si){RC.sections[si].items.push({id:'i_'+Date.now(),icon:'🔹',label:'Mục mới',note:'',type:'check'});renderSecBuilder();}
+function addItem(si){
+  RC.sections[si].items.push({
+    id:'item_'+Date.now(),
+    icon:'🔹',
+    label:'Mục mới',
+    note:'',
+    type:'check'
+  });
+  renderSecBuilder();
+}
 function delItem(si,ii){if(RC.sections[si].items.length<=1){toast('Mỗi nhóm cần ít nhất 1 mục','err');return;}RC.sections[si].items.splice(ii,1);renderSecBuilder();}
 function chEmoji(si){const e=prompt('Nhập emoji:',RC.sections[si].emoji||'📋');if(e){RC.sections[si].emoji=e.trim().slice(0,2);renderSecBuilder();}}
 
