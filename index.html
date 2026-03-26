@@ -423,11 +423,11 @@ input[type=file]{display:none}
 // ⚙️  HARDCODED CONFIG — Admin điền 1 lần, commit lên GitHub
 // ═══════════════════════════════════════════════════════════
 const HARDCODED_CFG = {
-  clientId:  '163ad118-4f2d-4061-80c9-8260393d92e1',   // Azure App Client ID
-  tenantId:  '630ee4a4-29e3-4488-ba82-3deed213e218',   // Azure Tenant ID
-  webhook:   'https://default630ee4a429e34488ba823deed213e2.18.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/229927fd64b44f0b87061ada6c78e0fb/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=myw8himcA8ZY-dY97yqyXR5TyaCrj7qiMX0Sitq2kPg',   // Power Automate Flow 1 URL
+  clientId:  '163ad118-4f2d-4061-80c9-8260393d92e1',
+  tenantId:  '630ee4a4-29e3-4488-ba82-3deed213e218',
+  webhook:   'https://default630ee4a429e34488ba823deed213e2.18.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/229927fd64b44f0b87061ada6c78e0fb/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=myw8himcA8ZY-dY97yqyXR5TyaCrj7qiMX0Sitq2kPg',
   lockApi:   'https://default630ee4a429e34488ba823deed213e2.18.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/ac60f817446e41dcab6e15cbe0f6d421/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=uuqHGeN4iarjBPsmplszytx7cvZg3CQu1LRkWNvrvsE',
-  org:       'Kềm Nghĩa Sài Gòn',
+  org:       'Kềm Nghĩa Sài Gòn'
 };
 // ═══════════════════════════════════════════════════════════
 
@@ -589,7 +589,14 @@ async function getToken() {
 
 // ── CONFIG ──
 function getCfg() {
-  return HARDCODED_CFG;
+  const saved = loadLocal('rc4_cfg') || {};
+  return {
+    clientId: HARDCODED_CFG.clientId !== 'PASTE_CLIENT_ID_HERE' ? HARDCODED_CFG.clientId : (saved.clientId||''),
+    tenantId: HARDCODED_CFG.tenantId !== 'PASTE_TENANT_ID_HERE' ? HARDCODED_CFG.tenantId : (saved.tenantId||''),
+    webhook:  HARDCODED_CFG.webhook  !== 'PASTE_FLOW1_URL_HERE' ? HARDCODED_CFG.webhook  : (saved.webhook||''),
+    lockApi:  HARDCODED_CFG.lockApi  !== 'PASTE_FLOW2_URL_HERE' ? HARDCODED_CFG.lockApi  : (saved.lockApi||''),
+    org: HARDCODED_CFG.org || saved.org || ''
+  };
 }
 
 // ── ROOM LOCK FROM SHAREPOINT ──
