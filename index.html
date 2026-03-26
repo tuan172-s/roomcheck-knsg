@@ -325,49 +325,6 @@ input[type=file]{display:none}
   </div>
 </div>
 
-    <div class="card">
-      <div class="card-hd"><span style="font-size:16px">🔑</span><h3>Azure App Registration</h3></div>
-      <div class="card-bd">
-        <div class="field">
-          <label>Client ID</label>
-          <input id="cfg_clientId" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx">
-        </div>
-        <div class="field">
-          <label>Tenant ID</label>
-          <input id="cfg_tenantId" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx">
-        </div>
-        <div class="hint">
-          💡 Vào <code>portal.azure.com</code> → App registrations → New registration<br>
-          • Supported account types: <strong>Single tenant</strong><br>
-          • Redirect URI: <strong>Single-page application</strong> → URL GitHub Pages của bạn<br>
-          • API permissions: <code>openid</code>, <code>profile</code> (không cần Sites.ReadWrite!)
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-hd"><span style="font-size:16px">⚡</span><h3>Power Automate Webhook</h3></div>
-      <div class="card-bd">
-        <div class="field">
-          <label>Flow 1 URL (lưu kết quả)</label>
-          <textarea id="cfg_webhook" rows="3" placeholder="https://prod-xx.westus.logic.azure.com/workflows/..."></textarea>
-        </div>
-        <div class="hint">
-		⚠️ Flow đặt <strong>"Who can trigger: Anyone"</strong> — nhưng app sẽ gửi kèm
-		<code>Authorization: Bearer ...</code>. Trong Flow, thêm Condition kiểm tra
-		header <code>Authorization</code> có tồn tại → nếu không có thì Response 401.
-		</div>
-      </div>
-    </div>
-
-    <button class="btn-main" onclick="setupSave()">💾 Lưu vào localStorage</button>
-    <div class="hint" style="margin-top:12px">
-      📌 Sau khi lưu, nhớ cập nhật <code>HARDCODED_CFG</code> trong file <code>index.html</code>
-      rồi commit lên GitHub để mọi thiết bị dùng chung cấu hình.
-    </div>
-  </div>
-</div>
-
 <!-- ════ MAIN ════ -->
 <div class="scr" id="s-main">
   <div class="topbar">
