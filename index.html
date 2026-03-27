@@ -954,9 +954,7 @@ async function doSubmit(){
     toast('Vui lòng chọn phòng','err');
     return;
   }
-
-  const isOverwrite = isRoomLocked(roomId);
-
+	
   if (isOverwrite) {
     toast('Phòng này đã có dữ liệu hôm nay, hệ thống sẽ ghi đè dữ liệu cũ', 'info');
   }
