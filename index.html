@@ -677,25 +677,24 @@ function buildRoomSel() {
   const sel = document.getElementById('roomSel');
   if (!sel) return;
 
-  const availableRooms = RC.rooms.filter(r => !isRoomLocked(r.id));
-
-  if (availableRooms.length === 0) {
-    sel.innerHTML = `<option value="">Tất cả phòng đã kiểm tra hôm nay</option>`;
-    sel.disabled = true;
-    return;
-  }
-
   sel.innerHTML = RC.rooms.map(r => {
-    const locked = isRoomLocked(r.id);
+    const checked = isRoomLocked(r.id);
     return `
-      <option value="${r.id}" ${locked ? 'disabled' : ''}>
-        ${esc(r.label)}${locked ? ' ✓ Đã kiểm tra' : ''}
+      <option value="${r.id}">
+        ${esc(r.label)}${checked ? ' ✓ Đã kiểm tra' : ''}
       </option>
     `;
   }).join('');
 
-  sel.value = availableRooms[0].id;
-  sel.disabled = false;
+  if (RC.rooms.length > 0) {
+    if (!sel.value || !RC.rooms.some(r => r.id === sel.value)) {
+      sel.value = RC.rooms[0].id;
+    }
+    sel.disabled = false;
+  } else {
+    sel.innerHTML = `<option value="">Chưa có phòng</option>`;
+    sel.disabled = true;
+  }
 }
 
 // ── CHECKLIST RENDER ──
@@ -883,22 +882,28 @@ function updateProgress(){
 
 // ── SUBMIT BUTTON STATE ──
 function updateSubmitBtn() {
-  const checkItems = RC.sections.flatMap(s=>s.items.filter(i=>i.type!=='speed'));
+  const checkItems = RC.sections.flatMap(s => s.items.filter(i => i.type !== 'speed'));
   const allChecked = checkItems.every(it => RC.results[it.id]);
   const hasPhoto = RC.photos.length > 0;
+  const hasWifiSpeed = Number(RC.speeds['wifi_spd']) > 0;
+
   const btn = document.getElementById('subBtn');
   if (!btn) return;
 
-  const ready = allChecked && hasPhoto;
+  const ready = allChecked && hasPhoto && hasWifiSpeed;
   btn.style.opacity = ready ? '1' : '0.55';
 
+  const labelEl = btn.querySelector('span');
+
   if (!allChecked) {
-    const remaining = checkItems.filter(it=>!RC.results[it.id]).length;
-    btn.querySelector('span') && (btn.querySelector('span').textContent = `Còn ${remaining} mục chưa kiểm tra`);
+    const remaining = checkItems.filter(it => !RC.results[it.id]).length;
+    if (labelEl) labelEl.textContent = `Còn ${remaining} mục chưa kiểm tra`;
+  } else if (!hasWifiSpeed) {
+    if (labelEl) labelEl.textContent = 'Cần nhập tốc độ WiFi';
   } else if (!hasPhoto) {
-    btn.querySelector('span') && (btn.querySelector('span').textContent = 'Cần chụp ít nhất 1 ảnh');
+    if (labelEl) labelEl.textContent = 'Cần chụp ít nhất 1 ảnh';
   } else {
-    btn.querySelector('span') && (btn.querySelector('span').textContent = 'Gửi kết quả lên SharePoint');
+    if (labelEl) labelEl.textContent = 'Gửi kết quả lên SharePoint';
   }
 }
 
@@ -943,19 +948,19 @@ async function doSubmit(){
   const checkIds = checkItems.map(i => i.id);
 
   const roomId = document.getElementById('roomSel').value;
+  const isOverwrite = isRoomLocked(roomId);
 
   if(!roomId){
     toast('Vui lòng chọn phòng','err');
     return;
   }
 
-  if (isRoomLocked(roomId)) {
-    toast('Phòng này đã checklist trên SharePoint rồi, không thể kiểm tra lại', 'err');
-    await fetchLockedRoomsFromSharePoint();
-    buildRoomSel();
-    return;
-  }
+  const isOverwrite = isRoomLocked(roomId);
 
+  if (isOverwrite) {
+    toast('Phòng này đã có dữ liệu hôm nay, hệ thống sẽ ghi đè dữ liệu cũ', 'info');
+  }
+  
   // Kiểm tra TẤT CẢ mục check phải được chọn
   const unchecked = checkItems.filter(it => !RC.results[it.id]);
   if(unchecked.length > 0){
@@ -970,6 +975,15 @@ async function doSubmit(){
     return;
   }
 
+  // Bắt buộc nhập tốc độ WiFi
+  if (!(Number(RC.speeds['wifi_spd']) > 0)) {
+    const wifiSec = document.getElementById('sc_wifi');
+    if (wifiSec && !wifiSec.classList.contains('open')) wifiSec.classList.add('open');
+    document.getElementById('sp_wifi_spd')?.focus();
+    toast('Vui lòng nhập tốc độ WiFi trước khi gửi', 'err');
+    return;
+  }
+  
   // Kiểm tra các mục lỗi phải có ghi chú
   const failWithoutNote = RC.sections.some(sec =>
     sec.items.some(it => RC.results[it.id] === 'fail' && !(RC.notes[it.id] || '').trim())
@@ -1036,7 +1050,7 @@ async function doSubmit(){
     clientCheckId,
     schemaVersion: 1,
     room: roomId,
-    roomLabel: document.getElementById('roomSel').selectedOptions[0]?.text || '',
+    roomLabel: RC.rooms.find(r => r.id === roomId)?.label || '',
     inspector: RC.account ? (RC.account.name || RC.account.username) : '(không đăng nhập)',
     inspectorEmail: RC.account?.username || '',
     checkDate: now.toISOString(),
@@ -1075,20 +1089,30 @@ async function doSubmit(){
         body: JSON.stringify(payload)
       });
 
-      if(!r.ok && r.status!==202) throw new Error('HTTP '+r.status);
+      let respData = {};
+      try {
+        respData = await r.json();
+      } catch (_) {
+        respData = {};
+      }
 
-      // Sau khi ghi thành công -> tải lại phòng đã khóa
+      if(!r.ok && r.status!==202) {
+        throw new Error(respData.message || ('HTTP ' + r.status));
+      }
+
       await fetchLockedRoomsFromSharePoint();
 
-      if (isRoomLocked(roomId)) {
-        toast('✅ Gửi thành công lên SharePoint! Phòng đã được khóa cho hôm nay','ok');
-      } else {
-        toast('✅ Gửi thành công lên SharePoint!','ok');
-      }
+      toast(
+        isOverwrite
+          ? '✅ Đã ghi đè dữ liệu cũ trên SharePoint!'
+          : '✅ Gửi thành công lên SharePoint!',
+        'ok'
+      );
     }catch(e){
       toast('Lỗi: '+e.message+' — đã lưu local','err');
     }
-  }else{
+  }
+  else{
     toast('✅ Đã lưu local (chưa có webhook)','ok');
   }
 
