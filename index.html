@@ -280,6 +280,64 @@ input[type=file]{display:none}
 ::-webkit-scrollbar{width:3px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+
+.room-wrap {
+  position: relative;
+  width: 200px;
+}
+
+.room-dropdown {
+  padding: 10px;
+  background-color: #2e3b4e;
+  color: #fff;
+  border-radius: 5px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.room-dropdown:hover {
+  background-color: #3e4d66;
+}
+
+.room-options {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background-color: #2e3b4e;
+  border-radius: 5px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.room-option {
+  padding: 10px;
+  color: #fff;
+  cursor: pointer;
+}
+
+.room-option:hover {
+  background-color: #3e4d66;
+}
+
+.room-option.checked {
+  background-color: #4caf50;
+  color: white;
+}
+
+.room-option.checked::before {
+  content: '✔ ';
+  color: white;
+}
+
+.dropdown-arrow {
+  font-size: 18px;
+}
 </style>
 </head>
 <body>
@@ -344,7 +402,15 @@ input[type=file]{display:none}
     <div class="room-row">
       <div class="room-wrap">
         <span style="font-size:16px">📍</span>
-        <select id="roomSel"></select>
+        <div class="room-wrap">
+		   <div id="roomSel" class="room-dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+			<span id="selectedRoom">Chọn phòng</span>
+			<span class="dropdown-arrow">↓</span>
+		   </div>
+		   <div class="room-options" id="roomOptions" role="listbox">
+			<!-- Các phòng sẽ được thêm ở đây -->
+		   </div>
+		</div>
       </div>
       <div class="clk-box">
         <div class="clk-t" id="clk">--:--</div>
@@ -674,27 +740,52 @@ function isRoomLocked(roomId) {
 
 // ── ROOM ──
 function buildRoomSel() {
-  const sel = document.getElementById('roomSel');
-  if (!sel) return;
+  const roomSel = document.getElementById('roomSel');
+  const optionsContainer = document.getElementById('roomOptions');
+  const selectedRoom = document.getElementById('selectedRoom');
 
-  sel.innerHTML = RC.rooms.map(r => {
+  optionsContainer.innerHTML = '';  // Clear current options
+
+  RC.rooms.forEach(r => {
     const checked = isRoomLocked(r.id);
-    return `
-      <option value="${r.id}">
-        ${esc(r.label)}${checked ? '   ✔ Đã kiểm tra' : ''}
-      </option>
-    `;
-  }).join('');
+    const roomLabel = `${esc(r.label)}${checked ? '   ✔ Đã kiểm tra' : ''}`;
+    
+    const option = document.createElement('div');
+    option.className = 'room-option';
+    option.textContent = roomLabel;
 
-  if (RC.rooms.length > 0) {
-    if (!sel.value || !RC.rooms.some(r => r.id === sel.value)) {
-      sel.value = RC.rooms[0].id;
+    if (checked) {
+      option.classList.add('checked');
     }
-    sel.disabled = false;
-  } else {
-    sel.innerHTML = `<option value="">Chưa có phòng</option>`;
-    sel.disabled = true;
-  }
+
+    option.onclick = () => {
+      selectedRoom.textContent = r.label;
+      roomSel.setAttribute('data-room', r.id); // Set the selected room's id
+      closeDropdown();
+    };
+
+    optionsContainer.appendChild(option);
+  });
+
+  // Show or hide options
+  roomSel.onclick = () => {
+    const isOpen = roomSel.getAttribute('aria-expanded') === 'true';
+    if (isOpen) {
+      closeDropdown();
+    } else {
+      openDropdown();
+    }
+  };
+}
+
+function openDropdown() {
+  document.getElementById('roomOptions').style.display = 'block';
+  document.getElementById('roomSel').setAttribute('aria-expanded', 'true');
+}
+
+function closeDropdown() {
+  document.getElementById('roomOptions').style.display = 'none';
+  document.getElementById('roomSel').setAttribute('aria-expanded', 'false');
 }
 
 // ── CHECKLIST RENDER ──
@@ -947,7 +1038,7 @@ async function doSubmit(){
   const checkItems = RC.sections.flatMap(s => s.items.filter(i => i.type !== 'speed'));
   const checkIds = checkItems.map(i => i.id);
 
-  const roomId = document.getElementById('roomSel').value;
+  const roomId = document.getElementById('roomSel').getAttribute('data-room');
   const isOverwrite = isRoomLocked(roomId);
 
   if(!roomId){
