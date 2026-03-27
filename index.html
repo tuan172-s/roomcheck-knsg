@@ -283,22 +283,23 @@ input[type=file]{display:none}
 
 .room-wrap {
   position: relative;
-  width: 200px;
+  width: 240px; /* Thay đổi chiều rộng để phù hợp với thiết kế */
 }
 
 .room-dropdown {
-  padding: 10px;
-  background-color: #2e3b4e;
+  padding: 12px 15px; /* Điều chỉnh padding để đẹp hơn */
+  background-color: #2e3b4e; /* Màu nền giống mẫu cũ */
   color: #fff;
-  border-radius: 5px;
+  border-radius: 6px; /* Mềm mại hơn */
   cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  transition: background-color 0.3s ease; /* Thêm hiệu ứng khi hover */
 }
 
 .room-dropdown:hover {
-  background-color: #3e4d66;
+  background-color: #3e4d66; /* Màu hover khi người dùng di chuột vào */
 }
 
 .room-options {
@@ -308,25 +309,27 @@ input[type=file]{display:none}
   left: 0;
   width: 100%;
   background-color: #2e3b4e;
-  border-radius: 5px;
+  border-radius: 6px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
   z-index: 10;
-  max-height: 200px;
+  max-height: 250px;
   overflow-y: auto;
+  margin-top: 8px; /* Thêm khoảng cách giữa dropdown và các phần tử bên dưới */
 }
 
 .room-option {
-  padding: 10px;
+  padding: 10px 15px; /* Điều chỉnh padding cho phù hợp */
   color: #fff;
   cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .room-option:hover {
-  background-color: #3e4d66;
+  background-color: #3e4d66; /* Màu hover khi di chuột vào */
 }
 
 .room-option.checked {
-  background-color: #4caf50;
+  background-color: #4caf50; /* Màu xanh cho các phòng đã kiểm tra */
   color: white;
 }
 
@@ -335,8 +338,17 @@ input[type=file]{display:none}
   color: white;
 }
 
+.room-option.checked:hover {
+  background-color: #45a049; /* Đổi màu hover khi phòng đã kiểm tra */
+}
+
 .dropdown-arrow {
   font-size: 18px;
+  transition: transform 0.3s ease; /* Hiệu ứng quay cho mũi tên */
+}
+
+.room-dropdown[aria-expanded="true"] .dropdown-arrow {
+  transform: rotate(180deg); /* Mũi tên quay ngược khi mở dropdown */
 }
 </style>
 </head>
