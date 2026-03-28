@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="RoomCheck">
-<title>RoomCheck – Kiểm tra phòng họp</title>
+<title>RoomCheck – Kiểm tra phòng</title>
 <link rel="manifest" href="manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -277,6 +277,40 @@ input[type=file]{display:none}
 .toast.err{background:rgba(248,113,113,.93);color:#fff}
 .toast.info{background:rgba(77,159,255,.93);color:#0b0f1a}
 
+/* room type badge in selector */
+.rt-badge{display:inline-block;font-size:9px;font-family:var(--mono);font-weight:700;padding:2px 7px;border-radius:5px;margin-left:4px;vertical-align:middle;text-transform:uppercase;letter-spacing:.6px}
+.rt-meeting{background:rgba(77,159,255,.15);color:var(--blue)}
+.rt-server{background:rgba(45,212,191,.15);color:var(--teal)}
+.rt-default{background:var(--s3);color:var(--dim)}
+
+/* type indicator on checklist header */
+.room-type-tag{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-family:var(--mono);font-weight:700;padding:3px 9px;border-radius:6px;text-transform:uppercase;letter-spacing:.6px;margin-left:6px}
+.rtt-meeting{background:rgba(77,159,255,.12);color:var(--blue);border:1px solid rgba(77,159,255,.2)}
+.rtt-server{background:rgba(45,212,191,.12);color:var(--teal);border:1px solid rgba(45,212,191,.2)}
+
+/* temp & voltage input rows */
+.meas-row{display:flex;align-items:center;gap:8px;margin-top:9px}
+.meas-in{flex:1;padding:9px 12px;background:var(--s2);border:1px solid var(--border);border-radius:9px;color:var(--text);font-size:16px;font-weight:600;font-family:var(--mono);outline:none;transition:border-color .2s}
+.meas-in:focus{border-color:var(--blue)}
+.meas-unit{font-size:11px;color:var(--dim);font-family:var(--mono);min-width:28px}
+.meas-tag{font-size:10px;font-weight:600;padding:3px 8px;border-radius:6px;font-family:var(--mono)}
+/* temp tags */
+.tt-cold{background:rgba(77,159,255,.12);color:var(--blue)}
+.tt-ok{background:rgba(52,211,153,.12);color:var(--green)}
+.tt-warm{background:rgba(251,191,36,.12);color:var(--amber)}
+.tt-hot{background:rgba(248,113,113,.12);color:var(--red)}
+/* voltage tags */
+.vt-ok{background:rgba(52,211,153,.12);color:var(--green)}
+.vt-warn{background:rgba(251,191,36,.12);color:var(--amber)}
+.vt-err{background:rgba(248,113,113,.12);color:var(--red)}
+
+/* admin: room-type selector per room row */
+.r-type-sel{background:var(--s2);border:1px solid var(--border);border-radius:7px;color:var(--dim);font-size:10px;font-family:var(--mono);padding:4px 6px;outline:none;flex-shrink:0;cursor:pointer}
+/* admin: section type tab */
+.adm-type-tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.adm-type-tab{padding:6px 14px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--dim);font-size:11px;font-family:var(--mono);cursor:pointer;transition:all .2s;font-weight:700}
+.adm-type-tab.on{border-color:var(--blue);color:var(--blue);background:rgba(77,159,255,.08)}
+
 ::-webkit-scrollbar{width:3px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
@@ -290,7 +324,7 @@ input[type=file]{display:none}
   <div class="splash-ico">📋</div>
   <div>
     <div class="splash-title">RoomCheck</div>
-    <div class="splash-sub">// meeting room checklist</div>
+    <div class="splash-sub">// facility checklist system</div>
   </div>
   <div>
     <div class="splash-bar"><div class="splash-fill"></div></div>
@@ -344,7 +378,7 @@ input[type=file]{display:none}
     <div class="room-row">
       <div class="room-wrap">
         <span style="font-size:16px">📍</span>
-        <select id="roomSel"></select>
+        <select id="roomSel" onchange="onRoomChange()"></select>
       </div>
       <div class="clk-box">
         <div class="clk-t" id="clk">--:--</div>
@@ -352,7 +386,13 @@ input[type=file]{display:none}
       </div>
     </div>
     <div class="prog-wrap">
-      <div class="prog-meta"><span id="pTxt">0 / 0 mục</span><span id="pPct">0%</span></div>
+      <div class="prog-meta">
+        <span id="pTxt">0 / 0 mục</span>
+        <span style="display:flex;align-items:center;gap:6px">
+          <span id="roomTypeTag"></span>
+          <span id="pPct">0%</span>
+        </span>
+      </div>
       <div class="prog-track"><div class="prog-bar" id="pBar" style="width:0%"></div></div>
     </div>
   </div>
@@ -396,7 +436,7 @@ input[type=file]{display:none}
   <div class="pane" id="pn-adm">
     <div class="adm-body">
       <div class="card">
-        <div class="card-hd"><h3>🏢 Danh sách phòng họp</h3><span id="rCnt" style="font-size:10px;font-family:var(--mono);color:var(--dim)"></span></div>
+        <div class="card-hd"><h3>🏢 Danh sách phòng</h3><span id="rCnt" style="font-size:10px;font-family:var(--mono);color:var(--dim)"></span></div>
         <div class="card-bd">
           <div class="r-list" id="rList"></div>
           <button class="add-row-btn" onclick="addRoom()">＋ Thêm phòng</button>
@@ -405,6 +445,7 @@ input[type=file]{display:none}
       <div class="card">
         <div class="card-hd"><h3>📋 Nhóm & mục kiểm tra</h3><span id="sCnt" style="font-size:10px;font-family:var(--mono);color:var(--dim)"></span></div>
         <div class="card-bd" style="padding-bottom:8px">
+          <div class="adm-type-tabs" id="admTypeTabs"></div>
           <div class="sb-list" id="sbList"></div>
           <button class="add-sec-btn" style="margin-top:10px" onclick="addSec()">＋ Thêm nhóm</button>
         </div>
@@ -431,52 +472,121 @@ const HARDCODED_CFG = {
 };
 // ═══════════════════════════════════════════════════════════
 
+// ── ROOM TYPES ──
+// Thêm type mới vào đây để hệ thống tự nhận diện
+const ROOM_TYPES = {
+  meeting: { label: 'Phòng họp', icon: '🏢', tagClass: 'rtt-meeting' },
+  server:  { label: 'Phòng server', icon: '🖥️', tagClass: 'rtt-server'  },
+  // warehouse: { label: 'Phòng kho', icon: '📦', tagClass: 'rtt-default' },  // ← thêm loại mới ở đây
+};
+
 const DEF_ROOMS = [
-  {id:'EVO',label:'Phòng họp EVO'},
-  {id:'ISO L1',label:'Phòng họp ISO Lầu 1'},
-  {id:'BOD',label:'Phòng họp BOD'},
-  {id:'Nipper',label:'Phòng họp Nipper'},
-  {id:'OEM',label:'Phòng OEM'},
-  {id:'Clipper',label:'Phòng họp Clipper'},
-  {id:'IE',label:'Phòng họp IE'},
-  {id:'KyThuat',label:'Phòng họp Kỹ Thuật'},
+  {id:'EVO',      label:'Phòng họp EVO',        type:'meeting'},
+  {id:'ISO L1',   label:'Phòng họp ISO Lầu 1',  type:'meeting'},
+  {id:'BOD',      label:'Phòng họp BOD',         type:'meeting'},
+  {id:'Nipper',   label:'Phòng họp Nipper',      type:'meeting'},
+  {id:'OEM',      label:'Phòng OEM',             type:'meeting'},
+  {id:'Clipper',  label:'Phòng họp Clipper',     type:'meeting'},
+  {id:'IE',       label:'Phòng họp IE',          type:'meeting'},
+  {id:'KyThuat',  label:'Phòng họp Kỹ Thuật',   type:'meeting'},
+  {id:'SVR_DC',   label:'Phòng Server DC',       type:'server'},
+  {id:'SVR_DR',   label:'Phòng Server DR',       type:'server'},
 ];
-const DEF_SECTIONS = [
-  {id:'tv',label:'Tivi / Màn hình',emoji:'📺',items:[
-    {id:'tv_pwr',icon:'🔌',label:'Tivi bật/tắt bình thường',note:'Kiểm tra nút nguồn & remote',type:'check'},
-    {id:'tv_img',icon:'🖥️',label:'Hiển thị hình ảnh rõ nét',note:'Không nhiễu, không chết điểm ảnh',type:'check'},
-    {id:'tv_snd',icon:'🔊',label:'Âm thanh hoạt động',note:'Test volume lên/xuống',type:'check'},
-    {id:'tv_rem',icon:'📱',label:'Remote hoạt động',note:'Kiểm tra pin nếu không phản hồi',type:'check'},
-  ]},
-  {id:'wifi',label:'Kết nối WiFi',emoji:'📶',items:[
-    {id:'wifi_con',icon:'🔗',label:'Kết nối WiFi thành công',note:'Kết nối SSID chính phòng họp',type:'check'},
-    {id:'wifi_net',icon:'🌐',label:'Truy cập Internet được',note:'Mở website bất kỳ kiểm tra',type:'check'},
-    {id:'wifi_spd',icon:'⚡',label:'Tốc độ WiFi (Mbps)',note:'Đo bằng Speedtest / Fast.com',type:'speed'},
-    {id:'wifi_stb',icon:'📡',label:'Tín hiệu ổn định',note:'Không bị ngắt kết nối',type:'check'},
-  ]},
-  {id:'hdmi',label:'Kết nối HDMI',emoji:'🔌',items:[
-    {id:'hdmi_cbl',icon:'🔋',label:'Cáp HDMI có sẵn & nguyên vẹn',note:'Đầu cắm không gãy',type:'check'},
-    {id:'hdmi_con',icon:'💻',label:'Kết nối laptop → Tivi',note:'Cắm HDMI, chọn đúng input',type:'check'},
-    {id:'hdmi_dsp',icon:'🖼️',label:'Màn hình laptop hiện lên Tivi',note:'Kiểm tra độ phân giải',type:'check'},
-    {id:'hdmi_aud',icon:'🎵',label:'Âm thanh qua HDMI',note:'Chọn HDMI làm audio output',type:'check'},
-    {id:'hdmi_adp',icon:'🔄',label:'HDMI không dây (nếu có)',note:'Kiểm tra HDMI không dây',type:'check'},
-  ]},
-];
+
+// ── SECTIONS THEO TỪNG LOẠI PHÒNG ──
+const DEF_SECTIONS_BY_TYPE = {
+  meeting: [
+    {id:'tv',label:'Tivi / Màn hình',emoji:'📺',items:[
+      {id:'tv_pwr',icon:'🔌',label:'Tivi bật/tắt bình thường',note:'Kiểm tra nút nguồn & remote',type:'check'},
+      {id:'tv_img',icon:'🖥️',label:'Hiển thị hình ảnh rõ nét',note:'Không nhiễu, không chết điểm ảnh',type:'check'},
+      {id:'tv_snd',icon:'🔊',label:'Âm thanh hoạt động',note:'Test volume lên/xuống',type:'check'},
+      {id:'tv_rem',icon:'📱',label:'Remote hoạt động',note:'Kiểm tra pin nếu không phản hồi',type:'check'},
+    ]},
+    {id:'wifi',label:'Kết nối WiFi',emoji:'📶',items:[
+      {id:'wifi_con',icon:'🔗',label:'Kết nối WiFi thành công',note:'Kết nối SSID chính phòng họp',type:'check'},
+      {id:'wifi_net',icon:'🌐',label:'Truy cập Internet được',note:'Mở website bất kỳ kiểm tra',type:'check'},
+      {id:'wifi_spd',icon:'⚡',label:'Tốc độ WiFi (Mbps)',note:'Đo bằng Speedtest / Fast.com',type:'speed'},
+      {id:'wifi_stb',icon:'📡',label:'Tín hiệu ổn định',note:'Không bị ngắt kết nối',type:'check'},
+    ]},
+    {id:'hdmi',label:'Kết nối HDMI',emoji:'🔌',items:[
+      {id:'hdmi_cbl',icon:'🔋',label:'Cáp HDMI có sẵn & nguyên vẹn',note:'Đầu cắm không gãy',type:'check'},
+      {id:'hdmi_con',icon:'💻',label:'Kết nối laptop → Tivi',note:'Cắm HDMI, chọn đúng input',type:'check'},
+      {id:'hdmi_dsp',icon:'🖼️',label:'Màn hình laptop hiện lên Tivi',note:'Kiểm tra độ phân giải',type:'check'},
+      {id:'hdmi_aud',icon:'🎵',label:'Âm thanh qua HDMI',note:'Chọn HDMI làm audio output',type:'check'},
+      {id:'hdmi_adp',icon:'🔄',label:'HDMI không dây (nếu có)',note:'Kiểm tra HDMI không dây',type:'check'},
+    ]},
+  ],
+  server: [
+    {id:'svr_power',label:'Nguồn điện / UPS',emoji:'⚡',items:[
+      {id:'svr_pwr_main', icon:'🔌',label:'Nguồn điện chính ổn định',  note:'Đèn báo UPS xanh',             type:'check'},
+      {id:'svr_pwr_ups',  icon:'🔋',label:'UPS còn pin dự phòng (>80%)',note:'Xem % pin trên màn hình UPS',  type:'check'},
+      {id:'svr_pwr_volt', icon:'📊',label:'Điện áp đầu ra UPS (V)',      note:'Đo đồng hồ hoặc đọc UPS LCD', type:'voltage'},
+      {id:'svr_pwr_cur',  icon:'⚡',label:'Dòng tải UPS (A)',            note:'Đọc từ màn hình UPS',          type:'voltage'},
+      {id:'svr_pwr_pdu',  icon:'🔌',label:'PDU tủ rack hoạt động',       note:'Không có lỗi/cảnh báo PDU',   type:'check'},
+    ]},
+    {id:'svr_cooling',label:'Làm mát / Nhiệt độ',emoji:'❄️',items:[
+      {id:'svr_cool_ac',   icon:'🌡️',label:'Điều hòa server room ON',      note:'Nhiệt độ đặt ≤ 22°C',          type:'check'},
+      {id:'svr_cool_tmp1', icon:'🌡️',label:'Nhiệt độ phòng (°C)',           note:'Cảm biến hoặc nhiệt kế treo',  type:'temp'},
+      {id:'svr_cool_tmp2', icon:'🌡️',label:'Nhiệt độ trong tủ rack (°C)',   note:'Cảm biến rack hoặc BMS',       type:'temp'},
+      {id:'svr_cool_hum',  icon:'💧',label:'Độ ẩm trong ngưỡng cho phép',   note:'40–60% RH — kiểm tra BMS',     type:'check'},
+      {id:'svr_cool_alm',  icon:'🚨',label:'Không có cảnh báo nhiệt/lửa',   note:'Kiểm tra bảng điều khiển BMS', type:'check'},
+    ]},
+    {id:'svr_network',label:'Mạng / Switch',emoji:'🌐',items:[
+      {id:'svr_net_core',  icon:'🔗',label:'Core switch hoạt động',      note:'Đèn link/activity xanh',      type:'check'},
+      {id:'svr_net_dist',  icon:'🔗',label:'Distribution switch OK',     note:'Không có port down bất thường',type:'check'},
+      {id:'svr_net_spd',   icon:'⚡',label:'Throughput nội bộ (Mbps)',   note:'iPerf hoặc đo NMS',           type:'speed'},
+      {id:'svr_net_int',   icon:'🌐',label:'Internet uplink hoạt động',  note:'Ping gateway < 5ms',          type:'check'},
+      {id:'svr_net_fw',    icon:'🛡️',label:'Firewall không có cảnh báo', note:'Kiểm tra dashboard firewall', type:'check'},
+    ]},
+    {id:'svr_servers',label:'Máy chủ / Storage',emoji:'🖥️',items:[
+      {id:'svr_srv_pwr',  icon:'💡',label:'Tất cả server đang chạy',     note:'Đèn power xanh, không amber',  type:'check'},
+      {id:'svr_srv_disk', icon:'💾',label:'Không có cảnh báo ổ đĩa',    note:'RAID / S.M.A.R.T. OK',         type:'check'},
+      {id:'svr_srv_bkp',  icon:'📦',label:'Backup đêm qua thành công',  note:'Kiểm tra log backup sáng nay', type:'check'},
+      {id:'svr_srv_virt', icon:'⚙️',label:'Virtualization host ổn định', note:'vSphere/Hyper-V không lỗi',   type:'check'},
+      {id:'svr_srv_cpu',  icon:'📈',label:'CPU/RAM không quá tải',       note:'< 85% thì OK',                type:'check'},
+    ]},
+    {id:'svr_access',label:'An toàn / Tiếp cận',emoji:'🔐',items:[
+      {id:'svr_acc_door',  icon:'🚪',label:'Cửa phòng khóa đúng cách',        note:'Khóa từ / thẻ hoạt động',   type:'check'},
+      {id:'svr_acc_cam',   icon:'📹',label:'Camera giám sát hoạt động',        note:'Kiểm tra hình live trên NVR',type:'check'},
+      {id:'svr_acc_cable', icon:'🧹',label:'Dây cáp gọn gàng, không lỗi hở',  note:'Dây quản lý bằng velcro',   type:'check'},
+      {id:'svr_acc_log',   icon:'📋',label:'Sổ vào/ra phòng có cập nhật',      note:'Ghi đầy đủ người/giờ vào',  type:'check'},
+    ]},
+  ],
+};
+
 
 // ── STATE ──
 const RC = {
   rooms:[],
-  sections:[],
+  sectionsByType:{},   // { meeting:[...], server:[...], ... }
   results:{},
   notes:{},
   speeds:{},
+  temps:{},            // nhiệt độ (°C)
+  voltages:{},         // điện áp / dòng điện
   photos:[],
   msalApp:null,
   account:null,
   token:null,
   lockedRooms:[],
-  lockedMap:{}
+  lockedMap:{},
+  adminEditType:'meeting',  // loại phòng đang edit trong admin
 };
+
+// Helper: lấy sections của phòng đang chọn
+function getActiveSections() {
+  const roomId = document.getElementById('roomSel')?.value;
+  const room = RC.rooms.find(r => r.id === roomId);
+  const type = room?.type || 'meeting';
+  return RC.sectionsByType[type] || RC.sectionsByType['meeting'] || [];
+}
+
+// Helper: type của phòng đang chọn
+function getActiveRoomType() {
+  const roomId = document.getElementById('roomSel')?.value;
+  const room = RC.rooms.find(r => r.id === roomId);
+  return room?.type || 'meeting';
+}
 
 // ── BOOT ──
 window.addEventListener('DOMContentLoaded', boot);
@@ -521,7 +631,7 @@ async function boot() {
       }
     }
 
-	if (RC.account) {
+  if (RC.account) {
 	  setSplash('Xin chào ' + (RC.account.name || RC.account.username) + '…');
       await sleep(600);
 	  await fetchLockedRoomsFromSharePoint();
@@ -679,11 +789,8 @@ function buildRoomSel() {
 
   sel.innerHTML = RC.rooms.map(r => {
     const checked = isRoomLocked(r.id);
-    return `
-      <option value="${r.id}">
-        ${esc(r.label)}${checked ? '   ✔ Đã kiểm tra' : ''}
-      </option>
-    `;
+    const typeInfo = ROOM_TYPES[r.type || 'meeting'] || ROOM_TYPES['meeting'];
+    return `<option value="${r.id}">${typeInfo.icon} ${esc(r.label)}${checked ? '  ✔ Đã KT' : ''}</option>`;
   }).join('');
 
   if (RC.rooms.length > 0) {
@@ -695,14 +802,30 @@ function buildRoomSel() {
     sel.innerHTML = `<option value="">Chưa có phòng</option>`;
     sel.disabled = true;
   }
+  updateRoomTypeTag();
+}
+
+function onRoomChange() {
+  renderChecklist();
+  updateRoomTypeTag();
+}
+
+function updateRoomTypeTag() {
+  const type = getActiveRoomType();
+  const typeInfo = ROOM_TYPES[type] || ROOM_TYPES['meeting'];
+  const tag = document.getElementById('roomTypeTag');
+  if (!tag) return;
+  tag.className = 'room-type-tag ' + (typeInfo.tagClass || 'rtt-meeting');
+  tag.textContent = typeInfo.icon + ' ' + typeInfo.label;
 }
 
 // ── CHECKLIST RENDER ──
 function renderChecklist() {
-  RC.results={}; RC.notes={}; RC.speeds={};
+  RC.results={}; RC.notes={}; RC.speeds={}; RC.temps={}; RC.voltages={};
   const body = document.getElementById('clBody');
   body.innerHTML = '';
-  RC.sections.forEach((sec,si)=>{
+  const sections = getActiveSections();
+  sections.forEach((sec,si)=>{
     const el = document.createElement('div');
     el.className = 'sec'+(si===0?' open':'');
     el.id = 'sc_'+sec.id;
@@ -722,7 +845,30 @@ function renderChecklist() {
   updateProgress();
 }
 function renderItem(it) {
-  const isSpeed = it.type === 'speed';
+  const isSpeed   = it.type === 'speed';
+  const isTemp    = it.type === 'temp';
+  const isVoltage = it.type === 'voltage';
+
+  if (isTemp || isVoltage) {
+    const unit    = isTemp ? '°C' : 'V';
+    const inputId = isTemp ? 'tmp_'+it.id : 'vlt_'+it.id;
+    const onInput = isTemp ? `onTemp('${it.id}')` : `onVoltage('${it.id}')`;
+    const tagId   = 'mte_'+it.id;
+    return `<div class="ci" id="ci_${it.id}">
+      <div class="ci-row">
+        <span class="ci-ico">${it.icon||'🔹'}</span>
+        <div class="ci-info">
+          <div class="ci-name">${esc(it.label)}</div>
+          ${it.note?`<div class="ci-note">${esc(it.note)}</div>`:''}
+        </div>
+      </div>
+      <div class="meas-row">
+        <input class="meas-in" id="${inputId}" type="number" min="0" step="${isTemp?'0.1':'0.1'}" placeholder="0" oninput="${onInput}">
+        <span class="meas-unit">${unit}</span>
+        <span id="${tagId}" class="meas-tag"></span>
+      </div>
+    </div>`;
+  }
 
   if (isSpeed) {
     return `<div class="ci" id="ci_${it.id}">
@@ -734,14 +880,7 @@ function renderItem(it) {
         </div>
       </div>
       <div class="spd-row">
-        <input
-          class="spd-in"
-          id="sp_${it.id}"
-          type="number"
-          min="0"
-          placeholder="0"
-          oninput="onSpd('${it.id}')"
-        >
+        <input class="spd-in" id="sp_${it.id}" type="number" min="0" placeholder="0" oninput="onSpd('${it.id}')">
         <span class="spd-unit">Mbps</span>
         <span id="spe_${it.id}"></span>
       </div>
@@ -812,20 +951,48 @@ function onSpd(id){
   updateSecUI();
   updateProgress();
 }
+
+function onTemp(id) {
+  const v = parseFloat(document.getElementById('tmp_' + id).value);
+  const el = document.getElementById('mte_' + id);
+  if (isNaN(v)) { delete RC.temps[id]; el.textContent=''; el.className='meas-tag'; updateSecUI(); updateProgress(); return; }
+  RC.temps[id] = v;
+  if      (v < 18)  { el.textContent='Lạnh';    el.className='meas-tag tt-cold'; }
+  else if (v <= 24) { el.textContent='Tốt';     el.className='meas-tag tt-ok';   }
+  else if (v <= 28) { el.textContent='Ấm';      el.className='meas-tag tt-warm'; }
+  else              { el.textContent='⚠ Nóng';  el.className='meas-tag tt-hot';  }
+  updateSecUI(); updateProgress();
+}
+
+function onVoltage(id) {
+  const v = parseFloat(document.getElementById('vlt_' + id).value);
+  const el = document.getElementById('mte_' + id);
+  if (isNaN(v) || v <= 0) { delete RC.voltages[id]; el.textContent=''; el.className='meas-tag'; updateSecUI(); updateProgress(); return; }
+  RC.voltages[id] = v;
+  // Đánh giá đơn giản theo dải điện áp AC thông thường (220V ±10%)
+  if (v >= 198 && v <= 242) { el.textContent='Bình thường'; el.className='meas-tag vt-ok';   }
+  else if (v > 0)           { el.textContent='Kiểm tra lại';el.className='meas-tag vt-warn'; }
+  else                      { el.textContent='Lỗi';         el.className='meas-tag vt-err';  }
+  updateSecUI(); updateProgress();
+}
 function updateSecUI(){
-  RC.sections.forEach(sec=>{
-    // Chỉ tính mục check (không tính speed) cho badge
-    const checkItems = sec.items.filter(i=>i.type!=='speed');
-    const speedItems = sec.items.filter(i=>i.type==='speed');
+  const sections = getActiveSections();
+  sections.forEach(sec=>{
+    const checkItems = sec.items.filter(i=>i.type==='check');
+    const measItems  = sec.items.filter(i=>i.type!=='check');  // speed, temp, voltage
     const cIds = checkItems.map(i=>i.id);
 
     const done = cIds.filter(id=>RC.results[id]);
     const pass = cIds.filter(id=>RC.results[id]==='pass');
     const fail = cIds.filter(id=>RC.results[id]==='fail');
-    const na   = cIds.filter(id=>RC.results[id]==='na');
 
-    // Speed: kiểm tra có nhập chưa
-    const spdDone = speedItems.filter(i=>RC.speeds[i.id]>0).length;
+    // Tất cả mục đo lường: có giá trị thì coi là done
+    const measDone = measItems.filter(i=>{
+      if (i.type==='speed')   return RC.speeds[i.id] > 0;
+      if (i.type==='temp')    return RC.temps[i.id] !== undefined;
+      if (i.type==='voltage') return RC.voltages[i.id] !== undefined;
+      return false;
+    }).length;
 
     const card=document.getElementById('sc_'+sec.id);
     const bdg=document.getElementById('sb_'+sec.id);
@@ -834,58 +1001,63 @@ function updateSecUI(){
     card.classList.remove('ok','warn','fail');
 
     const allCheckDone = done.length === cIds.length;
-    const allSpdDone = spdDone === speedItems.length;
+    const allMeasDone  = measDone === measItems.length;
 
-    if(!done.length && spdDone===0){
+    if(!done.length && measDone===0){
       bdg.textContent='--'; bdg.className='sec-bdg bp'; sub.textContent='Chưa kiểm tra';
-    } else if(fail.length===0 && allCheckDone && allSpdDone){
+    } else if(fail.length===0 && allCheckDone && allMeasDone){
       bdg.textContent='✓ OK'; bdg.className='sec-bdg bok';
       sub.textContent='Tất cả mục đạt'; card.classList.add('ok');
     } else if(fail.length>0){
       bdg.textContent=`${fail.length} lỗi`; bdg.className='sec-bdg bfail';
       sub.textContent=`${pass.length}/${cIds.length} đạt`; card.classList.add('fail');
     } else {
-      // Hiện số mục check đã xong (không kể speed)
-      const spdTxt = speedItems.length>0 ? ` + tốc độ ${spdDone>0?'✓':'?'}` : '';
-      bdg.textContent=`${done.length}/${cIds.length}${spdTxt}`;
+      const measTxt = measItems.length>0 ? ` + ${measDone}/${measItems.length} đo` : '';
+      bdg.textContent=`${done.length}/${cIds.length}${measTxt}`;
       bdg.className='sec-bdg bpart';
       sub.textContent=`Đã kiểm ${done.length}/${cIds.length} mục`; card.classList.add('warn');
     }
   });
 }
 function updateProgress(){
-  // Tách mục check và speed riêng
-  const checkItems = RC.sections.flatMap(s=>s.items.filter(i=>i.type!=='speed'));
-  const speedItems = RC.sections.flatMap(s=>s.items.filter(i=>i.type==='speed'));
+  const sections = getActiveSections();
+  const checkItems = sections.flatMap(s=>s.items.filter(i=>i.type==='check'));
+  const measItems  = sections.flatMap(s=>s.items.filter(i=>i.type!=='check'));
 
   const checkIds = checkItems.map(i=>i.id);
   const done = checkIds.filter(id=>RC.results[id]).length;
   const total = checkIds.length;
 
-  // Speed tính riêng: có nhập số > 0 thì coi là đã kiểm
-  const speedDone = speedItems.filter(i=> RC.speeds[i.id] > 0).length;
-  const speedTotal = speedItems.length;
+  const measDone = measItems.filter(i=>{
+    if (i.type==='speed')   return RC.speeds[i.id] > 0;
+    if (i.type==='temp')    return RC.temps[i.id] !== undefined;
+    if (i.type==='voltage') return RC.voltages[i.id] !== undefined;
+    return false;
+  }).length;
+  const measTotal = measItems.length;
 
-  const grandDone = done + speedDone;
-  const grandTotal = total + speedTotal;
+  const grandDone = done + measDone;
+  const grandTotal = total + measTotal;
   const pct = grandTotal ? Math.round(grandDone/grandTotal*100) : 0;
 
-  // Hiển thị: phân biệt mục check và mục tốc độ
-  const spdTxt = speedTotal > 0 ? ` + ${speedDone}/${speedTotal} tốc độ` : '';
-  document.getElementById('pTxt').textContent=`${done} / ${total} mục${spdTxt}`;
+  const measTxt = measTotal > 0 ? ` + ${measDone}/${measTotal} đo lường` : '';
+  document.getElementById('pTxt').textContent=`${done} / ${total} mục${measTxt}`;
   document.getElementById('pPct').textContent=pct+'%';
   document.getElementById('pBar').style.width=pct+'%';
 
-  // Cập nhật màu nút gửi theo trạng thái
   updateSubmitBtn();
 }
 
 // ── SUBMIT BUTTON STATE ──
 function updateSubmitBtn() {
-  const checkItems = RC.sections.flatMap(s => s.items.filter(i => i.type !== 'speed'));
+  const sections = getActiveSections();
+  const roomType = getActiveRoomType();
+  const checkItems = sections.flatMap(s => s.items.filter(i => i.type === 'check'));
   const allChecked = checkItems.every(it => RC.results[it.id]);
   const hasPhoto = RC.photos.length > 0;
-  const hasWifiSpeed = Number(RC.speeds['wifi_spd']) > 0;
+
+  // WiFi speed chỉ bắt buộc với phòng họp
+  const hasWifiSpeed = roomType !== 'meeting' || Number(RC.speeds['wifi_spd']) > 0;
 
   const btn = document.getElementById('subBtn');
   if (!btn) return;
@@ -943,8 +1115,9 @@ function delPhoto(id){RC.photos=RC.photos.filter(p=>p.id!==id);renderPhotos();}
 
 // ── SUBMIT ──
 async function doSubmit(){
-  const all = RC.sections.flatMap(s => s.items.map(i => i.id));
-  const checkItems = RC.sections.flatMap(s => s.items.filter(i => i.type !== 'speed'));
+  const sections = getActiveSections();
+  const roomType = getActiveRoomType();
+  const checkItems = sections.flatMap(s => s.items.filter(i => i.type === 'check'));
   const checkIds = checkItems.map(i => i.id);
 
   const roomId = document.getElementById('roomSel').value;
@@ -962,9 +1135,8 @@ async function doSubmit(){
   // Kiểm tra TẤT CẢ mục check phải được chọn
   const unchecked = checkItems.filter(it => !RC.results[it.id]);
   if(unchecked.length > 0){
-    // Mở section chứa mục chưa check
     const firstUnchecked = unchecked[0];
-    const sec = RC.sections.find(s => s.items.some(i => i.id === firstUnchecked.id));
+    const sec = sections.find(s => s.items.some(i => i.id === firstUnchecked.id));
     if(sec) {
       const card = document.getElementById('sc_'+sec.id);
       if(card && !card.classList.contains('open')) card.classList.add('open');
@@ -973,8 +1145,8 @@ async function doSubmit(){
     return;
   }
 
-  // Bắt buộc nhập tốc độ WiFi
-  if (!(Number(RC.speeds['wifi_spd']) > 0)) {
+  // Bắt buộc nhập tốc độ WiFi chỉ với phòng họp
+  if (roomType === 'meeting' && !(Number(RC.speeds['wifi_spd']) > 0)) {
     const wifiSec = document.getElementById('sc_wifi');
     if (wifiSec && !wifiSec.classList.contains('open')) wifiSec.classList.add('open');
     document.getElementById('sp_wifi_spd')?.focus();
@@ -983,7 +1155,7 @@ async function doSubmit(){
   }
   
   // Kiểm tra các mục lỗi phải có ghi chú
-  const failWithoutNote = RC.sections.some(sec =>
+  const failWithoutNote = sections.some(sec =>
     sec.items.some(it => RC.results[it.id] === 'fail' && !(RC.notes[it.id] || '').trim())
   );
   if(failWithoutNote){
@@ -1011,25 +1183,30 @@ async function doSubmit(){
   const now=new Date();
   const clientCheckId = crypto.randomUUID();
 
-  const details = RC.sections.map((sec, secIdx) => ({
+  const details = sections.map((sec, secIdx) => ({
     sectionId: sec.id,
     sectionLabel: sec.label,
     sectionOrder: secIdx + 1,
     items: sec.items.map((it, itemIdx) => {
-      const isSpeed = it.type === 'speed';
-      const speedVal = isSpeed ? (RC.speeds[it.id] ?? null) : null;
-      const speedText = isSpeed && speedVal != null ? `${speedVal} Mbps` : '';
-
+      const isSpeed   = it.type === 'speed';
+      const isTemp    = it.type === 'temp';
+      const isVoltage = it.type === 'voltage';
+      const isMeas    = isSpeed || isTemp || isVoltage;
+      let valueNumber = null, valueText = '', unit = '';
+      if (isSpeed)   { valueNumber = RC.speeds[it.id] ?? null;   unit = 'Mbps'; valueText = valueNumber != null ? `${valueNumber} Mbps` : ''; }
+      if (isTemp)    { valueNumber = RC.temps[it.id]  ?? null;   unit = '°C';   valueText = valueNumber != null ? `${valueNumber}°C` : '';   }
+      if (isVoltage) { valueNumber = RC.voltages[it.id] ?? null; unit = 'V';    valueText = valueNumber != null ? `${valueNumber}V` : '';    }
       return {
         id: it.id,
         label: it.label,
         type: it.type || 'check',
         itemOrder: itemIdx + 1,
-        result: isSpeed ? 'value' : (RC.results[it.id] || 'unchecked'),
-        displayText: isSpeed ? speedText : it.label,
-        note: isSpeed ? '' : (RC.notes[it.id] || ''),
-        valueNumber: speedVal,
-        valueText: speedText
+        result: isMeas ? 'value' : (RC.results[it.id] || 'unchecked'),
+        displayText: isMeas ? valueText : it.label,
+        note: isMeas ? '' : (RC.notes[it.id] || ''),
+        valueNumber,
+        valueText,
+        unit
       };
     })
   }));
@@ -1046,7 +1223,8 @@ async function doSubmit(){
 
   const payload = {
     clientCheckId,
-    schemaVersion: 1,
+    schemaVersion: 2,
+    roomType,
     room: roomId,
     roomLabel: RC.rooms.find(r => r.id === roomId)?.label || '',
     inspector: RC.account ? (RC.account.name || RC.account.username) : '(không đăng nhập)',
@@ -1077,9 +1255,7 @@ async function doSubmit(){
     try{
       toast('📤 Đang gửi lên SharePoint…','info');
 
-      const headers = {
-        'Content-Type': 'application/json'
-      };
+      const headers = { 'Content-Type': 'application/json' };
 
       const r = await fetch(cfg.webhook, {
         method: 'POST',
@@ -1088,11 +1264,7 @@ async function doSubmit(){
       });
 
       let respData = {};
-      try {
-        respData = await r.json();
-      } catch (_) {
-        respData = {};
-      }
+      try { respData = await r.json(); } catch (_) { respData = {}; }
 
       if(!r.ok && r.status!==202) {
         throw new Error(respData.message || ('HTTP ' + r.status));
@@ -1143,7 +1315,7 @@ async function compressPhoto(dataUrl,maxKB){
 }
 
 function resetForm(){
-  RC.results={};RC.notes={};RC.speeds={};RC.photos=[];
+  RC.results={};RC.notes={};RC.speeds={};RC.temps={};RC.voltages={};RC.photos=[];
   document.getElementById('genNote').value='';
   renderChecklist();renderPhotos();updateProgress();updateSubmitBtn();
 }
@@ -1175,76 +1347,103 @@ function renderHistory(){
 
 // ── ADMIN ──
 function renderAdmin(){
-  renderRoomList(); renderSecBuilder();
+  renderRoomList(); renderAdmTypeTabs(); renderSecBuilder();
 }
 function renderRoomList(){
+  const typeOptions = Object.entries(ROOM_TYPES).map(([k,v])=>
+    `<option value="${k}">${v.icon} ${v.label}</option>`
+  ).join('');
+
   document.getElementById('rList').innerHTML=RC.rooms.map((r,i)=>`
-    <div class="r-row"><span>🏢</span>
+    <div class="r-row"><span>📍</span>
       <input value="${esc(r.label)}" placeholder="Tên phòng" oninput="RC.rooms[${i}].label=this.value">
+      <select class="r-type-sel" onchange="RC.rooms[${i}].type=this.value">
+        ${Object.entries(ROOM_TYPES).map(([k,v])=>
+          `<option value="${k}" ${r.type===k?'selected':''}>${v.icon} ${v.label}</option>`
+        ).join('')}
+      </select>
       <button class="del-btn" onclick="delRoom(${i})">✕</button>
     </div>`).join('');
   document.getElementById('rCnt').textContent=RC.rooms.length+' phòng';
 }
 function addRoom(){
-  RC.rooms.push({id:'room_'+Date.now(),label:'Phòng mới'});
+  RC.rooms.push({id:'room_'+Date.now(),label:'Phòng mới',type:'meeting'});
   renderRoomList();
 }
 function delRoom(i){if(RC.rooms.length<=1){toast('Phải có ít nhất 1 phòng','err');return;}RC.rooms.splice(i,1);renderRoomList();}
 
+function renderAdmTypeTabs() {
+  const tabs = document.getElementById('admTypeTabs');
+  if (!tabs) return;
+  tabs.innerHTML = Object.entries(ROOM_TYPES).map(([k,v])=>
+    `<button class="adm-type-tab ${RC.adminEditType===k?'on':''}" onclick="setAdmType('${k}')">${v.icon} ${v.label}</button>`
+  ).join('');
+}
+function setAdmType(type) {
+  RC.adminEditType = type;
+  renderAdmTypeTabs();
+  renderSecBuilder();
+}
+
 function renderSecBuilder(){
-  document.getElementById('sbList').innerHTML=RC.sections.map((sec,si)=>`
+  const type = RC.adminEditType;
+  const sections = RC.sectionsByType[type] || [];
+  document.getElementById('sbList').innerHTML=sections.map((sec,si)=>`
     <div class="sb-sec">
       <div class="sb-hd">
-        <span class="sb-em" onclick="chEmoji(${si})">${sec.emoji||'📋'}</span>
-        <input value="${esc(sec.label)}" placeholder="Tên nhóm" oninput="RC.sections[${si}].label=this.value">
-        <button class="del-sec" onclick="delSec(${si})">Xoá</button>
+        <span class="sb-em" onclick="chEmoji('${type}',${si})">${sec.emoji||'📋'}</span>
+        <input value="${esc(sec.label)}" placeholder="Tên nhóm" oninput="RC.sectionsByType['${type}'][${si}].label=this.value">
+        <button class="del-sec" onclick="delSec('${type}',${si})">Xoá</button>
       </div>
       <div class="sb-items">
         <div class="sb-cols"><span></span><span>Tên mục</span><span>Ghi chú</span><span>Loại</span><span></span></div>
         ${sec.items.map((it,ii)=>`
           <div class="sb-row">
-            <input class="em-in" value="${esc(it.icon||'🔹')}" maxlength="2" oninput="RC.sections[${si}].items[${ii}].icon=this.value">
-            <input value="${esc(it.label)}" placeholder="Tên mục" oninput="RC.sections[${si}].items[${ii}].label=this.value">
-            <input value="${esc(it.note||'')}" placeholder="Ghi chú" oninput="RC.sections[${si}].items[${ii}].note=this.value">
-            <select onchange="RC.sections[${si}].items[${ii}].type=this.value">
-              <option value="check" ${it.type==='check'?'selected':''}>✓ Check</option>
-              <option value="speed" ${it.type==='speed'?'selected':''}>⚡ Speed</option>
+            <input class="em-in" value="${esc(it.icon||'🔹')}" maxlength="2" oninput="RC.sectionsByType['${type}'][${si}].items[${ii}].icon=this.value">
+            <input value="${esc(it.label)}" placeholder="Tên mục" oninput="RC.sectionsByType['${type}'][${si}].items[${ii}].label=this.value">
+            <input value="${esc(it.note||'')}" placeholder="Ghi chú" oninput="RC.sectionsByType['${type}'][${si}].items[${ii}].note=this.value">
+            <select onchange="RC.sectionsByType['${type}'][${si}].items[${ii}].type=this.value">
+              <option value="check"   ${it.type==='check'  ?'selected':''}>✓ Check</option>
+              <option value="speed"   ${it.type==='speed'  ?'selected':''}>⚡ Mbps</option>
+              <option value="temp"    ${it.type==='temp'   ?'selected':''}>🌡 °C</option>
+              <option value="voltage" ${it.type==='voltage'?'selected':''}>⚡ Volt</option>
             </select>
-            <button class="del-btn" onclick="delItem(${si},${ii})">✕</button>
+            <button class="del-btn" onclick="delItem('${type}',${si},${ii})">✕</button>
           </div>`).join('')}
-        <button class="add-item" onclick="addItem(${si})">＋ Thêm mục</button>
+        <button class="add-item" onclick="addItem('${type}',${si})">＋ Thêm mục</button>
       </div>
     </div>`).join('');
-  document.getElementById('sCnt').textContent=RC.sections.length+' nhóm';
+  document.getElementById('sCnt').textContent=sections.length+' nhóm ('+( ROOM_TYPES[type]?.label||type)+')';
 }
 function addSec(){
-  RC.sections.push({
+  const type = RC.adminEditType;
+  if (!RC.sectionsByType[type]) RC.sectionsByType[type] = [];
+  RC.sectionsByType[type].push({
     id:'sec_'+Date.now(),
     label:'Nhóm mới',
     emoji:'📋',
-    items:[{
-      id:'item_'+Date.now(),
-      icon:'🔹',
-      label:'Mục kiểm tra',
-      note:'',
-      type:'check'
-    }]
+    items:[{id:'item_'+Date.now(),icon:'🔹',label:'Mục kiểm tra',note:'',type:'check'}]
   });
   renderSecBuilder();
 }
-function delSec(i){if(RC.sections.length<=1){toast('Phải có ít nhất 1 nhóm','err');return;}RC.sections.splice(i,1);renderSecBuilder();}
-function addItem(si){
-  RC.sections[si].items.push({
-    id:'item_'+Date.now(),
-    icon:'🔹',
-    label:'Mục mới',
-    note:'',
-    type:'check'
-  });
+function delSec(type,i){
+  const secs = RC.sectionsByType[type]||[];
+  if(secs.length<=1){toast('Phải có ít nhất 1 nhóm','err');return;}
+  secs.splice(i,1); renderSecBuilder();
+}
+function addItem(type,si){
+  RC.sectionsByType[type][si].items.push({id:'item_'+Date.now(),icon:'🔹',label:'Mục mới',note:'',type:'check'});
   renderSecBuilder();
 }
-function delItem(si,ii){if(RC.sections[si].items.length<=1){toast('Mỗi nhóm cần ít nhất 1 mục','err');return;}RC.sections[si].items.splice(ii,1);renderSecBuilder();}
-function chEmoji(si){const e=prompt('Nhập emoji:',RC.sections[si].emoji||'📋');if(e){RC.sections[si].emoji=e.trim().slice(0,2);renderSecBuilder();}}
+function delItem(type,si,ii){
+  const items = RC.sectionsByType[type][si].items;
+  if(items.length<=1){toast('Mỗi nhóm cần ít nhất 1 mục','err');return;}
+  items.splice(ii,1); renderSecBuilder();
+}
+function chEmoji(type,si){
+  const e=prompt('Nhập emoji:',RC.sectionsByType[type][si].emoji||'📋');
+  if(e){RC.sectionsByType[type][si].emoji=e.trim().slice(0,2);renderSecBuilder();}
+}
 
 async function adminSave(){
   const btn=document.getElementById('saveCfgBtn');
@@ -1255,7 +1454,11 @@ async function adminSave(){
 }
 
 function exportCfg(){
-  const out='// DEF_ROOMS\nconst DEF_ROOMS = '+JSON.stringify(RC.rooms,null,2)+';\n\n// DEF_SECTIONS\nconst DEF_SECTIONS = '+JSON.stringify(RC.sections,null,2)+';';
+  const roomsJson = JSON.stringify(RC.rooms,null,2);
+  const secsByTypeJson = JSON.stringify(RC.sectionsByType,null,2);
+  const out =
+    '// DEF_ROOMS\nconst DEF_ROOMS = '+roomsJson+';\n\n'+
+    '// DEF_SECTIONS_BY_TYPE\nconst DEF_SECTIONS_BY_TYPE = '+secsByTypeJson+';';
   const d=document.createElement('div');
   d.style.cssText='position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);display:flex;align-items:flex-end';
   d.innerHTML='<div style="width:100%;max-width:500px;margin:0 auto;background:#111827;border:1px solid #2a3f5f;border-radius:22px 22px 0 0;padding:22px 20px 36px">'
@@ -1289,8 +1492,28 @@ function esc(s){if(!s)return '';return String(s).replace(/&/g,'&amp;').replace(/
 function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
 function saveLocal(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch{}}
 function loadLocal(k){try{const v=localStorage.getItem(k);return v?JSON.parse(v):null;}catch{return null;}}
-function saveLocalSchema(){saveLocal('rc4_rooms',RC.rooms);saveLocal('rc4_secs',RC.sections);}
-function loadLocalSchema(){RC.rooms=loadLocal('rc4_rooms')||DEF_ROOMS;RC.sections=loadLocal('rc4_secs')||DEF_SECTIONS;}
+function saveLocalSchema(){
+  saveLocal('rc4_rooms', RC.rooms);
+  saveLocal('rc4_secs_bytype', RC.sectionsByType);
+}
+function loadLocalSchema(){
+  RC.rooms = loadLocal('rc4_rooms') || DEF_ROOMS;
+  // Migrate cũ: nếu có rc4_secs (format cũ) thì map vào meeting
+  const legacySecs = loadLocal('rc4_secs');
+  const savedByType = loadLocal('rc4_secs_bytype');
+  if (savedByType) {
+    RC.sectionsByType = savedByType;
+    // Đảm bảo luôn có đủ các type mặc định nếu chưa có
+    for (const type of Object.keys(DEF_SECTIONS_BY_TYPE)) {
+      if (!RC.sectionsByType[type]) RC.sectionsByType[type] = DEF_SECTIONS_BY_TYPE[type];
+    }
+  } else if (legacySecs) {
+    // Migration từ version cũ: coi data cũ là meeting
+    RC.sectionsByType = { ...JSON.parse(JSON.stringify(DEF_SECTIONS_BY_TYPE)), meeting: legacySecs };
+  } else {
+    RC.sectionsByType = JSON.parse(JSON.stringify(DEF_SECTIONS_BY_TYPE));
+  }
+}
 function loadScript(src){return new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=rej;document.head.appendChild(s);});}
 function startClock(){
   const up=()=>{
