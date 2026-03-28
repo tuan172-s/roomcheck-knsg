@@ -130,9 +130,34 @@ body::before{
 .ico-btn{width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:var(--s2);color:var(--dim);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;transition:all .2s}
 .ico-btn:hover{border-color:var(--blue);color:var(--blue)}
 .room-row{display:flex;align-items:center;gap:10px}
-.room-wrap{flex:1;display:flex;align-items:center;gap:10px;background:var(--s2);border:1px solid var(--border);border-radius:11px;padding:9px 12px}
-.room-wrap select{flex:1;background:transparent;border:none;color:var(--text);font-size:13px;font-weight:700;font-family:var(--sans);outline:none;cursor:pointer}
-.room-wrap select option{background:var(--s2)}
+/* ── CUSTOM ROOM DROPDOWN ── */
+.room-wrap{flex:1;display:flex;align-items:center;gap:10px;background:var(--s2);border:1px solid var(--border);border-radius:11px;padding:9px 12px;cursor:pointer;position:relative;transition:border-color .2s}
+.room-wrap:hover{border-color:var(--border2)}
+.room-sel-val{flex:1;font-size:13px;font-weight:700;font-family:var(--sans);color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.2}
+.room-sel-val.is-locked{color:var(--green)}
+.room-chevron{color:var(--dim);font-size:11px;flex-shrink:0;transition:transform .2s}
+.room-wrap.open .room-chevron{transform:rotate(180deg)}
+/* Dropdown list */
+.room-dropdown{
+  position:absolute;top:calc(100% + 6px);left:0;right:0;z-index:100;
+  background:var(--s1);border:1px solid var(--border2);border-radius:13px;
+  overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,.5);
+  display:none;animation:dropIn .18s ease;
+}
+.room-wrap.open .room-dropdown{display:block}
+@keyframes dropIn{from{opacity:0;transform:translateY(-6px)}to{opacity:1;transform:none}}
+.room-opt{
+  display:flex;align-items:center;gap:10px;
+  padding:11px 14px;cursor:pointer;transition:background .15s;
+  border-bottom:1px solid rgba(30,45,69,.5);
+}
+.room-opt:last-child{border-bottom:none}
+.room-opt:hover{background:var(--s2)}
+.room-opt.selected{background:rgba(77,159,255,.07)}
+.room-opt-name{flex:1;font-size:13px;font-weight:600;font-family:var(--sans);color:var(--text)}
+.room-opt.locked .room-opt-name{color:var(--green)}
+.room-opt-badge{font-size:10px;font-weight:700;font-family:var(--mono);color:var(--green);flex-shrink:0;white-space:nowrap}
+.room-opt-check{font-size:14px;color:var(--green);flex-shrink:0;width:16px;text-align:center}
 .clk-box{text-align:right;flex-shrink:0}
 .clk-t{font-family:var(--mono);font-size:18px;font-weight:500;color:var(--blue);line-height:1}
 .clk-d{font-size:9px;color:var(--dim);font-family:var(--mono);margin-top:3px}
@@ -343,12 +368,7 @@ input[type=file]{display:none}
 }
 .rb-close:hover{transform:translateY(-1px)}
 
-/* ── ROOM SELECT — locked = green ── */
-.room-wrap.room-locked{
-  border-color:rgba(52,211,153,.5);
-  background:rgba(52,211,153,.05);
-}
-.room-wrap.room-locked select{color:var(--green);}
+/* ── ROOM SELECT — locked = green (handled via .is-locked on val + .locked on opt) ── */
 #roomLockedBadge{
   font-size:11px;font-family:var(--mono);font-weight:700;
   color:var(--green);white-space:nowrap;flex-shrink:0;
@@ -455,10 +475,12 @@ input[type=file]{display:none}
       </div>
     </div>
     <div class="room-row">
-      <div class="room-wrap" id="roomWrap">
-        <span style="font-size:16px">📍</span>
-        <select id="roomSel" onchange="onRoomChange()"></select>
+      <div class="room-wrap" id="roomWrap" onclick="toggleRoomDropdown(event)">
+        <span style="font-size:16px;flex-shrink:0">📍</span>
+        <span class="room-sel-val" id="roomSelVal">—</span>
         <span id="roomLockedBadge">✔ Đã KT</span>
+        <span class="room-chevron">▾</span>
+        <div class="room-dropdown" id="roomDropdown"></div>
       </div>
       <div class="clk-box">
         <div class="clk-t" id="clk">--:--</div>
@@ -655,16 +677,14 @@ const RC = {
 
 // Helper: lấy sections của phòng đang chọn
 function getActiveSections() {
-  const roomId = document.getElementById('roomSel')?.value;
-  const room = RC.rooms.find(r => r.id === roomId);
+  const room = RC.rooms.find(r => r.id === _activeRoomId);
   const type = room?.type || 'meeting';
   return RC.sectionsByType[type] || RC.sectionsByType['meeting'] || [];
 }
 
 // Helper: type của phòng đang chọn
 function getActiveRoomType() {
-  const roomId = document.getElementById('roomSel')?.value;
-  const room = RC.rooms.find(r => r.id === roomId);
+  const room = RC.rooms.find(r => r.id === _activeRoomId);
   return room?.type || 'meeting';
 }
 
@@ -862,27 +882,61 @@ function isRoomLocked(roomId) {
   return !!RC.lockedMap?.[roomId];
 }
 
-// ── ROOM ──
+// ── ROOM CUSTOM DROPDOWN ──
+let _activeRoomId = '';
+
 function buildRoomSel() {
-  const sel = document.getElementById('roomSel');
-  if (!sel) return;
-
-  sel.innerHTML = RC.rooms.map(r => {
-    const typeInfo = ROOM_TYPES[r.type || 'meeting'] || ROOM_TYPES['meeting'];
-    return `<option value="${r.id}">${typeInfo.icon} ${esc(r.label)}</option>`;
-  }).join('');
-
-  if (RC.rooms.length > 0) {
-    if (!sel.value || !RC.rooms.some(r => r.id === sel.value)) {
-      sel.value = RC.rooms[0].id;
-    }
-    sel.disabled = false;
-  } else {
-    sel.innerHTML = `<option value="">Chưa có phòng</option>`;
-    sel.disabled = true;
+  // Chọn phòng đầu tiên nếu chưa có
+  if (!_activeRoomId || !RC.rooms.some(r => r.id === _activeRoomId)) {
+    _activeRoomId = RC.rooms[0]?.id || '';
   }
+  renderRoomDropdown();
   updateLockedRoomUI();
   updateRoomTypeTag();
+}
+
+function renderRoomDropdown() {
+  const dd = document.getElementById('roomDropdown');
+  if (!dd) return;
+  dd.innerHTML = RC.rooms.map(r => {
+    const locked   = isRoomLocked(r.id);
+    const selected = r.id === _activeRoomId;
+    const typeInfo = ROOM_TYPES[r.type || 'meeting'] || ROOM_TYPES['meeting'];
+    return `<div class="room-opt${locked?' locked':''}${selected?' selected':''}"
+                 onclick="selectRoom('${r.id}',event)">
+      <span style="font-size:14px;flex-shrink:0">${typeInfo.icon}</span>
+      <span class="room-opt-name">${esc(r.label)}</span>
+      ${locked ? `<span class="room-opt-badge">✔ Đã kiểm tra</span>` : ''}
+      ${selected ? `<span class="room-opt-check">◀</span>` : '<span style="width:16px"></span>'}
+    </div>`;
+  }).join('');
+}
+
+function toggleRoomDropdown(e) {
+  // Nếu click vào một option thì không toggle lại
+  if (e.target.closest('.room-opt')) return;
+  const wrap = document.getElementById('roomWrap');
+  const isOpen = wrap.classList.toggle('open');
+  if (isOpen) {
+    // Đóng khi click ra ngoài
+    setTimeout(() => {
+      document.addEventListener('click', closeRoomDropdown, { once: true });
+    }, 0);
+  }
+}
+
+function closeRoomDropdown() {
+  document.getElementById('roomWrap')?.classList.remove('open');
+}
+
+function selectRoom(id, e) {
+  e.stopPropagation();
+  _activeRoomId = id;
+  closeRoomDropdown();
+  renderRoomDropdown();
+  updateLockedRoomUI();
+  updateRoomTypeTag();
+  renderChecklist();
 }
 
 function onRoomChange() {
@@ -891,15 +945,21 @@ function onRoomChange() {
   updateLockedRoomUI();
 }
 
-// Cập nhật viền xanh + badge "✔ Đã KT" theo trạng thái phòng đang chọn
+// Hàm compat — trả về roomId đang chọn
+function getActiveRoomId() { return _activeRoomId; }
+
+// Cập nhật val hiển thị + badge xanh theo phòng đang chọn
 function updateLockedRoomUI() {
-  const sel  = document.getElementById('roomSel');
-  const wrap = document.getElementById('roomWrap');
-  const badge= document.getElementById('roomLockedBadge');
-  if (!sel || !wrap || !badge) return;
-  const locked = isRoomLocked(sel.value);
-  wrap.classList.toggle('room-locked', locked);
-  badge.classList.toggle('on', locked);
+  const room   = RC.rooms.find(r => r.id === _activeRoomId);
+  const locked = isRoomLocked(_activeRoomId);
+  const valEl  = document.getElementById('roomSelVal');
+  const badge  = document.getElementById('roomLockedBadge');
+  if (valEl) {
+    const typeInfo = ROOM_TYPES[room?.type || 'meeting'] || ROOM_TYPES['meeting'];
+    valEl.textContent = room ? `${typeInfo.icon} ${room.label}` : '—';
+    valEl.classList.toggle('is-locked', locked);
+  }
+  if (badge) badge.classList.toggle('on', locked);
 }
 
 function updateRoomTypeTag() {
@@ -1212,7 +1272,7 @@ async function doSubmit(){
   const checkItems = sections.flatMap(s => s.items.filter(i => i.type === 'check'));
   const checkIds = checkItems.map(i => i.id);
 
-  const roomId = document.getElementById('roomSel').value;
+  const roomId = _activeRoomId;
   const isOverwrite = isRoomLocked(roomId);
 
   if(!roomId){
