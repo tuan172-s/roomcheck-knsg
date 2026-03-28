@@ -607,8 +607,7 @@ const DEF_SECTIONS_BY_TYPE = {
     {id:'wifi',label:'Kết nối WiFi',emoji:'📶',items:[
       {id:'wifi_con',icon:'🔗',label:'Kết nối WiFi thành công',note:'Kết nối SSID chính phòng họp',type:'check'},
       {id:'wifi_net',icon:'🌐',label:'Truy cập Internet được',note:'Mở website bất kỳ kiểm tra',type:'check'},
-      {id:'wifi_spd',icon:'⚡',label:'Tốc độ WiFi Download(Mbps)',note:'Đo bằng Speedtest / Fast.com',type:'speed'},
-	  {id:'wifi_spd',icon:'⚡',label:'Tốc độ WiFi Upload(Mbps)',note:'Đo bằng Speedtest / Fast.com',type:'speed'},
+      {id:'wifi_spd',icon:'⚡',label:'Tốc độ WiFi (Mbps)',note:'Đo bằng Speedtest / Fast.com',type:'speed'},
       {id:'wifi_stb',icon:'📡',label:'Tín hiệu ổn định',note:'Không bị ngắt kết nối',type:'check'},
     ]},
     {id:'hdmi',label:'Kết nối HDMI',emoji:'🔌',items:[
@@ -914,14 +913,21 @@ function renderRoomDropdown() {
 }
 
 function toggleRoomDropdown(e) {
-  // Nếu click vào một option thì không toggle lại
   if (e.target.closest('.room-opt')) return;
   const wrap = document.getElementById('roomWrap');
-  const isOpen = wrap.classList.toggle('open');
+  const isOpen = wrap.classList.contains('open');
   if (isOpen) {
-    // Đóng khi click ra ngoài
+    wrap.classList.remove('open');
+  } else {
+    wrap.classList.add('open');
+    // Đóng khi click ra ngoài roomWrap
     setTimeout(() => {
-      document.addEventListener('click', closeRoomDropdown, { once: true });
+      document.addEventListener('click', function _close(ev) {
+        if (!wrap.contains(ev.target)) {
+          wrap.classList.remove('open');
+          document.removeEventListener('click', _close);
+        }
+      });
     }, 0);
   }
 }
