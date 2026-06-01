@@ -1274,7 +1274,7 @@ function handlePhotoFiles(files){
     const r=new FileReader();
     r.onload=ev=>{
       RC.photos.push({
-        id:Date.now()+Math.random(),
+        id:String(Date.now() + '_' + Math.random().toString(36).slice(2)),
         dataUrl:ev.target.result,
         name:f.name || ('photo_'+Date.now()+'.jpg')
       });
@@ -1316,7 +1316,11 @@ function renderPhotos(){
   }
   updateSubmitBtn();
 }
-function delPhoto(id){RC.photos=RC.photos.filter(p=>p.id!==id);renderPhotos();}
+function delPhoto(id){
+  RC.photos = RC.photos.filter(p => String(p.id) !== String(id));
+  renderPhotos();
+  updateSubmitBtn();
+}
 
 // ── SUBMIT ──
 async function doSubmit(){
@@ -1422,7 +1426,7 @@ async function doSubmit(){
   const photos = await Promise.all(
     RC.photos.map(async p => ({
       name: p.name,
-      base64: await compressPhoto(p.dataUrl, 900),
+      base64: await compressPhoto(p.dataUrl, 1500),
       clientCheckId
     }))
   );
@@ -1590,11 +1594,14 @@ async function compressPhoto(dataUrl,maxKB){
     const img=new Image();
     img.onload=()=>{
       const canvas=document.createElement('canvas');
-      const max=1600; let w=img.width,h=img.height;
+      const max=2200; let w=img.width,h=img.height;
       if(w>max||h>max){const r=Math.min(max/w,max/h);w=Math.round(w*r);h=Math.round(h*r);}
       canvas.width=w;canvas.height=h;
-      canvas.getContext('2d').drawImage(img,0,0,w,h);
-      let q=0.9;
+      const ctx=canvas.getContext('2d');
+      ctx.imageSmoothingEnabled=true;
+      ctx.imageSmoothingQuality='high';
+      ctx.drawImage(img,0,0,w,h);
+      let q=0.92;
       const attempt=()=>{
         const d=canvas.toDataURL('image/jpeg',q);
         if(d.length/1024*0.75<=maxKB||q<=0.2){res(d.split(',')[1]);return;}
