@@ -512,7 +512,7 @@ input[type=file]{display:none}
       <div class="ph-grid" id="phGrid">
         <label class="ph-add" for="phIn"><span style="font-size:22px">📷</span><span>Chụp / chọn ảnh</span></label>
       </div>
-      <input type="file" id="phIn" accept="image/*" capture="environment" multiple>
+      <input type="file" id="phIn" accept="image/*" multiple>
     </div>
     <div class="extras">
       <div>
@@ -1226,24 +1226,43 @@ function updateSubmitBtn() {
 
 // ── PHOTOS ──
 document.addEventListener('DOMContentLoaded',()=>{
-  document.getElementById('phIn').addEventListener('change',function(e){
-    Array.from(e.target.files).forEach(f=>{
-      const r=new FileReader();
-      r.onload=ev=>{RC.photos.push({id:Date.now()+Math.random(),dataUrl:ev.target.result,name:f.name});renderPhotos();};
+  const input = document.getElementById('phIn');
+  if (!input) return;
+
+  input.addEventListener('change', function(e){
+    const files = Array.from(e.target.files || []);
+    if (!files.length) return;
+
+    files.forEach(f=>{
+      if (!f.type.startsWith('image/')) {
+        toast('File không phải hình ảnh: ' + f.name, 'err');
+        return;
+      }
+
+      const r = new FileReader();
+      r.onload = ev => {
+        RC.photos.push({
+          id: 'ph_' + Date.now() + '_' + Math.random().toString(36).slice(2),
+          dataUrl: ev.target.result,
+          name: f.name || ('photo_' + Date.now() + '.jpg')
+        });
+        renderPhotos();
+      };
       r.readAsDataURL(f);
     });
-    this.value='';
+
+    this.value = '';
   });
 });
 function renderPhotos(){
   const g=document.getElementById('phGrid'); g.innerHTML='';
   RC.photos.forEach(p=>{
     const d=document.createElement('div'); d.className='ph-thumb';
-    d.innerHTML=`<img src="${p.dataUrl}"><button class="ph-del" onclick="delPhoto('${p.id}')">×</button>`;
+    d.innerHTML=`<img src="${p.dataUrl}" alt="Ảnh bằng chứng"><button class="ph-del" onclick="delPhoto('${p.id}')" title="Xóa ảnh">×</button>`;
     g.appendChild(d);
   });
   const a=document.createElement('label'); a.className='ph-add'; a.htmlFor='phIn';
-  a.innerHTML='<span style="font-size:22px">📷</span><span>Thêm ảnh</span>';
+  a.innerHTML='<span style="font-size:22px">📷</span><span>Chụp / chọn ảnh</span>';
   g.appendChild(a);
 
   // Cập nhật label phần ảnh
@@ -1362,7 +1381,7 @@ async function doSubmit(){
   const photos = await Promise.all(
     RC.photos.map(async p => ({
       name: p.name,
-      base64: await compressPhoto(p.dataUrl, 300),
+      base64: await compressPhoto(p.dataUrl, 900),
       clientCheckId
     }))
   );
@@ -1540,15 +1559,15 @@ async function compressPhoto(dataUrl,maxKB){
     const img=new Image();
     img.onload=()=>{
       const canvas=document.createElement('canvas');
-      const max=800; let w=img.width,h=img.height;
+      const max=1600; let w=img.width,h=img.height;
       if(w>max||h>max){const r=Math.min(max/w,max/h);w=Math.round(w*r);h=Math.round(h*r);}
       canvas.width=w;canvas.height=h;
       canvas.getContext('2d').drawImage(img,0,0,w,h);
-      let q=0.8;
+      let q=0.88;
       const attempt=()=>{
         const d=canvas.toDataURL('image/jpeg',q);
-        if(d.length/1024*0.75<=maxKB||q<=0.2){res(d.split(',')[1]);return;}
-        q-=0.1;attempt();
+        if(d.length/1024*0.75<=maxKB||q<=0.45){res(d.split(',')[1]);return;}
+        q-=0.08;attempt();
       };
       attempt();
     };
