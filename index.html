@@ -714,7 +714,6 @@ async function boot() {
 	  buildRoomSel(); renderChecklist();
 	  show('s-main');
 	  document.getElementById('userLabel').textContent = '👤 ' + (RC.account.name || RC.account.username);
-	  applyAdminUI();
 	} else {
 	  show('s-login');
 	}
@@ -855,7 +854,7 @@ async function fetchLockedRoomsFromSharePoint() {
     return RC.lockedRooms;
   } catch (e) {
     console.warn('fetchLockedRoomsFromSharePoint failed:', e);
-    toast('Không tải được danh sách phòng đã kiểm tra từ SharePoint', 'err');
+    console.warn('Không tải được danh sách phòng đã kiểm tra:', e);
     return [];
   }
 }
