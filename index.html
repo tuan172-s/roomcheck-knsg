@@ -648,6 +648,7 @@ const RC = {
   token:null,
   lockedRooms:[],
   lockedMap:{},
+  drafts:{},
   adminEditType:'meeting',  // loại phòng đang edit trong admin
 };
 
@@ -917,14 +918,49 @@ function closeRoomDropdown() {
   document.getElementById('roomWrap')?.classList.remove('open');
 }
 
+function saveRoomDraft(roomId) {
+  if (!roomId) return;
+
+  RC.drafts[roomId] = {
+    results: JSON.parse(JSON.stringify(RC.results || {})),
+    notes: JSON.parse(JSON.stringify(RC.notes || {})),
+    speeds: JSON.parse(JSON.stringify(RC.speeds || {})),
+    temps: JSON.parse(JSON.stringify(RC.temps || {})),
+    voltages: JSON.parse(JSON.stringify(RC.voltages || {})),
+    photos: JSON.parse(JSON.stringify(RC.photos || [])),
+    genNote: document.getElementById('genNote')?.value || ''
+  };
+}
+
+function loadRoomDraft(roomId) {
+  const d = RC.drafts[roomId];
+
+  RC.results = d?.results || {};
+  RC.notes = d?.notes || {};
+  RC.speeds = d?.speeds || {};
+  RC.temps = d?.temps || {};
+  RC.voltages = d?.voltages || {};
+  RC.photos = d?.photos || [];
+
+  const noteEl = document.getElementById('genNote');
+  if (noteEl) noteEl.value = d?.genNote || '';
+}
+
 function selectRoom(id, e) {
   e.stopPropagation();
+
+  saveRoomDraft(_activeRoomId);
+
   _activeRoomId = id;
+
+  loadRoomDraft(_activeRoomId);
+
   closeRoomDropdown();
   renderRoomDropdown();
   updateLockedRoomUI();
   updateRoomTypeTag();
   renderChecklist();
+  renderPhotos();
 }
 
 function onRoomChange() {
@@ -961,7 +997,7 @@ function updateRoomTypeTag() {
 
 // ── CHECKLIST RENDER ──
 function renderChecklist() {
-  RC.results={}; RC.notes={}; RC.speeds={}; RC.temps={}; RC.voltages={};
+  // Không reset ở đây, để giữ nháp theo từng phòng
   const body = document.getElementById('clBody');
   body.innerHTML = '';
   const sections = getActiveSections();
@@ -982,8 +1018,49 @@ function renderChecklist() {
       <div class="sec-items" id="si_${sec.id}">${sec.items.map(it=>renderItem(it)).join('')}</div>`;
     body.appendChild(el);
   });
+  restoreChecklistUI();
   updateProgress();
 }
+
+function restoreChecklistUI() {
+  Object.entries(RC.results || {}).forEach(([id, val]) => {
+    ['pass','fail','na'].forEach(v => {
+      const p = v === 'pass' ? 'tp' : v === 'fail' ? 'tf' : 'tn';
+      document.getElementById(p + '_' + id)?.classList.toggle('on', val === v);
+    });
+
+    const fw = document.getElementById('fn_' + id);
+    if (fw) fw.style.display = val === 'fail' ? 'block' : 'none';
+
+    const noteEl = document.getElementById('fnt_' + id);
+    if (noteEl) noteEl.value = RC.notes?.[id] || '';
+  });
+
+  Object.entries(RC.speeds || {}).forEach(([id, val]) => {
+    const el = document.getElementById('sp_' + id);
+    if (el) {
+      el.value = val;
+      onSpd(id);
+    }
+  });
+
+  Object.entries(RC.temps || {}).forEach(([id, val]) => {
+    const el = document.getElementById('tmp_' + id);
+    if (el) {
+      el.value = val;
+      onTemp(id);
+    }
+  });
+
+  Object.entries(RC.voltages || {}).forEach(([id, val]) => {
+    const el = document.getElementById('vlt_' + id);
+    if (el) {
+      el.value = val;
+      onVoltage(id);
+    }
+  });
+}
+
 function renderItem(it) {
   const isSpeed   = it.type === 'speed';
   const isTemp    = it.type === 'temp';
