@@ -1414,9 +1414,14 @@ async function doSubmit(){
       let respData = {};
       try { respData = await r.json(); } catch (_) { respData = {}; }
 
-      if(!r.ok && r.status!==202) {
-        throw new Error(respData.message || ('HTTP ' + r.status));
-      }
+	if(!r.ok && r.status!==202) {
+	  const msg =
+		typeof respData === 'string'
+		  ? respData
+		  : (respData.message || JSON.stringify(respData));
+
+	  throw new Error('HTTP ' + r.status + ' - ' + msg);
+	}
 
       await fetchLockedRoomsFromSharePoint();
 
