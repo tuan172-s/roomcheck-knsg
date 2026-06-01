@@ -228,7 +228,7 @@ body::before{
 .ph-thumb{aspect-ratio:1;border-radius:10px;overflow:hidden;position:relative;background:var(--s2);border:1px solid var(--border)}
 .ph-thumb img{width:100%;height:100%;object-fit:cover;display:block}
 .ph-del{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;background:rgba(0,0,0,.75);border:none;color:#fff;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center}
-.ph-add{aspect-ratio:1;border-radius:10px;border:1.5px dashed var(--s3);background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;color:var(--dim);font-size:10px;font-family:var(--sans);transition:all .2s}
+.ph-add{aspect-ratio:1;border-radius:10px;border:1.5px dashed var(--s3);background:transparent;display:flex;font-family:var(--sans);flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;color:var(--dim);font-size:10px;font-family:var(--sans);transition:all .2s}
 .ph-add:hover{border-color:var(--blue);color:var(--blue)}
 input[type=file]{display:none}
 
@@ -502,6 +502,7 @@ input[type=file]{display:none}
   <div class="tabs">
     <div class="tab on" id="tb-check" onclick="tab('check')">✅ Kiểm tra</div>
     <div class="tab" id="tb-hist"  onclick="tab('hist')">📁 Lịch sử</div>
+    <div class="tab" id="tb-adm"   onclick="tab('adm')">🔧 Quản lý</div>
   </div>
 
   <!-- CHECK -->
@@ -510,9 +511,10 @@ input[type=file]{display:none}
     <div class="ph-sec">
       <div class="ph-lbl">📸 Hình ảnh bằng chứng</div>
       <div class="ph-grid" id="phGrid">
-        <label class="ph-add" for="phIn"><span style="font-size:22px">📷</span><span>Chụp / chọn ảnh</span></label>
+        <button class="ph-add" type="button" onclick="showPhotoPicker()"><span style="font-size:22px">📷</span><span>Chụp / chọn ảnh</span></button>
       </div>
-      <input type="file" id="phIn" accept="image/*" multiple>
+      <input type="file" id="phCam" accept="image/*" capture="environment" multiple>
+      <input type="file" id="phAlbum" accept="image/*" multiple>
     </div>
     <div class="extras">
       <div>
@@ -533,6 +535,28 @@ input[type=file]{display:none}
     <div class="hist-body" id="histBody"></div>
   </div>
 
+  <!-- ADMIN -->
+  <div class="pane" id="pn-adm">
+    <div class="adm-body">
+      <div class="card">
+        <div class="card-hd"><h3>🏢 Danh sách phòng</h3><span id="rCnt" style="font-size:10px;font-family:var(--mono);color:var(--dim)"></span></div>
+        <div class="card-bd">
+          <div class="r-list" id="rList"></div>
+          <button class="add-row-btn" onclick="addRoom()">＋ Thêm phòng</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hd"><h3>📋 Nhóm & mục kiểm tra</h3><span id="sCnt" style="font-size:10px;font-family:var(--mono);color:var(--dim)"></span></div>
+        <div class="card-bd" style="padding-bottom:8px">
+          <div class="adm-type-tabs" id="admTypeTabs"></div>
+          <div class="sb-list" id="sbList"></div>
+          <button class="add-sec-btn" style="margin-top:10px" onclick="addSec()">＋ Thêm nhóm</button>
+        </div>
+      </div>
+      <button class="save-cfg-btn" id="saveCfgBtn" onclick="adminSave()">💾 Lưu cấu hình</button>
+      <button class="save-cfg-btn" style="background:linear-gradient(135deg,#f59e0b,#ef4444);margin-top:8px" onclick="exportCfg()">📤 Xuất JSON</button>
+    </div>
+  </div>
 </div><!-- /s-main -->
 
 </div><!-- /app -->
@@ -545,8 +569,8 @@ input[type=file]{display:none}
 const HARDCODED_CFG = {
   clientId:  '163ad118-4f2d-4061-80c9-8260393d92e1',
   tenantId:  '630ee4a4-29e3-4488-ba82-3deed213e218',
-  webhook:   'https://roomcheck-api.tuan-ht.workers.dev/submit-check',
-  lockApi:   'https://roomcheck-api.tuan-ht.workers.dev/locked-rooms',
+  webhook:   'https://default630ee4a429e34488ba823deed213e2.18.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/229927fd64b44f0b87061ada6c78e0fb/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=myw8himcA8ZY-dY97yqyXR5TyaCrj7qiMX0Sitq2kPg',
+  lockApi:   'https://default630ee4a429e34488ba823deed213e2.18.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/ac60f817446e41dcab6e15cbe0f6d421/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=uuqHGeN4iarjBPsmplszytx7cvZg3CQu1LRkWNvrvsE',
   org:       'Kềm Nghĩa Sài Gòn'
 };
 // ═══════════════════════════════════════════════════════════
@@ -675,7 +699,7 @@ async function boot() {
   if (!cfg.clientId || cfg.clientId === 'PASTE_CLIENT_ID_HERE') {
     // Chưa cấu hình → vào thẳng app ở chế độ offline
     await fetchLockedRoomsFromSharePoint();
-	buildRoomSel(); renderChecklist();
+	buildRoomSel(); renderChecklist(); renderAdmin();
     show('s-main');
     document.getElementById('userLabel').textContent = 'Chưa cấu hình (offline)';
     toast('⚠️ Chưa cấu hình Client ID – xem tab Quản lý → Cài đặt','info');
@@ -691,7 +715,7 @@ async function boot() {
         authority: 'https://login.microsoftonline.com/' + cfg.tenantId,
         redirectUri: location.href.split('?')[0].split('#')[0],
       },
-      cache: { cacheLocation:'localStorage', storeAuthStateInCookie:false },
+      cache: { cacheLocation:'localStorage', storeAuthStateInCookie:true },
     });
     await RC.msalApp.initialize();
 
@@ -711,7 +735,7 @@ async function boot() {
 	  setSplash('Xin chào ' + (RC.account.name || RC.account.username) + '…');
       await sleep(600);
 	  await fetchLockedRoomsFromSharePoint();
-	  buildRoomSel(); renderChecklist();
+	  buildRoomSel(); renderChecklist(); renderAdmin();
 	  show('s-main');
 	  document.getElementById('userLabel').textContent = '👤 ' + (RC.account.name || RC.account.username);
 	} else {
@@ -720,7 +744,7 @@ async function boot() {
   } catch(e) {
     console.warn('MSAL error:', e);
 	await fetchLockedRoomsFromSharePoint();
-    buildRoomSel(); renderChecklist();
+    buildRoomSel(); renderChecklist(); renderAdmin();
     show('s-main');
     document.getElementById('userLabel').textContent = 'Lỗi xác thực – offline';
     toast('Lỗi MSAL: ' + e.message,'err');
@@ -812,19 +836,14 @@ async function fetchLockedRoomsFromSharePoint() {
   try {
     const { dateKey } = getVNDateParts();
 
-    const token = RC.account ? await getToken() : '';
-
-	const res = await fetch(cfg.lockApi, {
-	  method: 'POST',
-	  headers: {
-		'Content-Type': 'application/json',
-		...(token ? { 'Authorization': 'Bearer ' + token } : {})
-	  },
-	  body: JSON.stringify({
-		date: dateKey,
-		org: cfg.org || ''
-	  })
-	});
+    const res = await fetch(cfg.lockApi, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        date: dateKey,
+        org: cfg.org || ''
+      })
+    });
 
     if (!res.ok && res.status !== 202) {
       throw new Error('HTTP ' + res.status);
@@ -854,7 +873,7 @@ async function fetchLockedRoomsFromSharePoint() {
     return RC.lockedRooms;
   } catch (e) {
     console.warn('fetchLockedRoomsFromSharePoint failed:', e);
-    console.warn('Không tải được danh sách phòng đã kiểm tra:', e);
+    toast('Không tải được danh sách phòng đã kiểm tra từ SharePoint', 'err');
     return [];
   }
 }
@@ -919,16 +938,12 @@ function closeRoomDropdown() {
 
 function selectRoom(id, e) {
   e.stopPropagation();
-
   _activeRoomId = id;
-
   closeRoomDropdown();
   renderRoomDropdown();
   updateLockedRoomUI();
   updateRoomTypeTag();
-
-  // Không renderChecklist ở đây để không mất tick
-  updateProgress();
+  renderChecklist();
 }
 
 function onRoomChange() {
@@ -988,7 +1003,6 @@ function renderChecklist() {
   });
   updateProgress();
 }
-
 function renderItem(it) {
   const isSpeed   = it.type === 'speed';
   const isTemp    = it.type === 'temp';
@@ -1225,44 +1239,71 @@ function updateSubmitBtn() {
 }
 
 // ── PHOTOS ──
+function showPhotoPicker(){
+  const overlay=document.createElement('div');
+  overlay.className='modal-overlay';
+  overlay.innerHTML=`
+    <div class="modal-sheet">
+      <div class="modal-handle"></div>
+      <div class="modal-icon">📸</div>
+      <div class="modal-title">Thêm hình ảnh</div>
+      <div class="modal-body">Chọn cách thêm ảnh bằng chứng cho phòng đang kiểm tra.</div>
+      <div class="modal-actions">
+        <button class="modal-confirm" id="_pickCam">📷 Chụp ảnh mới</button>
+        <button class="modal-confirm" id="_pickAlbum" style="background:linear-gradient(135deg,var(--blue),var(--teal))">🖼️ Chọn từ album</button>
+        <button class="modal-cancel" id="_pickCancel">Đóng</button>
+      </div>
+    </div>`;
+  document.body.appendChild(overlay);
+
+  overlay.querySelector('#_pickCam').addEventListener('click',()=>{
+    overlay.remove();
+    document.getElementById('phCam')?.click();
+  });
+  overlay.querySelector('#_pickAlbum').addEventListener('click',()=>{
+    overlay.remove();
+    document.getElementById('phAlbum')?.click();
+  });
+  overlay.querySelector('#_pickCancel').addEventListener('click',()=>overlay.remove());
+  overlay.addEventListener('click',e=>{if(e.target===overlay)overlay.remove();});
+}
+
+function handlePhotoFiles(files){
+  Array.from(files || []).forEach(f=>{
+    if(!f.type.startsWith('image/')) return;
+    const r=new FileReader();
+    r.onload=ev=>{
+      RC.photos.push({
+        id:Date.now()+Math.random(),
+        dataUrl:ev.target.result,
+        name:f.name || ('photo_'+Date.now()+'.jpg')
+      });
+      renderPhotos();
+    };
+    r.readAsDataURL(f);
+  });
+}
+
 document.addEventListener('DOMContentLoaded',()=>{
-  const input = document.getElementById('phIn');
-  if (!input) return;
-
-  input.addEventListener('change', function(e){
-    const files = Array.from(e.target.files || []);
-    if (!files.length) return;
-
-    files.forEach(f=>{
-      if (!f.type.startsWith('image/')) {
-        toast('File không phải hình ảnh: ' + f.name, 'err');
-        return;
-      }
-
-      const r = new FileReader();
-      r.onload = ev => {
-        RC.photos.push({
-          id: 'ph_' + Date.now() + '_' + Math.random().toString(36).slice(2),
-          dataUrl: ev.target.result,
-          name: f.name || ('photo_' + Date.now() + '.jpg')
-        });
-        renderPhotos();
-      };
-      r.readAsDataURL(f);
+  ['phCam','phAlbum'].forEach(id=>{
+    document.getElementById(id)?.addEventListener('change',function(e){
+      handlePhotoFiles(e.target.files);
+      this.value='';
     });
-
-    this.value = '';
   });
 });
 function renderPhotos(){
   const g=document.getElementById('phGrid'); g.innerHTML='';
   RC.photos.forEach(p=>{
     const d=document.createElement('div'); d.className='ph-thumb';
-    d.innerHTML=`<img src="${p.dataUrl}" alt="Ảnh bằng chứng"><button class="ph-del" onclick="delPhoto('${p.id}')" title="Xóa ảnh">×</button>`;
+    d.innerHTML=`<img src="${p.dataUrl}"><button class="ph-del" onclick="delPhoto('${p.id}')">×</button>`;
     g.appendChild(d);
   });
-  const a=document.createElement('label'); a.className='ph-add'; a.htmlFor='phIn';
-  a.innerHTML='<span style="font-size:22px">📷</span><span>Chụp / chọn ảnh</span>';
+  const a=document.createElement('button');
+  a.className='ph-add';
+  a.type='button';
+  a.onclick=showPhotoPicker;
+  a.innerHTML='<span style="font-size:22px">📷</span><span>Thêm ảnh</span>';
   g.appendChild(a);
 
   // Cập nhật label phần ảnh
@@ -1422,30 +1463,20 @@ async function doSubmit(){
     try{
       toast('📤 Đang gửi lên SharePoint…','info');
 
-      const token = await getToken();
+      const headers = { 'Content-Type': 'application/json' };
 
-	const headers = {
-	  'Content-Type': 'application/json',
-	  'Authorization': 'Bearer ' + token
-	};
-
-	const r = await fetch(cfg.webhook, {
-	  method: 'POST',
-	  headers,
-	  body: JSON.stringify(payload)
-	});
+      const r = await fetch(cfg.webhook, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(payload)
+      });
 
       let respData = {};
       try { respData = await r.json(); } catch (_) { respData = {}; }
 
-	if(!r.ok && r.status!==202) {
-	  const msg =
-		typeof respData === 'string'
-		  ? respData
-		  : (respData.message || JSON.stringify(respData));
-
-	  throw new Error('HTTP ' + r.status + ' - ' + msg);
-	}
+      if(!r.ok && r.status!==202) {
+        throw new Error(respData.message || ('HTTP ' + r.status));
+      }
 
       await fetchLockedRoomsFromSharePoint();
 
@@ -1563,11 +1594,11 @@ async function compressPhoto(dataUrl,maxKB){
       if(w>max||h>max){const r=Math.min(max/w,max/h);w=Math.round(w*r);h=Math.round(h*r);}
       canvas.width=w;canvas.height=h;
       canvas.getContext('2d').drawImage(img,0,0,w,h);
-      let q=0.88;
+      let q=0.9;
       const attempt=()=>{
         const d=canvas.toDataURL('image/jpeg',q);
-        if(d.length/1024*0.75<=maxKB||q<=0.45){res(d.split(',')[1]);return;}
-        q-=0.08;attempt();
+        if(d.length/1024*0.75<=maxKB||q<=0.2){res(d.split(',')[1]);return;}
+        q-=0.1;attempt();
       };
       attempt();
     };
@@ -1735,11 +1766,12 @@ function exportCfg(){
 
 // ── UTILS ──
 function tab(name){
-  ['check','hist'].forEach(n=>{
+  ['check','hist','adm'].forEach(n=>{
     document.getElementById('tb-'+n).classList.toggle('on',n===name);
     document.getElementById('pn-'+n).classList.toggle('on',n===name);
   });
   if(name==='hist') renderHistory();
+  if(name==='adm') renderAdmin();
 }
 function show(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on');}
 function setSplash(m){const e=document.getElementById('splashMsg');if(e)e.textContent=m;}
@@ -1757,8 +1789,22 @@ function saveLocalSchema(){
   saveLocal('rc4_secs_bytype', RC.sectionsByType);
 }
 function loadLocalSchema(){
-  RC.rooms = JSON.parse(JSON.stringify(DEF_ROOMS));
-  RC.sectionsByType = JSON.parse(JSON.stringify(DEF_SECTIONS_BY_TYPE));
+  RC.rooms = loadLocal('rc4_rooms') || DEF_ROOMS;
+  // Migrate cũ: nếu có rc4_secs (format cũ) thì map vào meeting
+  const legacySecs = loadLocal('rc4_secs');
+  const savedByType = loadLocal('rc4_secs_bytype');
+  if (savedByType) {
+    RC.sectionsByType = savedByType;
+    // Đảm bảo luôn có đủ các type mặc định nếu chưa có
+    for (const type of Object.keys(DEF_SECTIONS_BY_TYPE)) {
+      if (!RC.sectionsByType[type]) RC.sectionsByType[type] = DEF_SECTIONS_BY_TYPE[type];
+    }
+  } else if (legacySecs) {
+    // Migration từ version cũ: coi data cũ là meeting
+    RC.sectionsByType = { ...JSON.parse(JSON.stringify(DEF_SECTIONS_BY_TYPE)), meeting: legacySecs };
+  } else {
+    RC.sectionsByType = JSON.parse(JSON.stringify(DEF_SECTIONS_BY_TYPE));
+  }
 }
 function loadScript(src){return new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=rej;document.head.appendChild(s);});}
 function startClock(){
