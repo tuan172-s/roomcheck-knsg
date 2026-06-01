@@ -502,7 +502,6 @@ input[type=file]{display:none}
   <div class="tabs">
     <div class="tab on" id="tb-check" onclick="tab('check')">✅ Kiểm tra</div>
     <div class="tab" id="tb-hist"  onclick="tab('hist')">📁 Lịch sử</div>
-    <div class="tab" id="tb-adm"   onclick="tab('adm')">🔧 Quản lý</div>
   </div>
 
   <!-- CHECK -->
@@ -534,28 +533,6 @@ input[type=file]{display:none}
     <div class="hist-body" id="histBody"></div>
   </div>
 
-  <!-- ADMIN -->
-  <div class="pane" id="pn-adm">
-    <div class="adm-body">
-      <div class="card">
-        <div class="card-hd"><h3>🏢 Danh sách phòng</h3><span id="rCnt" style="font-size:10px;font-family:var(--mono);color:var(--dim)"></span></div>
-        <div class="card-bd">
-          <div class="r-list" id="rList"></div>
-          <button class="add-row-btn" onclick="addRoom()">＋ Thêm phòng</button>
-        </div>
-      </div>
-      <div class="card">
-        <div class="card-hd"><h3>📋 Nhóm & mục kiểm tra</h3><span id="sCnt" style="font-size:10px;font-family:var(--mono);color:var(--dim)"></span></div>
-        <div class="card-bd" style="padding-bottom:8px">
-          <div class="adm-type-tabs" id="admTypeTabs"></div>
-          <div class="sb-list" id="sbList"></div>
-          <button class="add-sec-btn" style="margin-top:10px" onclick="addSec()">＋ Thêm nhóm</button>
-        </div>
-      </div>
-      <button class="save-cfg-btn" id="saveCfgBtn" onclick="adminSave()">💾 Lưu cấu hình</button>
-      <button class="save-cfg-btn" style="background:linear-gradient(135deg,#f59e0b,#ef4444);margin-top:8px" onclick="exportCfg()">📤 Xuất JSON</button>
-    </div>
-  </div>
 </div><!-- /s-main -->
 
 </div><!-- /app -->
@@ -568,8 +545,8 @@ input[type=file]{display:none}
 const HARDCODED_CFG = {
   clientId:  '163ad118-4f2d-4061-80c9-8260393d92e1',
   tenantId:  '630ee4a4-29e3-4488-ba82-3deed213e218',
-  webhook:   'https://default630ee4a429e34488ba823deed213e2.18.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/229927fd64b44f0b87061ada6c78e0fb/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=myw8himcA8ZY-dY97yqyXR5TyaCrj7qiMX0Sitq2kPg',
-  lockApi:   'https://default630ee4a429e34488ba823deed213e2.18.environment.api.powerplatform.com:443/powerautomate/automations/direct/workflows/ac60f817446e41dcab6e15cbe0f6d421/triggers/manual/paths/invoke?api-version=1&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=uuqHGeN4iarjBPsmplszytx7cvZg3CQu1LRkWNvrvsE',
+  webhook:   'https://roomcheck-api.tuan-ht.workers.dev/submit-check',
+  lockApi:   'https://roomcheck-api.tuan-ht.workers.dev/locked-rooms',
   org:       'Kềm Nghĩa Sài Gòn'
 };
 // ═══════════════════════════════════════════════════════════
@@ -698,7 +675,7 @@ async function boot() {
   if (!cfg.clientId || cfg.clientId === 'PASTE_CLIENT_ID_HERE') {
     // Chưa cấu hình → vào thẳng app ở chế độ offline
     await fetchLockedRoomsFromSharePoint();
-	buildRoomSel(); renderChecklist(); renderAdmin();
+	buildRoomSel(); renderChecklist();
     show('s-main');
     document.getElementById('userLabel').textContent = 'Chưa cấu hình (offline)';
     toast('⚠️ Chưa cấu hình Client ID – xem tab Quản lý → Cài đặt','info');
@@ -714,7 +691,7 @@ async function boot() {
         authority: 'https://login.microsoftonline.com/' + cfg.tenantId,
         redirectUri: location.href.split('?')[0].split('#')[0],
       },
-      cache: { cacheLocation:'localStorage', storeAuthStateInCookie:true },
+      cache: { cacheLocation:'localStorage', storeAuthStateInCookie:false },
     });
     await RC.msalApp.initialize();
 
@@ -734,16 +711,17 @@ async function boot() {
 	  setSplash('Xin chào ' + (RC.account.name || RC.account.username) + '…');
       await sleep(600);
 	  await fetchLockedRoomsFromSharePoint();
-	  buildRoomSel(); renderChecklist(); renderAdmin();
+	  buildRoomSel(); renderChecklist();
 	  show('s-main');
 	  document.getElementById('userLabel').textContent = '👤 ' + (RC.account.name || RC.account.username);
+	  applyAdminUI();
 	} else {
 	  show('s-login');
 	}
   } catch(e) {
     console.warn('MSAL error:', e);
 	await fetchLockedRoomsFromSharePoint();
-    buildRoomSel(); renderChecklist(); renderAdmin();
+    buildRoomSel(); renderChecklist();
     show('s-main');
     document.getElementById('userLabel').textContent = 'Lỗi xác thực – offline';
     toast('Lỗi MSAL: ' + e.message,'err');
@@ -835,14 +813,19 @@ async function fetchLockedRoomsFromSharePoint() {
   try {
     const { dateKey } = getVNDateParts();
 
-    const res = await fetch(cfg.lockApi, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        date: dateKey,
+    const token = RC.account ? await getToken() : '';
+
+	const res = await fetch(cfg.lockApi, {
+	  method: 'POST',
+	  headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { 'Authorization': 'Bearer ' + token } : {})
+	  },
+	  body: JSON.stringify({
+	    date: dateKey,
         org: cfg.org || ''
-      })
-    });
+	  })
+	});
 
     if (!res.ok && res.status !== 202) {
       throw new Error('HTTP ' + res.status);
@@ -1416,13 +1399,18 @@ async function doSubmit(){
     try{
       toast('📤 Đang gửi lên SharePoint…','info');
 
-      const headers = { 'Content-Type': 'application/json' };
+      const token = await getToken();
 
-      const r = await fetch(cfg.webhook, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify(payload)
-      });
+	const headers = {
+	  'Content-Type': 'application/json',
+	  'Authorization': 'Bearer ' + token
+	};
+
+	const r = await fetch(cfg.webhook, {
+	  method: 'POST',
+	  headers,
+	  body: JSON.stringify(payload)
+	});
 
       let respData = {};
       try { respData = await r.json(); } catch (_) { respData = {}; }
@@ -1719,12 +1707,11 @@ function exportCfg(){
 
 // ── UTILS ──
 function tab(name){
-  ['check','hist','adm'].forEach(n=>{
+  ['check','hist'].forEach(n=>{
     document.getElementById('tb-'+n).classList.toggle('on',n===name);
     document.getElementById('pn-'+n).classList.toggle('on',n===name);
   });
   if(name==='hist') renderHistory();
-  if(name==='adm') renderAdmin();
 }
 function show(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on');}
 function setSplash(m){const e=document.getElementById('splashMsg');if(e)e.textContent=m;}
@@ -1742,22 +1729,8 @@ function saveLocalSchema(){
   saveLocal('rc4_secs_bytype', RC.sectionsByType);
 }
 function loadLocalSchema(){
-  RC.rooms = loadLocal('rc4_rooms') || DEF_ROOMS;
-  // Migrate cũ: nếu có rc4_secs (format cũ) thì map vào meeting
-  const legacySecs = loadLocal('rc4_secs');
-  const savedByType = loadLocal('rc4_secs_bytype');
-  if (savedByType) {
-    RC.sectionsByType = savedByType;
-    // Đảm bảo luôn có đủ các type mặc định nếu chưa có
-    for (const type of Object.keys(DEF_SECTIONS_BY_TYPE)) {
-      if (!RC.sectionsByType[type]) RC.sectionsByType[type] = DEF_SECTIONS_BY_TYPE[type];
-    }
-  } else if (legacySecs) {
-    // Migration từ version cũ: coi data cũ là meeting
-    RC.sectionsByType = { ...JSON.parse(JSON.stringify(DEF_SECTIONS_BY_TYPE)), meeting: legacySecs };
-  } else {
-    RC.sectionsByType = JSON.parse(JSON.stringify(DEF_SECTIONS_BY_TYPE));
-  }
+  RC.rooms = JSON.parse(JSON.stringify(DEF_ROOMS));
+  RC.sectionsByType = JSON.parse(JSON.stringify(DEF_SECTIONS_BY_TYPE));
 }
 function loadScript(src){return new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=rej;document.head.appendChild(s);});}
 function startClock(){
