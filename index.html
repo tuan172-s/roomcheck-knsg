@@ -817,12 +817,12 @@ async function fetchLockedRoomsFromSharePoint() {
 	const res = await fetch(cfg.lockApi, {
 	  method: 'POST',
 	  headers: {
-        'Content-Type': 'application/json',
-        ...(token ? { 'Authorization': 'Bearer ' + token } : {})
+		'Content-Type': 'application/json',
+		...(token ? { 'Authorization': 'Bearer ' + token } : {})
 	  },
 	  body: JSON.stringify({
-	    date: dateKey,
-        org: cfg.org || ''
+		date: dateKey,
+		org: cfg.org || ''
 	  })
 	});
 
