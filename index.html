@@ -949,18 +949,15 @@ function loadRoomDraft(roomId) {
 function selectRoom(id, e) {
   e.stopPropagation();
 
-  saveRoomDraft(_activeRoomId);
-
   _activeRoomId = id;
-
-  loadRoomDraft(_activeRoomId);
 
   closeRoomDropdown();
   renderRoomDropdown();
   updateLockedRoomUI();
   updateRoomTypeTag();
-  renderChecklist();
-  renderPhotos();
+
+  // Không renderChecklist ở đây để không mất tick
+  updateProgress();
 }
 
 function onRoomChange() {
@@ -997,7 +994,7 @@ function updateRoomTypeTag() {
 
 // ── CHECKLIST RENDER ──
 function renderChecklist() {
-  // Không reset ở đây, để giữ nháp theo từng phòng
+  RC.results={}; RC.notes={}; RC.speeds={}; RC.temps={}; RC.voltages={};
   const body = document.getElementById('clBody');
   body.innerHTML = '';
   const sections = getActiveSections();
