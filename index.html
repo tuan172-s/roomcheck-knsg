@@ -21,14 +21,7 @@
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html{-webkit-tap-highlight-color:transparent}
-body{
-  font-family:var(--sans);
-  background:var(--bg);
-  color:var(--text);
-  min-height:100svh;
-  overflow-x:hidden;
-  touch-action: manipulation;
-}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100svh;overflow-x:hidden}
 body::before{
   content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   background:
@@ -81,6 +74,46 @@ body::before{
 .ms-logo{width:20px;height:20px;flex-shrink:0}
 .login-note{font-size:11px;color:var(--muted);margin-top:16px;line-height:1.6}
 
+/* ── SETUP (first time / admin) ── */
+#s-setup{overflow-y:auto}
+.setup-inner{padding:24px 20px 44px}
+.setup-back{
+  display:flex;align-items:center;gap:8px;
+  font-size:13px;color:var(--dim);cursor:pointer;margin-bottom:20px;
+  background:none;border:none;font-family:var(--sans);
+}
+.setup-back:hover{color:var(--text)}
+.setup-h1{font-size:22px;font-weight:800;margin-bottom:6px}
+.setup-p{font-size:13px;color:var(--dim);line-height:1.6;margin-bottom:24px}
+.card{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);margin-bottom:14px}
+.card-hd{padding:13px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.card-hd h3{font-size:13px;font-weight:700}
+.card-bd{padding:14px 16px}
+.field{margin-bottom:12px}
+.field:last-child{margin-bottom:0}
+.field label{display:block;font-size:10px;font-family:var(--mono);color:var(--dim);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:6px}
+.field input,.field textarea{
+  width:100%;padding:11px 13px;
+  background:var(--s2);border:1px solid var(--border);
+  border-radius:10px;color:var(--text);font-size:13px;font-family:var(--sans);
+  outline:none;transition:border-color .2s;-webkit-appearance:none;
+}
+.field input:focus,.field textarea:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(77,159,255,.1)}
+.field input::placeholder,.field textarea::placeholder{color:var(--muted)}
+.hint{background:rgba(77,159,255,.07);border:1px solid rgba(77,159,255,.18);border-radius:10px;padding:12px 14px;font-size:11px;color:var(--dim);line-height:1.75;margin-top:10px}
+.hint code{font-family:var(--mono);color:var(--blue);background:rgba(77,159,255,.1);padding:1px 5px;border-radius:4px}
+.btn-main{
+  width:100%;padding:16px;border-radius:13px;border:none;
+  background:linear-gradient(135deg,var(--blue),var(--teal));
+  color:#0b0f1a;font-size:15px;font-weight:800;
+  font-family:var(--sans);cursor:pointer;
+  transition:all .2s;box-shadow:var(--glow);
+}
+.btn-main:hover{transform:translateY(-1px)}
+.btn-main:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.btn-ghost{width:100%;padding:13px;border-radius:13px;border:1px solid var(--border);background:transparent;color:var(--dim);font-size:13px;font-family:var(--sans);cursor:pointer;margin-top:8px;transition:all .2s}
+.btn-ghost:hover{border-color:var(--border2);color:var(--text)}
+
 /* ── TOPBAR ── */
 .topbar{
   padding:14px 18px 12px;
@@ -94,6 +127,8 @@ body::before{
 .brand-name{font-size:15px;font-weight:800;letter-spacing:-.3px}
 .brand-user{font-size:10px;font-family:var(--mono);color:var(--dim);margin-top:2px}
 .tb-acts{display:flex;gap:7px}
+.ico-btn{width:36px;height:36px;border-radius:10px;border:1px solid var(--border);background:var(--s2);color:var(--dim);cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;transition:all .2s}
+.ico-btn:hover{border-color:var(--blue);color:var(--blue)}
 .room-row{display:flex;align-items:center;gap:10px}
 /* ── CUSTOM ROOM DROPDOWN ── */
 .room-wrap{flex:1;display:flex;align-items:center;gap:10px;background:var(--s2);border:1px solid var(--border);border-radius:11px;padding:9px 12px;cursor:pointer;position:relative;transition:border-color .2s}
@@ -135,7 +170,7 @@ body::before{
 .tabs{display:flex;padding:14px 18px 0;gap:2px}
 .tab{flex:1;padding:9px;text-align:center;font-size:11px;font-weight:700;font-family:var(--mono);cursor:pointer;border-bottom:2px solid transparent;color:var(--dim);transition:all .2s;letter-spacing:.3px}
 .tab.on{color:var(--blue);border-bottom-color:var(--blue)}
-.pane{display:none;overflow-y:auto;flex:1;-webkit-overflow-scrolling: touch}
+.pane{display:none;overflow-y:auto;flex:1}
 .pane.on{display:block}
 
 /* ── CHECKLIST ── */
@@ -174,8 +209,6 @@ body::before{
 .tog.tf.on{border-color:var(--red);background:rgba(248,113,113,.1);color:var(--red);box-shadow:0 0 10px rgba(248,113,113,.18)}
 .tog.tn{border-color:rgba(122,138,160,.18);color:rgba(122,138,160,.3)}
 .tog.tn.on{border-color:var(--dim);background:rgba(122,138,160,.08);color:var(--dim)}
-
-/* Form controls optimized for mobile auto-zoom (font-size >= 16px) */
 .spd-row{display:flex;align-items:center;gap:8px;margin-top:9px}
 .spd-in{flex:1;padding:9px 12px;background:var(--s2);border:1px solid var(--border);border-radius:9px;color:var(--text);font-size:16px;font-weight:600;font-family:var(--mono);outline:none;transition:border-color .2s}
 .spd-in:focus{border-color:var(--blue)}
@@ -185,7 +218,7 @@ body::before{
 .sto{background:rgba(251,191,36,.12);color:var(--amber)}
 .stb{background:rgba(248,113,113,.12);color:var(--red)}
 .fn-wrap{margin-top:8px;display:none}
-.fn-ta{width:100%;padding:9px 12px;background:var(--s2);border:1px solid rgba(248,113,113,.25);border-radius:9px;color:var(--text);font-size:16px;font-family:var(--sans);outline:none;resize:none;min-height:52px}
+.fn-ta{width:100%;padding:9px 12px;background:var(--s2);border:1px solid rgba(248,113,113,.25);border-radius:9px;color:var(--text);font-size:12px;font-family:var(--sans);outline:none;resize:none;min-height:52px}
 .fn-ta::placeholder{color:var(--muted)}
 
 /* photos */
@@ -195,18 +228,1529 @@ body::before{
 .ph-thumb{aspect-ratio:1;border-radius:10px;overflow:hidden;position:relative;background:var(--s2);border:1px solid var(--border)}
 .ph-thumb img{width:100%;height:100%;object-fit:cover;display:block}
 .ph-del{position:absolute;top:4px;right:4px;width:22px;height:22px;border-radius:50%;background:rgba(0,0,0,.75);border:none;color:#fff;cursor:pointer;font-size:13px;display:flex;align-items:center;justify-content:center}
-.ph-add{aspect-ratio:1;border-radius:10px;border:1.5px dashed var(--s3);background:transparent;display:flex;font-family:var(--sans);flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;color:var(--dim);font-size:10px;transition:all .2s}
+.ph-add{aspect-ratio:1;border-radius:10px;border:1.5px dashed var(--s3);background:transparent;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;color:var(--dim);font-size:10px;font-family:var(--sans);transition:all .2s}
 .ph-add:hover{border-color:var(--blue);color:var(--blue)}
 input[type=file]{display:none}
 
 /* extras */
 .extras{padding:0 18px;display:flex;flex-direction:column;gap:10px;margin-bottom:14px}
-.ext-input{width:100%;padding:11px 13px;background:var(--s1);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:16px;font-family:var(--sans);outline:none;transition:border-color .2s}
+.ext-input{width:100%;padding:11px 13px;background:var(--s1);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:13px;font-family:var(--sans);outline:none;transition:border-color .2s}
 .ext-input:focus{border-color:var(--blue)}
 .ext-input::placeholder{color:var(--muted)}
-.ext-ta{width:100%;padding:11px 13px;background:var(--s1);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:16px;font-family:var(--sans);outline:none;resize:none;min-height:68px}
+.ext-ta{width:100%;padding:11px 13px;background:var(--s1);border:1px solid var(--border);border-radius:10px;color:var(--text);font-size:13px;font-family:var(--sans);outline:none;resize:none;min-height:68px}
 .ext-ta::placeholder{color:var(--muted)}
 
 /* submit */
 .sub-wrap{padding:0 18px 36px}
-.sub-btn{width:100%;padding:17px;border-radius:var(--r);border:none;background:linear-gradient(135deg,var(--blue),var(--teal));color:#0b0f1a;font-size:15px;font-weight:800;font-family:var(--sans);cursor:pointer;display:flex;align-items:
+.sub-btn{width:100%;padding:17px;border-radius:var(--r);border:none;background:linear-gradient(135deg,var(--blue),var(--teal));color:#0b0f1a;font-size:15px;font-weight:800;font-family:var(--sans);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:9px;transition:all .2s;box-shadow:var(--glow)}
+.sub-btn:hover{transform:translateY(-1px);box-shadow:0 8px 36px rgba(77,159,255,.35)}
+.sub-btn:active{transform:none}
+.sub-btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+
+/* ── HISTORY ── */
+.hist-body{padding:14px 18px;display:flex;flex-direction:column;gap:11px}
+.hc{background:var(--s1);border:1px solid var(--border);border-radius:var(--r);padding:13px 15px}
+.hc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:9px}
+.hc-room{font-size:14px;font-weight:700}
+.hc-time{font-size:10px;color:var(--dim);font-family:var(--mono);margin-top:3px}
+.hc-chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font-size:10px;font-weight:600;padding:3px 8px;border-radius:6px;font-family:var(--mono)}
+.cp{background:rgba(52,211,153,.1);color:var(--green)}
+.cf{background:rgba(248,113,113,.1);color:var(--red)}
+.cn{background:var(--s3);color:var(--dim)}
+.ci2{background:rgba(77,159,255,.1);color:var(--blue)}
+.cs{background:rgba(251,191,36,.1);color:var(--amber)}
+.hc-note{font-size:11px;color:var(--dim);margin-top:8px;padding-top:8px;border-top:1px solid var(--border);line-height:1.5}
+.empty{text-align:center;padding:60px 20px;color:var(--dim)}
+.empty-ico{font-size:44px;margin-bottom:12px}
+
+/* ── ADMIN ── */
+.adm-body{padding:14px 18px;display:flex;flex-direction:column;gap:13px}
+.r-list{display:flex;flex-direction:column;gap:6px}
+.r-row{display:flex;align-items:center;gap:9px;background:var(--s2);border:1px solid var(--border);border-radius:9px;padding:9px 12px}
+.r-row input{flex:1;background:transparent;border:none;color:var(--text);font-size:13px;font-weight:600;font-family:var(--sans);outline:none}
+.del-btn{width:28px;height:28px;border-radius:8px;border:1px solid rgba(248,113,113,.25);background:transparent;color:rgba(248,113,113,.5);cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.del-btn:hover{border-color:var(--red);color:var(--red)}
+.add-row-btn{display:flex;align-items:center;gap:8px;padding:9px 12px;border-radius:9px;border:1.5px dashed var(--border);background:transparent;color:var(--dim);font-size:12px;font-family:var(--sans);cursor:pointer;transition:all .2s;width:100%}
+.add-row-btn:hover{border-color:var(--blue);color:var(--blue)}
+.sb-list{display:flex;flex-direction:column;gap:11px}
+.sb-sec{background:var(--s2);border:1px solid var(--border);border-radius:11px;overflow:hidden}
+.sb-hd{display:flex;align-items:center;gap:9px;padding:10px 13px;border-bottom:1px solid var(--border)}
+.sb-hd input{flex:1;background:transparent;border:none;color:var(--text);font-size:13px;font-weight:700;font-family:var(--sans);outline:none}
+.sb-em{font-size:19px;cursor:pointer;flex-shrink:0}
+.del-sec{padding:4px 10px;border-radius:7px;border:1px solid rgba(248,113,113,.25);background:transparent;color:rgba(248,113,113,.5);font-size:10px;font-family:var(--mono);cursor:pointer;flex-shrink:0;transition:all .15s}
+.del-sec:hover{border-color:var(--red);color:var(--red)}
+.sb-items{padding:9px 13px;display:flex;flex-direction:column;gap:5px}
+.sb-cols{display:grid;grid-template-columns:32px 1.8fr 1.4fr 80px 28px;gap:4px;padding:0 0 4px;font-size:9px;font-family:var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.8px}
+.sb-row{display:grid;grid-template-columns:32px 1.8fr 1.4fr 80px 28px;gap:4px;align-items:center}
+.sb-row input,.sb-row select{background:var(--s1);border:1px solid var(--border);border-radius:7px;color:var(--text);font-family:var(--sans);outline:none;padding:7px 8px;font-size:12px;width:100%;-webkit-appearance:none}
+.sb-row input.em-in{text-align:center;font-size:15px;padding:5px}
+.sb-row select{font-size:10px;font-family:var(--mono);color:var(--dim)}
+.add-item{display:flex;align-items:center;gap:6px;padding:7px 10px;border-radius:8px;border:1.5px dashed var(--border);background:transparent;color:var(--dim);font-size:11px;font-family:var(--sans);cursor:pointer;transition:all .2s;width:100%;margin-top:4px}
+.add-item:hover{border-color:var(--teal);color:var(--teal)}
+.add-sec-btn{width:100%;padding:12px;border-radius:10px;border:1.5px dashed var(--border);background:transparent;color:var(--dim);font-size:13px;font-family:var(--sans);cursor:pointer;transition:all .2s}
+.add-sec-btn:hover{border-color:var(--blue);color:var(--blue)}
+.save-cfg-btn{width:100%;padding:15px;border-radius:var(--r);border:none;background:linear-gradient(135deg,var(--green),var(--teal));color:#0b0f1a;font-size:14px;font-weight:800;font-family:var(--sans);cursor:pointer;transition:all .2s}
+.save-cfg-btn:hover{transform:translateY(-1px)}
+.save-cfg-btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+
+/* ── TOAST ── */
+.toast-stack{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:200;display:flex;flex-direction:column;gap:8px;width:90%;max-width:420px;pointer-events:none}
+.toast{padding:12px 16px;border-radius:12px;font-size:13px;font-weight:600;font-family:var(--sans);display:flex;align-items:center;gap:10px;animation:tIn .25s ease;box-shadow:0 8px 32px rgba(0,0,0,.5);pointer-events:auto}
+@keyframes tIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.toast.ok{background:rgba(52,211,153,.93);color:#0b0f1a}
+.toast.err{background:rgba(248,113,113,.93);color:#fff}
+.toast.info{background:rgba(77,159,255,.93);color:#0b0f1a}
+
+/* ── CONFIRM MODAL ── */
+.modal-overlay{
+  position:fixed;inset:0;z-index:400;
+  background:rgba(0,0,0,.75);backdrop-filter:blur(8px);
+  display:flex;align-items:flex-end;justify-content:center;
+  animation:fadeOverlay .2s ease;
+}
+@keyframes fadeOverlay{from{opacity:0}to{opacity:1}}
+.modal-sheet{
+  width:100%;max-width:500px;
+  background:var(--s1);border:1px solid var(--border2);
+  border-radius:22px 22px 0 0;padding:24px 20px 44px;
+  animation:slideUp .25s cubic-bezier(.4,0,.2,1);
+}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:none}}
+.modal-handle{width:38px;height:4px;background:var(--s3);border-radius:2px;margin:0 auto 20px}
+.modal-icon{font-size:44px;text-align:center;margin-bottom:12px}
+.modal-title{font-size:18px;font-weight:800;text-align:center;margin-bottom:8px}
+.modal-body{font-size:13px;color:var(--dim);text-align:center;line-height:1.75;margin-bottom:22px;padding:0 4px}
+.modal-body strong{color:var(--amber);font-weight:700}
+.modal-actions{display:flex;flex-direction:column;gap:9px}
+.modal-confirm{
+  width:100%;padding:15px;border-radius:13px;border:none;
+  background:linear-gradient(135deg,var(--amber),#f59e0b);
+  color:#0b0f1a;font-size:15px;font-weight:800;font-family:var(--sans);cursor:pointer;
+  transition:all .2s;
+}
+.modal-confirm:hover{transform:translateY(-1px)}
+.modal-cancel{
+  width:100%;padding:13px;border-radius:13px;
+  border:1px solid var(--border2);background:transparent;
+  color:var(--dim);font-size:13px;font-family:var(--sans);cursor:pointer;transition:all .2s;
+}
+.modal-cancel:hover{color:var(--text);border-color:var(--border2)}
+
+/* ── RESULT BANNER ── */
+.result-overlay{
+  position:fixed;inset:0;z-index:350;
+  display:flex;align-items:center;justify-content:center;
+  background:rgba(0,0,0,.65);backdrop-filter:blur(12px);
+  animation:fadeOverlay .2s ease;padding:20px;
+}
+.result-card{
+  width:100%;max-width:340px;
+  background:var(--s1);border-radius:22px;padding:32px 24px 28px;
+  text-align:center;border:1px solid var(--border2);
+  animation:popIn .3s cubic-bezier(.175,.885,.32,1.275);
+}
+@keyframes popIn{from{opacity:0;transform:scale(.85)}to{opacity:1;transform:none}}
+.rb-icon{font-size:54px;display:block;margin-bottom:14px}
+.rb-title{font-size:20px;font-weight:800;margin-bottom:6px}
+.rb-sub{font-size:12px;color:var(--dim);line-height:1.65}
+.rb-meta{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:16px 0 4px}
+.rb-chip{font-size:11px;font-weight:700;padding:4px 12px;border-radius:8px;font-family:var(--mono)}
+.rb-pass{background:rgba(52,211,153,.13);color:var(--green)}
+.rb-fail{background:rgba(248,113,113,.13);color:var(--red)}
+.rb-na{background:var(--s3);color:var(--dim)}
+.rb-warn{background:rgba(251,191,36,.13);color:var(--amber)}
+.rb-close{
+  width:100%;padding:14px;border-radius:13px;border:none;
+  background:linear-gradient(135deg,var(--blue),var(--teal));
+  color:#0b0f1a;font-size:14px;font-weight:800;font-family:var(--sans);
+  cursor:pointer;margin-top:18px;transition:all .2s;
+}
+.rb-close:hover{transform:translateY(-1px)}
+
+/* ── ROOM SELECT — locked = green (handled via .is-locked on val + .locked on opt) ── */
+#roomLockedBadge{
+  font-size:11px;font-family:var(--mono);font-weight:700;
+  color:var(--green);white-space:nowrap;flex-shrink:0;
+  display:none;
+}
+#roomLockedBadge.on{display:block}
+
+/* room type badge in selector */
+.rt-badge{display:inline-block;font-size:9px;font-family:var(--mono);font-weight:700;padding:2px 7px;border-radius:5px;margin-left:4px;vertical-align:middle;text-transform:uppercase;letter-spacing:.6px}
+.rt-meeting{background:rgba(77,159,255,.15);color:var(--blue)}
+.rt-server{background:rgba(45,212,191,.15);color:var(--teal)}
+.rt-default{background:var(--s3);color:var(--dim)}
+
+/* type indicator on checklist header */
+.room-type-tag{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-family:var(--mono);font-weight:700;padding:3px 9px;border-radius:6px;text-transform:uppercase;letter-spacing:.6px;margin-left:6px}
+.rtt-meeting{background:rgba(77,159,255,.12);color:var(--blue);border:1px solid rgba(77,159,255,.2)}
+.rtt-server{background:rgba(45,212,191,.12);color:var(--teal);border:1px solid rgba(45,212,191,.2)}
+
+/* temp & voltage input rows */
+.meas-row{display:flex;align-items:center;gap:8px;margin-top:9px}
+.meas-in{flex:1;padding:9px 12px;background:var(--s2);border:1px solid var(--border);border-radius:9px;color:var(--text);font-size:16px;font-weight:600;font-family:var(--mono);outline:none;transition:border-color .2s}
+.meas-in:focus{border-color:var(--blue)}
+.meas-unit{font-size:11px;color:var(--dim);font-family:var(--mono);min-width:28px}
+.meas-tag{font-size:10px;font-weight:600;padding:3px 8px;border-radius:6px;font-family:var(--mono)}
+/* temp tags */
+.tt-cold{background:rgba(77,159,255,.12);color:var(--blue)}
+.tt-ok{background:rgba(52,211,153,.12);color:var(--green)}
+.tt-warm{background:rgba(251,191,36,.12);color:var(--amber)}
+.tt-hot{background:rgba(248,113,113,.12);color:var(--red)}
+/* voltage tags */
+.vt-ok{background:rgba(52,211,153,.12);color:var(--green)}
+.vt-warn{background:rgba(251,191,36,.12);color:var(--amber)}
+.vt-err{background:rgba(248,113,113,.12);color:var(--red)}
+
+/* admin: room-type selector per room row */
+.r-type-sel{background:var(--s2);border:1px solid var(--border);border-radius:7px;color:var(--dim);font-size:10px;font-family:var(--mono);padding:4px 6px;outline:none;flex-shrink:0;cursor:pointer}
+/* admin: section type tab */
+.adm-type-tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.adm-type-tab{padding:6px 14px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--dim);font-size:11px;font-family:var(--mono);cursor:pointer;transition:all .2s;font-weight:700}
+.adm-type-tab.on{border-color:var(--blue);color:var(--blue);background:rgba(77,159,255,.08)}
+
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--s3);border-radius:3px}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ════ SPLASH ════ -->
+<div class="scr on" id="s-splash">
+  <div class="splash-ico">📋</div>
+  <div>
+    <div class="splash-title">RoomCheck</div>
+    <div class="splash-sub">Facility checklist system</div>
+  </div>
+  <div>
+    <div class="splash-bar"><div class="splash-fill"></div></div>
+    <div class="splash-msg" id="splashMsg">Đang khởi động…</div>
+  </div>
+</div>
+
+<!-- ════ LOGIN ════ -->
+<div class="scr" id="s-login">
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:24px">
+    <div class="login-card">
+      <div class="login-ico">🔐</div>
+      <div class="login-title">Đăng nhập nội bộ</div>
+      <div class="login-desc">
+        Sử dụng tài khoản Microsoft 365 công ty để xác thực.<br>
+        Chỉ nhân viên trong tenant mới gửi được dữ liệu lên SharePoint.
+      </div>
+      <button class="ms-btn" id="loginBtn" onclick="msLogin()">
+        <svg class="ms-logo" viewBox="0 0 21 21" fill="none">
+          <rect x="1" y="1" width="9" height="9" fill="#f25022"/>
+          <rect x="11" y="1" width="9" height="9" fill="#7fba00"/>
+          <rect x="1" y="11" width="9" height="9" fill="#00a4ef"/>
+          <rect x="11" y="11" width="9" height="9" fill="#ffb900"/>
+        </svg>
+        Đăng nhập với Microsoft 365
+      </button>
+      <div class="login-note">
+        🔒 Token xác thực do Microsoft cấp — app không lưu mật khẩu.<br>
+        Sau lần đầu, thiết bị sẽ tự động đăng nhập.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ MAIN ════ -->
+<div class="scr" id="s-main">
+  <div class="topbar">
+    <div class="tb1">
+      <div class="brand">
+        <div class="brand-ico">📋</div>
+        <div>
+          <div class="brand-name">RoomCheck</div>
+          <div class="brand-user" id="userLabel">Đang đăng nhập…</div>
+        </div>
+      </div>
+      <div class="tb-acts">
+        <button class="ico-btn" title="Đăng xuất" onclick="msLogout()">🚪</button>
+        
+      </div>
+    </div>
+    <div class="room-row">
+      <div class="room-wrap" id="roomWrap" onclick="toggleRoomDropdown(event)">
+        <span style="font-size:16px;flex-shrink:0">📍</span>
+        <span class="room-sel-val" id="roomSelVal">—</span>
+        <span id="roomLockedBadge">✔ Đã KT</span>
+        <span class="room-chevron">▾</span>
+        <div class="room-dropdown" id="roomDropdown"></div>
+      </div>
+      <div class="clk-box">
+        <div class="clk-t" id="clk">--:--</div>
+        <div class="clk-d" id="clkd">---</div>
+      </div>
+    </div>
+    <div class="prog-wrap">
+      <div class="prog-meta">
+        <span id="pTxt">0 / 0 mục</span>
+        <span style="display:flex;align-items:center;gap:6px">
+          <span id="roomTypeTag"></span>
+          <span id="pPct">0%</span>
+        </span>
+      </div>
+      <div class="prog-track"><div class="prog-bar" id="pBar" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab on" id="tb-check" onclick="tab('check')">✅ Kiểm tra</div>
+    <div class="tab" id="tb-hist"  onclick="tab('hist')">📁 Lịch sử</div>
+  </div>
+
+  <!-- CHECK -->
+  <div class="pane on" id="pn-check">
+    <div class="cl-body" id="clBody"></div>
+    <div class="ph-sec">
+      <div class="ph-lbl">📸 Hình ảnh bằng chứng</div>
+      <div class="ph-grid" id="phGrid">
+        <label class="ph-add" for="phIn"><span style="font-size:22px">📷</span><span>Chụp / chọn ảnh</span></label>
+      </div>
+      <input type="file" id="phIn" accept="image/*" capture="environment" multiple>
+    </div>
+    <div class="extras">
+      <div>
+        <div style="font-size:10px;font-family:var(--mono);color:var(--dim);text-transform:uppercase;letter-spacing:1.2px;margin-bottom:6px">📝 Ghi chú tổng quát</div>
+        <textarea class="ext-ta" id="genNote" placeholder="Ghi chú thêm về tình trạng phòng họp…"></textarea>
+      </div>
+    </div>
+    <div class="sub-wrap">
+      <button class="sub-btn" id="subBtn" onclick="doSubmit()" style="opacity:0.55">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+        <span>Còn mục chưa kiểm tra</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- HISTORY -->
+  <div class="pane" id="pn-hist">
+    <div class="hist-body" id="histBody"></div>
+  </div>
+
+</div><!-- /s-main -->
+
+</div><!-- /app -->
+<div class="toast-stack" id="toasts"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// ⚙️  HARDCODED CONFIG — Admin điền 1 lần, commit lên GitHub
+// ═══════════════════════════════════════════════════════════
+const HARDCODED_CFG = {
+  clientId:  '163ad118-4f2d-4061-80c9-8260393d92e1',
+  tenantId:  '630ee4a4-29e3-4488-ba82-3deed213e218',
+  webhook:   'https://roomcheck-api.tuan-ht.workers.dev/submit-check',
+  lockApi:   'https://roomcheck-api.tuan-ht.workers.dev/locked-rooms',
+  org:       'Kềm Nghĩa Sài Gòn'
+};
+// ═══════════════════════════════════════════════════════════
+
+// ── ROOM TYPES ──
+// Thêm type mới vào đây để hệ thống tự nhận diện
+const ROOM_TYPES = {
+  meeting: { label: 'Phòng họp', icon: '🏢', tagClass: 'rtt-meeting' },
+  server:  { label: 'Phòng server', icon: '🖥️', tagClass: 'rtt-server'  },
+  // warehouse: { label: 'Phòng kho', icon: '📦', tagClass: 'rtt-default' },  // ← thêm loại mới ở đây
+};
+
+const DEF_ROOMS = [
+  {id:'EVO',      label:'Phòng họp EVO',        type:'meeting'},
+  {id:'ISO L1',   label:'Phòng họp ISO Lầu 1',  type:'meeting'},
+  {id:'BOD',      label:'Phòng họp BOD',         type:'meeting'},
+  {id:'Nipper',   label:'Phòng họp Nipper',      type:'meeting'},
+  {id:'OEM',      label:'Phòng OEM',             type:'meeting'},
+  {id:'Clipper',  label:'Phòng họp Clipper',     type:'meeting'},
+  {id:'IE',       label:'Phòng họp IE',          type:'meeting'},
+  {id:'KyThuat',  label:'Phòng họp Kỹ Thuật',   type:'meeting'},
+  {id:'SVR_DC',   label:'Phòng Server',       type:'server'},
+];
+
+// ── SECTIONS THEO TỪNG LOẠI PHÒNG ──
+const DEF_SECTIONS_BY_TYPE = {
+  meeting: [
+    {id:'tv',label:'Tivi / Màn hình',emoji:'📺',items:[
+      {id:'tv_pwr',icon:'🔌',label:'Tivi bật/tắt bình thường',note:'Kiểm tra nút nguồn & remote',type:'check'},
+      {id:'tv_img',icon:'🖥️',label:'Hiển thị hình ảnh rõ nét',note:'Không nhiễu, không chết điểm ảnh',type:'check'},
+      {id:'tv_snd',icon:'🔊',label:'Âm thanh hoạt động',note:'Test volume lên/xuống',type:'check'},
+      {id:'tv_rem',icon:'📱',label:'Remote hoạt động',note:'Kiểm tra pin nếu không phản hồi',type:'check'},
+    ]},
+    {id:'wifi',label:'Kết nối WiFi',emoji:'📶',items:[
+      {id:'wifi_con',icon:'🔗',label:'Kết nối WiFi thành công',note:'Kết nối SSID chính phòng họp',type:'check'},
+      {id:'wifi_net',icon:'🌐',label:'Truy cập Internet được',note:'Mở website bất kỳ kiểm tra',type:'check'},
+      {id:'wifi_spd',icon:'⚡',label:'Tốc độ WiFi (Mbps)',note:'Đo bằng Speedtest / Fast.com',type:'speed'},
+      {id:'wifi_stb',icon:'📡',label:'Tín hiệu ổn định',note:'Không bị ngắt kết nối',type:'check'},
+    ]},
+    {id:'hdmi',label:'Kết nối HDMI',emoji:'🔌',items:[
+      {id:'hdmi_cbl',icon:'🔋',label:'Cáp HDMI có sẵn & nguyên vẹn',note:'Đầu cắm không gãy',type:'check'},
+      {id:'hdmi_con',icon:'💻',label:'Kết nối laptop → Tivi',note:'Cắm HDMI, chọn đúng input',type:'check'},
+      {id:'hdmi_dsp',icon:'🖼️',label:'Màn hình laptop hiện lên Tivi',note:'Kiểm tra độ phân giải',type:'check'},
+      {id:'hdmi_aud',icon:'🎵',label:'Âm thanh qua HDMI',note:'Chọn HDMI làm audio output',type:'check'},
+      {id:'hdmi_adp',icon:'🔄',label:'HDMI không dây (nếu có)',note:'Kiểm tra HDMI không dây',type:'check'},
+    ]},
+  ],
+  server: [
+    {id:'svr_power',label:'Nguồn điện / UPS',emoji:'⚡',items:[
+      {id:'svr_pwr_main', icon:'🔌',label:'Nguồn điện chính ổn định',  note:'Đèn báo UPS xanh',             type:'check'},
+      {id:'svr_pwr_ups',  icon:'🔋',label:'UPS còn pin dự phòng (>80%)',note:'Xem % pin trên màn hình UPS',  type:'check'},
+      {id:'svr_pwr_volt', icon:'📊',label:'Điện áp đầu ra UPS (V)',      note:'Đo đồng hồ hoặc đọc UPS LCD', type:'voltage'},
+      {id:'svr_pwr_cur',  icon:'⚡',label:'Dòng tải UPS (A)',            note:'Đọc từ màn hình UPS',          type:'voltage'},
+      {id:'svr_pwr_pdu',  icon:'🔌',label:'PDU tủ rack hoạt động',       note:'Không có lỗi/cảnh báo PDU',   type:'check'},
+    ]},
+    {id:'svr_cooling',label:'Làm mát / Nhiệt độ',emoji:'❄️',items:[
+      {id:'svr_cool_ac',   icon:'🌡️',label:'Điều hòa server room ON',      note:'Nhiệt độ đặt ≤ 22°C',          type:'check'},
+      {id:'svr_cool_tmp1', icon:'🌡️',label:'Nhiệt độ phòng (°C)',           note:'Cảm biến hoặc nhiệt kế treo',  type:'temp'},
+      {id:'svr_cool_tmp2', icon:'🌡️',label:'Nhiệt độ trong tủ rack (°C)',   note:'Cảm biến rack hoặc BMS',       type:'temp'},
+      {id:'svr_cool_hum',  icon:'💧',label:'Độ ẩm trong ngưỡng cho phép',   note:'40–60% RH — kiểm tra BMS',     type:'check'},
+      {id:'svr_cool_alm',  icon:'🚨',label:'Không có cảnh báo nhiệt/lửa',   note:'Kiểm tra bảng điều khiển BMS', type:'check'},
+    ]},
+    {id:'svr_network',label:'Mạng / Switch',emoji:'🌐',items:[
+      {id:'svr_net_core',  icon:'🔗',label:'Core switch hoạt động',      note:'Đèn link/activity xanh',      type:'check'},
+      {id:'svr_net_dist',  icon:'🔗',label:'Distribution switch OK',     note:'Không có port down bất thường',type:'check'},
+      {id:'svr_net_spd',   icon:'⚡',label:'Throughput nội bộ (Mbps)',   note:'iPerf hoặc đo NMS',           type:'speed'},
+      {id:'svr_net_int',   icon:'🌐',label:'Internet uplink hoạt động',  note:'Ping gateway < 5ms',          type:'check'},
+      {id:'svr_net_fw',    icon:'🛡️',label:'Firewall không có cảnh báo', note:'Kiểm tra dashboard firewall', type:'check'},
+    ]},
+    {id:'svr_servers',label:'Máy chủ / Storage',emoji:'🖥️',items:[
+      {id:'svr_srv_pwr',  icon:'💡',label:'Tất cả server đang chạy',     note:'Đèn power xanh, không amber',  type:'check'},
+      {id:'svr_srv_disk', icon:'💾',label:'Không có cảnh báo ổ đĩa',    note:'RAID / S.M.A.R.T. OK',         type:'check'},
+      {id:'svr_srv_bkp',  icon:'📦',label:'Backup đêm qua thành công',  note:'Kiểm tra log backup sáng nay', type:'check'},
+      {id:'svr_srv_virt', icon:'⚙️',label:'Virtualization host ổn định', note:'vSphere/Hyper-V không lỗi',   type:'check'},
+      {id:'svr_srv_cpu',  icon:'📈',label:'CPU/RAM không quá tải',       note:'< 85% thì OK',                type:'check'},
+    ]},
+    {id:'svr_access',label:'An toàn / Tiếp cận',emoji:'🔐',items:[
+      {id:'svr_acc_door',  icon:'🚪',label:'Cửa phòng khóa đúng cách',        note:'Khóa từ / thẻ hoạt động',   type:'check'},
+      {id:'svr_acc_cam',   icon:'📹',label:'Camera giám sát hoạt động',        note:'Kiểm tra hình live trên NVR',type:'check'},
+      {id:'svr_acc_cable', icon:'🧹',label:'Dây cáp gọn gàng, không lỗi hở',  note:'Dây quản lý bằng velcro',   type:'check'},
+      {id:'svr_acc_log',   icon:'📋',label:'Sổ vào/ra phòng có cập nhật',      note:'Ghi đầy đủ người/giờ vào',  type:'check'},
+    ]},
+  ],
+};
+
+
+// ── STATE ──
+const RC = {
+  rooms:[],
+  sectionsByType:{},   // { meeting:[...], server:[...], ... }
+  results:{},
+  notes:{},
+  speeds:{},
+  temps:{},            // nhiệt độ (°C)
+  voltages:{},         // điện áp / dòng điện
+  photos:[],
+  msalApp:null,
+  account:null,
+  token:null,
+  lockedRooms:[],
+  lockedMap:{},
+  adminEditType:'meeting',  // loại phòng đang edit trong admin
+};
+
+// Helper: lấy sections của phòng đang chọn
+function getActiveSections() {
+  const room = RC.rooms.find(r => r.id === _activeRoomId);
+  const type = room?.type || 'meeting';
+  return RC.sectionsByType[type] || RC.sectionsByType['meeting'] || [];
+}
+
+// Helper: type của phòng đang chọn
+function getActiveRoomType() {
+  const room = RC.rooms.find(r => r.id === _activeRoomId);
+  return room?.type || 'meeting';
+}
+
+// ── BOOT ──
+window.addEventListener('DOMContentLoaded', boot);
+async function boot() {
+  startClock();
+  setSplash('Đang khởi động…');
+  loadLocalSchema();
+
+  const cfg = getCfg();
+  if (!cfg.clientId || cfg.clientId === 'PASTE_CLIENT_ID_HERE') {
+    // Chưa cấu hình → vào thẳng app ở chế độ offline
+    await fetchLockedRoomsFromSharePoint();
+	buildRoomSel(); renderChecklist();
+    show('s-main');
+    document.getElementById('userLabel').textContent = 'Chưa cấu hình (offline)';
+    toast('⚠️ Chưa cấu hình Client ID – xem tab Quản lý → Cài đặt','info');
+    return;
+  }
+
+  setSplash('Đang tải thư viện xác thực…');
+  try {
+    await loadScript('https://alcdn.msauth.net/browser/2.38.0/js/msal-browser.min.js');
+    RC.msalApp = new msal.PublicClientApplication({
+      auth: {
+        clientId: cfg.clientId,
+        authority: 'https://login.microsoftonline.com/' + cfg.tenantId,
+        redirectUri: location.href.split('?')[0].split('#')[0],
+      },
+      cache: { cacheLocation:'localStorage', storeAuthStateInCookie:false },
+    });
+    await RC.msalApp.initialize();
+
+    // Check existing account
+    const redirectResult = await RC.msalApp.handleRedirectPromise();
+
+	if (redirectResult && redirectResult.account) {
+	  RC.account = redirectResult.account;
+	} else {
+	  const accounts = RC.msalApp.getAllAccounts();
+	  if (accounts.length > 0) {
+      RC.account = accounts[0];
+      }
+    }
+
+  if (RC.account) {
+	  setSplash('Xin chào ' + (RC.account.name || RC.account.username) + '…');
+      await sleep(600);
+	  await fetchLockedRoomsFromSharePoint();
+	  buildRoomSel(); renderChecklist();
+	  show('s-main');
+	  document.getElementById('userLabel').textContent = '👤 ' + (RC.account.name || RC.account.username);
+	} else {
+	  show('s-login');
+	}
+  } catch(e) {
+    console.warn('MSAL error:', e);
+	await fetchLockedRoomsFromSharePoint();
+    buildRoomSel(); renderChecklist();
+    show('s-main');
+    document.getElementById('userLabel').textContent = 'Lỗi xác thực – offline';
+    toast('Lỗi MSAL: ' + e.message,'err');
+  }
+}
+
+// ── MSAL AUTH ──
+async function msLogin() {
+  const btn = document.getElementById('loginBtn');
+  btn.disabled = true;
+  btn.textContent = 'Đang chuyển sang Microsoft…';
+
+  try {
+    await RC.msalApp.loginRedirect({
+      scopes: ['openid', 'profile', 'User.Read'],
+      prompt: 'select_account'
+    });
+  } catch (e) {
+    toast('Đăng nhập thất bại: ' + e.message, 'err');
+    btn.disabled = false;
+    btn.innerHTML = '<svg class="ms-logo" viewBox="0 0 21 21" fill="none"><rect x="1" y="1" width="9" height="9" fill="#f25022"/><rect x="11" y="1" width="9" height="9" fill="#7fba00"/><rect x="1" y="11" width="9" height="9" fill="#00a4ef"/><rect x="11" y="11" width="9" height="9" fill="#ffb900"/></svg> Đăng nhập với Microsoft 365';
+  }
+}
+
+async function msLogout() {
+  if (!RC.msalApp) return;
+  try {
+    await RC.msalApp.logoutRedirect({
+      account: RC.account
+    });
+  } catch (e) {
+    toast('Lỗi đăng xuất: ' + e.message, 'err');
+  }
+}
+
+async function getToken() {
+  if (!RC.msalApp || !RC.account) {
+    throw new Error('Chưa đăng nhập Microsoft 365');
+  }
+
+  try {
+    const r = await RC.msalApp.acquireTokenSilent({
+      scopes: ['openid', 'profile', 'User.Read'],
+      account: RC.account
+    });
+    return r.accessToken;
+  } catch (e) {
+    console.warn('acquireTokenSilent failed:', e);
+    throw new Error('Không lấy được access token. Vui lòng đăng nhập lại.');
+  }
+}
+
+// ── CONFIG ──
+function getCfg() {
+  const saved = loadLocal('rc4_cfg') || {};
+  return {
+    clientId: HARDCODED_CFG.clientId !== 'PASTE_CLIENT_ID_HERE' ? HARDCODED_CFG.clientId : (saved.clientId||''),
+    tenantId: HARDCODED_CFG.tenantId !== 'PASTE_TENANT_ID_HERE' ? HARDCODED_CFG.tenantId : (saved.tenantId||''),
+    webhook:  HARDCODED_CFG.webhook  !== 'PASTE_FLOW1_URL_HERE' ? HARDCODED_CFG.webhook  : (saved.webhook||''),
+    lockApi:  HARDCODED_CFG.lockApi  !== 'PASTE_FLOW2_URL_HERE' ? HARDCODED_CFG.lockApi  : (saved.lockApi||''),
+    org: HARDCODED_CFG.org || saved.org || ''
+  };
+}
+
+// ── ROOM LOCK FROM SHAREPOINT ──
+function getVNDateParts() {
+  const now = new Date();
+
+  const vn = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Ho_Chi_Minh',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).format(now); // yyyy-mm-dd
+
+  return {
+    dateKey: vn
+  };
+}
+
+async function fetchLockedRoomsFromSharePoint() {
+  const cfg = getCfg();
+
+  RC.lockedRooms = [];
+  RC.lockedMap = {};
+
+  if (!cfg.lockApi) return [];
+
+  try {
+    const { dateKey } = getVNDateParts();
+
+    const token = RC.account ? await getToken() : '';
+
+	const res = await fetch(cfg.lockApi, {
+	  method: 'POST',
+	  headers: {
+		'Content-Type': 'application/json',
+		...(token ? { 'Authorization': 'Bearer ' + token } : {})
+	  },
+	  body: JSON.stringify({
+		date: dateKey,
+		org: cfg.org || ''
+	  })
+	});
+
+    if (!res.ok && res.status !== 202) {
+      throw new Error('HTTP ' + res.status);
+    }
+
+    let data = {};
+    try {
+      data = await res.json();
+    } catch (_) {
+      data = {};
+    }
+
+    const rooms = Array.isArray(data)
+      ? data
+      : Array.isArray(data.rooms)
+        ? data.rooms
+        : Array.isArray(data.lockedRooms)
+          ? data.lockedRooms
+          : [];
+
+    RC.lockedRooms = rooms
+      .map(x => typeof x === 'string' ? x : (x.room || x.roomId || ''))
+      .filter(Boolean);
+
+    RC.lockedMap = Object.fromEntries(RC.lockedRooms.map(id => [id, true]));
+
+    return RC.lockedRooms;
+  } catch (e) {
+    console.warn('fetchLockedRoomsFromSharePoint failed:', e);
+    console.warn('Không tải được danh sách phòng đã kiểm tra:', e);
+    return [];
+  }
+}
+
+function isRoomLocked(roomId) {
+  return !!RC.lockedMap?.[roomId];
+}
+
+// ── ROOM CUSTOM DROPDOWN ──
+let _activeRoomId = '';
+
+function buildRoomSel() {
+  // Chọn phòng đầu tiên nếu chưa có
+  if (!_activeRoomId || !RC.rooms.some(r => r.id === _activeRoomId)) {
+    _activeRoomId = RC.rooms[0]?.id || '';
+  }
+  renderRoomDropdown();
+  updateLockedRoomUI();
+  updateRoomTypeTag();
+}
+
+function renderRoomDropdown() {
+  const dd = document.getElementById('roomDropdown');
+  if (!dd) return;
+  dd.innerHTML = RC.rooms.map(r => {
+    const locked   = isRoomLocked(r.id);
+    const selected = r.id === _activeRoomId;
+    const typeInfo = ROOM_TYPES[r.type || 'meeting'] || ROOM_TYPES['meeting'];
+    return `<div class="room-opt${locked?' locked':''}${selected?' selected':''}"
+                 onclick="selectRoom('${r.id}',event)">
+      <span style="font-size:14px;flex-shrink:0">${typeInfo.icon}</span>
+      <span class="room-opt-name">${esc(r.label)}</span>
+      ${locked ? `<span class="room-opt-badge">✔ Đã kiểm tra</span>` : ''}
+      ${selected ? `<span class="room-opt-check">◀</span>` : '<span style="width:16px"></span>'}
+    </div>`;
+  }).join('');
+}
+
+function toggleRoomDropdown(e) {
+  if (e.target.closest('.room-opt')) return;
+  const wrap = document.getElementById('roomWrap');
+  const isOpen = wrap.classList.contains('open');
+  if (isOpen) {
+    wrap.classList.remove('open');
+  } else {
+    wrap.classList.add('open');
+    // Đóng khi click ra ngoài roomWrap
+    setTimeout(() => {
+      document.addEventListener('click', function _close(ev) {
+        if (!wrap.contains(ev.target)) {
+          wrap.classList.remove('open');
+          document.removeEventListener('click', _close);
+        }
+      });
+    }, 0);
+  }
+}
+
+function closeRoomDropdown() {
+  document.getElementById('roomWrap')?.classList.remove('open');
+}
+
+function selectRoom(id, e) {
+  e.stopPropagation();
+
+  _activeRoomId = id;
+
+  closeRoomDropdown();
+  renderRoomDropdown();
+  updateLockedRoomUI();
+  updateRoomTypeTag();
+
+  // Không renderChecklist ở đây để không mất tick
+  updateProgress();
+}
+
+function onRoomChange() {
+  renderChecklist();
+  updateRoomTypeTag();
+  updateLockedRoomUI();
+}
+
+// Hàm compat — trả về roomId đang chọn
+function getActiveRoomId() { return _activeRoomId; }
+
+// Cập nhật val hiển thị + badge xanh theo phòng đang chọn
+function updateLockedRoomUI() {
+  const room   = RC.rooms.find(r => r.id === _activeRoomId);
+  const locked = isRoomLocked(_activeRoomId);
+  const valEl  = document.getElementById('roomSelVal');
+  const badge  = document.getElementById('roomLockedBadge');
+  if (valEl) {
+    const typeInfo = ROOM_TYPES[room?.type || 'meeting'] || ROOM_TYPES['meeting'];
+    valEl.textContent = room ? `${typeInfo.icon} ${room.label}` : '—';
+    valEl.classList.toggle('is-locked', locked);
+  }
+  if (badge) badge.classList.toggle('on', locked);
+}
+
+function updateRoomTypeTag() {
+  const type = getActiveRoomType();
+  const typeInfo = ROOM_TYPES[type] || ROOM_TYPES['meeting'];
+  const tag = document.getElementById('roomTypeTag');
+  if (!tag) return;
+  tag.className = 'room-type-tag ' + (typeInfo.tagClass || 'rtt-meeting');
+  tag.textContent = typeInfo.icon + ' ' + typeInfo.label;
+}
+
+// ── CHECKLIST RENDER ──
+function renderChecklist() {
+  RC.results={}; RC.notes={}; RC.speeds={}; RC.temps={}; RC.voltages={};
+  const body = document.getElementById('clBody');
+  body.innerHTML = '';
+  const sections = getActiveSections();
+  sections.forEach((sec,si)=>{
+    const el = document.createElement('div');
+    el.className = 'sec'+(si===0?' open':'');
+    el.id = 'sc_'+sec.id;
+    el.innerHTML = `
+      <div class="sec-hd" onclick="toggleSec('${sec.id}')">
+        <span class="sec-em">${sec.emoji||'📋'}</span>
+        <div class="sec-info">
+          <div class="sec-lbl">${esc(sec.label)}</div>
+          <div class="sec-sub" id="ss_${sec.id}">Chưa kiểm tra</div>
+        </div>
+        <span class="sec-bdg bp" id="sb_${sec.id}">--</span>
+        <svg class="chev" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
+      <div class="sec-items" id="si_${sec.id}">${sec.items.map(it=>renderItem(it)).join('')}</div>`;
+    body.appendChild(el);
+  });
+  updateProgress();
+}
+
+function renderItem(it) {
+  const isSpeed   = it.type === 'speed';
+  const isTemp    = it.type === 'temp';
+  const isVoltage = it.type === 'voltage';
+
+  if (isTemp || isVoltage) {
+    const unit    = isTemp ? '°C' : 'V';
+    const inputId = isTemp ? 'tmp_'+it.id : 'vlt_'+it.id;
+    const onInput = isTemp ? `onTemp('${it.id}')` : `onVoltage('${it.id}')`;
+    const tagId   = 'mte_'+it.id;
+    return `<div class="ci" id="ci_${it.id}">
+      <div class="ci-row">
+        <span class="ci-ico">${it.icon||'🔹'}</span>
+        <div class="ci-info">
+          <div class="ci-name">${esc(it.label)}</div>
+          ${it.note?`<div class="ci-note">${esc(it.note)}</div>`:''}
+        </div>
+      </div>
+      <div class="meas-row">
+        <input class="meas-in" id="${inputId}" type="number" min="0" step="${isTemp?'0.1':'0.1'}" placeholder="0" oninput="${onInput}">
+        <span class="meas-unit">${unit}</span>
+        <span id="${tagId}" class="meas-tag"></span>
+      </div>
+    </div>`;
+  }
+
+  if (isSpeed) {
+    return `<div class="ci" id="ci_${it.id}">
+      <div class="ci-row">
+        <span class="ci-ico">${it.icon||'🔹'}</span>
+        <div class="ci-info">
+          <div class="ci-name">${esc(it.label)}</div>
+          ${it.note ? `<div class="ci-note">${esc(it.note)}</div>` : ''}
+        </div>
+      </div>
+      <div class="spd-row">
+        <input class="spd-in" id="sp_${it.id}" type="number" min="0" placeholder="0" oninput="onSpd('${it.id}')">
+        <span class="spd-unit">Mbps</span>
+        <span id="spe_${it.id}"></span>
+      </div>
+    </div>`;
+  }
+
+  const toggles = `<div class="togs">
+        <button class="tog tp" id="tp_${it.id}" onclick="setR('${it.id}','pass')" title="Đạt">✓</button>
+        <button class="tog tf" id="tf_${it.id}" onclick="setR('${it.id}','fail')" title="Lỗi">✗</button>
+        <button class="tog tn" id="tn_${it.id}" onclick="setR('${it.id}','na')" title="N/A">—</button>
+      </div>`;
+
+  const failNote = `<div class="fn-wrap" id="fn_${it.id}">
+      <textarea class="fn-ta" id="fnt_${it.id}" placeholder="Mô tả lỗi / hành động xử lý…" oninput="RC.notes['${it.id}']=this.value"></textarea>
+    </div>`;
+
+  return `<div class="ci" id="ci_${it.id}">
+    <div class="ci-row">
+      <span class="ci-ico">${it.icon||'🔹'}</span>
+      <div class="ci-info">
+        <div class="ci-name">${esc(it.label)}</div>
+        ${it.note?`<div class="ci-note">${esc(it.note)}</div>`:''}
+      </div>
+      ${toggles}
+    </div>
+    ${failNote}
+  </div>`;
+}
+function toggleSec(id){ document.getElementById('sc_'+id).classList.toggle('open'); }
+function setR(id,val){
+  RC.results[id] = RC.results[id]===val ? null : val;
+  const cur = RC.results[id];
+  ['pass','fail','na'].forEach(v=>{
+    const p=v==='pass'?'tp':v==='fail'?'tf':'tn';
+    document.getElementById(p+'_'+id)?.classList.toggle('on',cur===v);
+  });
+  const fw=document.getElementById('fn_'+id);
+  if(fw) fw.style.display=cur==='fail'?'block':'none';
+  if(cur==='fail') setTimeout(()=>document.getElementById('fnt_'+id)?.focus(),50);
+  updateSecUI(); updateProgress();
+}
+function onSpd(id){
+  const v = parseFloat(document.getElementById('sp_' + id).value);
+  const el = document.getElementById('spe_' + id);
+
+  if (isNaN(v) || v <= 0) {
+    delete RC.speeds[id];
+    el.textContent = '';
+    el.className = '';
+    updateSecUI();
+    updateProgress();
+    return;
+  }
+
+  RC.speeds[id] = v;
+
+  if (v >= 50) {
+    el.textContent = 'Tốt';
+    el.className = 'spd-tag stg';
+  } else if (v >= 10) {
+    el.textContent = 'TB';
+    el.className = 'spd-tag sto';
+  } else {
+    el.textContent = 'Yếu';
+    el.className = 'spd-tag stb';
+  }
+
+  updateSecUI();
+  updateProgress();
+}
+
+function onTemp(id) {
+  const v = parseFloat(document.getElementById('tmp_' + id).value);
+  const el = document.getElementById('mte_' + id);
+  if (isNaN(v)) { delete RC.temps[id]; el.textContent=''; el.className='meas-tag'; updateSecUI(); updateProgress(); return; }
+  RC.temps[id] = v;
+  if      (v < 18)  { el.textContent='Lạnh';    el.className='meas-tag tt-cold'; }
+  else if (v <= 24) { el.textContent='Tốt';     el.className='meas-tag tt-ok';   }
+  else if (v <= 28) { el.textContent='Ấm';      el.className='meas-tag tt-warm'; }
+  else              { el.textContent='⚠ Nóng';  el.className='meas-tag tt-hot';  }
+  updateSecUI(); updateProgress();
+}
+
+function onVoltage(id) {
+  const v = parseFloat(document.getElementById('vlt_' + id).value);
+  const el = document.getElementById('mte_' + id);
+  if (isNaN(v) || v <= 0) { delete RC.voltages[id]; el.textContent=''; el.className='meas-tag'; updateSecUI(); updateProgress(); return; }
+  RC.voltages[id] = v;
+  // Đánh giá đơn giản theo dải điện áp AC thông thường (220V ±10%)
+  if (v >= 198 && v <= 242) { el.textContent='Bình thường'; el.className='meas-tag vt-ok';   }
+  else if (v > 0)           { el.textContent='Kiểm tra lại';el.className='meas-tag vt-warn'; }
+  else                      { el.textContent='Lỗi';         el.className='meas-tag vt-err';  }
+  updateSecUI(); updateProgress();
+}
+function updateSecUI(){
+  const sections = getActiveSections();
+  sections.forEach(sec=>{
+    const checkItems = sec.items.filter(i=>i.type==='check');
+    const measItems  = sec.items.filter(i=>i.type!=='check');  // speed, temp, voltage
+    const cIds = checkItems.map(i=>i.id);
+
+    const done = cIds.filter(id=>RC.results[id]);
+    const pass = cIds.filter(id=>RC.results[id]==='pass');
+    const fail = cIds.filter(id=>RC.results[id]==='fail');
+
+    // Tất cả mục đo lường: có giá trị thì coi là done
+    const measDone = measItems.filter(i=>{
+      if (i.type==='speed')   return RC.speeds[i.id] > 0;
+      if (i.type==='temp')    return RC.temps[i.id] !== undefined;
+      if (i.type==='voltage') return RC.voltages[i.id] !== undefined;
+      return false;
+    }).length;
+
+    const card=document.getElementById('sc_'+sec.id);
+    const bdg=document.getElementById('sb_'+sec.id);
+    const sub=document.getElementById('ss_'+sec.id);
+    if(!card) return;
+    card.classList.remove('ok','warn','fail');
+
+    const allCheckDone = done.length === cIds.length;
+    const allMeasDone  = measDone === measItems.length;
+
+    if(!done.length && measDone===0){
+      bdg.textContent='--'; bdg.className='sec-bdg bp'; sub.textContent='Chưa kiểm tra';
+    } else if(fail.length===0 && allCheckDone && allMeasDone){
+      bdg.textContent='✓ OK'; bdg.className='sec-bdg bok';
+      sub.textContent='Tất cả mục đạt'; card.classList.add('ok');
+    } else if(fail.length>0){
+      bdg.textContent=`${fail.length} lỗi`; bdg.className='sec-bdg bfail';
+      sub.textContent=`${pass.length}/${cIds.length} đạt`; card.classList.add('fail');
+    } else {
+      const measTxt = measItems.length>0 ? ` + ${measDone}/${measItems.length} đo` : '';
+      bdg.textContent=`${done.length}/${cIds.length}${measTxt}`;
+      bdg.className='sec-bdg bpart';
+      sub.textContent=`Đã kiểm ${done.length}/${cIds.length} mục`; card.classList.add('warn');
+    }
+  });
+}
+function updateProgress(){
+  const sections = getActiveSections();
+  const checkItems = sections.flatMap(s=>s.items.filter(i=>i.type==='check'));
+  const measItems  = sections.flatMap(s=>s.items.filter(i=>i.type!=='check'));
+
+  const checkIds = checkItems.map(i=>i.id);
+  const done = checkIds.filter(id=>RC.results[id]).length;
+  const total = checkIds.length;
+
+  const measDone = measItems.filter(i=>{
+    if (i.type==='speed')   return RC.speeds[i.id] > 0;
+    if (i.type==='temp')    return RC.temps[i.id] !== undefined;
+    if (i.type==='voltage') return RC.voltages[i.id] !== undefined;
+    return false;
+  }).length;
+  const measTotal = measItems.length;
+
+  const grandDone = done + measDone;
+  const grandTotal = total + measTotal;
+  const pct = grandTotal ? Math.round(grandDone/grandTotal*100) : 0;
+
+  const measTxt = measTotal > 0 ? ` + ${measDone}/${measTotal} đo lường` : '';
+  document.getElementById('pTxt').textContent=`${done} / ${total} mục${measTxt}`;
+  document.getElementById('pPct').textContent=pct+'%';
+  document.getElementById('pBar').style.width=pct+'%';
+
+  updateSubmitBtn();
+}
+
+// ── SUBMIT BUTTON STATE ──
+function updateSubmitBtn() {
+  const sections = getActiveSections();
+  const roomType = getActiveRoomType();
+  const checkItems = sections.flatMap(s => s.items.filter(i => i.type === 'check'));
+  const allChecked = checkItems.every(it => RC.results[it.id]);
+  const hasPhoto = RC.photos.length > 0;
+
+  // WiFi speed chỉ bắt buộc với phòng họp
+  const hasWifiSpeed = roomType !== 'meeting' || Number(RC.speeds['wifi_spd']) > 0;
+
+  const btn = document.getElementById('subBtn');
+  if (!btn) return;
+
+  const ready = allChecked && hasPhoto && hasWifiSpeed;
+  btn.style.opacity = ready ? '1' : '0.55';
+
+  const labelEl = btn.querySelector('span');
+
+  if (!allChecked) {
+    const remaining = checkItems.filter(it => !RC.results[it.id]).length;
+    if (labelEl) labelEl.textContent = `Còn ${remaining} mục chưa kiểm tra`;
+  } else if (!hasWifiSpeed) {
+    if (labelEl) labelEl.textContent = 'Cần nhập tốc độ WiFi';
+  } else if (!hasPhoto) {
+    if (labelEl) labelEl.textContent = 'Cần chụp ít nhất 1 ảnh';
+  } else {
+    if (labelEl) labelEl.textContent = 'Gửi kết quả lên SharePoint';
+  }
+}
+
+// ── PHOTOS ──
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('phIn').addEventListener('change',function(e){
+    Array.from(e.target.files).forEach(f=>{
+      const r=new FileReader();
+      r.onload=ev=>{RC.photos.push({id:Date.now()+Math.random(),dataUrl:ev.target.result,name:f.name});renderPhotos();};
+      r.readAsDataURL(f);
+    });
+    this.value='';
+  });
+});
+function renderPhotos(){
+  const g=document.getElementById('phGrid'); g.innerHTML='';
+  RC.photos.forEach(p=>{
+    const d=document.createElement('div'); d.className='ph-thumb';
+    d.innerHTML=`<img src="${p.dataUrl}"><button class="ph-del" onclick="delPhoto('${p.id}')">×</button>`;
+    g.appendChild(d);
+  });
+  const a=document.createElement('label'); a.className='ph-add'; a.htmlFor='phIn';
+  a.innerHTML='<span style="font-size:22px">📷</span><span>Thêm ảnh</span>';
+  g.appendChild(a);
+
+  // Cập nhật label phần ảnh
+  const lbl = document.querySelector('.ph-lbl');
+  if(lbl) {
+    lbl.textContent = RC.photos.length > 0
+      ? `📸 Hình ảnh bằng chứng (${RC.photos.length} ảnh)`
+      : '📸 Hình ảnh bằng chứng ⚠️ Cần ít nhất 1 ảnh';
+    lbl.style.color = RC.photos.length > 0 ? '' : 'var(--amber)';
+  }
+  updateSubmitBtn();
+}
+function delPhoto(id){RC.photos=RC.photos.filter(p=>p.id!==id);renderPhotos();}
+
+// ── SUBMIT ──
+async function doSubmit(){
+  const sections = getActiveSections();
+  const roomType = getActiveRoomType();
+  const checkItems = sections.flatMap(s => s.items.filter(i => i.type === 'check'));
+  const checkIds = checkItems.map(i => i.id);
+
+  const roomId = _activeRoomId;
+  const isOverwrite = isRoomLocked(roomId);
+
+  if(!roomId){
+    toast('Vui lòng chọn phòng','err');
+    return;
+  }
+
+  // ── Nếu phòng đã có dữ liệu → hỏi xác nhận trước khi tiếp tục ──
+  if (isOverwrite) {
+    const roomLabel = RC.rooms.find(r => r.id === roomId)?.label || roomId;
+    const confirmed = await showConfirmOverwrite(roomLabel);
+    if (!confirmed) return;
+  }
+  
+  // Kiểm tra TẤT CẢ mục check phải được chọn
+  const unchecked = checkItems.filter(it => !RC.results[it.id]);
+  if(unchecked.length > 0){
+    const firstUnchecked = unchecked[0];
+    const sec = sections.find(s => s.items.some(i => i.id === firstUnchecked.id));
+    if(sec) {
+      const card = document.getElementById('sc_'+sec.id);
+      if(card && !card.classList.contains('open')) card.classList.add('open');
+    }
+    toast(`Còn ${unchecked.length} mục chưa kiểm tra`, 'err');
+    return;
+  }
+
+  // Bắt buộc nhập tốc độ WiFi chỉ với phòng họp
+  if (roomType === 'meeting' && !(Number(RC.speeds['wifi_spd']) > 0)) {
+    const wifiSec = document.getElementById('sc_wifi');
+    if (wifiSec && !wifiSec.classList.contains('open')) wifiSec.classList.add('open');
+    document.getElementById('sp_wifi_spd')?.focus();
+    toast('Vui lòng nhập tốc độ WiFi trước khi gửi', 'err');
+    return;
+  }
+  
+  // Kiểm tra các mục lỗi phải có ghi chú
+  const failWithoutNote = sections.some(sec =>
+    sec.items.some(it => RC.results[it.id] === 'fail' && !(RC.notes[it.id] || '').trim())
+  );
+  if(failWithoutNote){
+    toast('Các mục lỗi cần nhập ghi chú','err');
+    return;
+  }
+
+  // Kiểm tra phải có ít nhất 1 ảnh
+  if(RC.photos.length === 0){
+    document.querySelector('.ph-sec')?.scrollIntoView({behavior:'smooth', block:'center'});
+    toast('Cần chụp ít nhất 1 ảnh bằng chứng','err');
+    return;
+  }
+
+  // Require login if MSAL configured
+  const cfg=getCfg();
+  if(cfg.clientId && !RC.account){
+    toast('Vui lòng đăng nhập Microsoft 365 trước','err');
+    show('s-login'); return;
+  }
+
+  const passC = checkIds.filter(id => RC.results[id] === 'pass').length;
+  const failC = checkIds.filter(id => RC.results[id] === 'fail').length;
+  const naC = checkIds.filter(id => RC.results[id] === 'na').length;
+  const now=new Date();
+  const clientCheckId = crypto.randomUUID();
+
+  const details = sections.map((sec, secIdx) => ({
+    sectionId: sec.id,
+    sectionLabel: sec.label,
+    sectionOrder: secIdx + 1,
+    items: sec.items.map((it, itemIdx) => {
+      const isSpeed   = it.type === 'speed';
+      const isTemp    = it.type === 'temp';
+      const isVoltage = it.type === 'voltage';
+      const isMeas    = isSpeed || isTemp || isVoltage;
+      let valueNumber = null, valueText = '', unit = '';
+      if (isSpeed)   { valueNumber = RC.speeds[it.id] ?? null;   unit = 'Mbps'; valueText = valueNumber != null ? `${valueNumber} Mbps` : ''; }
+      if (isTemp)    { valueNumber = RC.temps[it.id]  ?? null;   unit = '°C';   valueText = valueNumber != null ? `${valueNumber}°C` : '';   }
+      if (isVoltage) { valueNumber = RC.voltages[it.id] ?? null; unit = 'V';    valueText = valueNumber != null ? `${valueNumber}V` : '';    }
+      return {
+        id: it.id,
+        label: it.label,
+        type: it.type || 'check',
+        itemOrder: itemIdx + 1,
+        result: isMeas ? 'value' : (RC.results[it.id] || 'unchecked'),
+        displayText: isMeas ? valueText : it.label,
+        note: isMeas ? '' : (RC.notes[it.id] || ''),
+        valueNumber,
+        valueText,
+        unit
+      };
+    })
+  }));
+
+  const photos = await Promise.all(
+    RC.photos.map(async p => ({
+      name: p.name,
+      base64: await compressPhoto(p.dataUrl, 300),
+      clientCheckId
+    }))
+  );
+
+  const uncheckedC = checkIds.filter(id => !RC.results[id]).length;
+
+  const payload = {
+    clientCheckId,
+    schemaVersion: 2,
+    roomType,
+    room: roomId,
+    roomLabel: RC.rooms.find(r => r.id === roomId)?.label || '',
+    inspector: RC.account ? (RC.account.name || RC.account.username) : '(không đăng nhập)',
+    inspectorEmail: RC.account?.username || '',
+    checkDate: now.toISOString(),
+    checkDateVN: now.toLocaleString('vi-VN'),
+    status: failC === 0 ? 'OK' : failC <= 2 ? 'WARNING' : 'FAIL',
+    passCount: passC,
+    failCount: failC,
+    naCount: naC,
+    uncheckedCount: uncheckedC,
+    wifiSpeed: RC.speeds['wifi_spd'] ?? null,
+    generalNote: document.getElementById('genNote').value || '',
+    details,
+    photos,
+    org: cfg.org || ''
+  };
+
+  const btn=document.getElementById('subBtn');
+  btn.disabled=true;
+  btn.innerHTML='⏳ Đang gửi…';
+
+  // Save local
+  const rec={...payload,id:Date.now(),ts:now.getTime(),dateStr:now.toLocaleString('vi-VN')};
+  saveRecordLocal(rec);
+
+  if(cfg.webhook){
+    try{
+      toast('📤 Đang gửi lên SharePoint…','info');
+
+      const token = await getToken();
+
+	const headers = {
+	  'Content-Type': 'application/json',
+	  'Authorization': 'Bearer ' + token
+	};
+
+	const r = await fetch(cfg.webhook, {
+	  method: 'POST',
+	  headers,
+	  body: JSON.stringify(payload)
+	});
+
+      let respData = {};
+      try { respData = await r.json(); } catch (_) { respData = {}; }
+
+	if(!r.ok && r.status!==202) {
+	  const msg =
+		typeof respData === 'string'
+		  ? respData
+		  : (respData.message || JSON.stringify(respData));
+
+	  throw new Error('HTTP ' + r.status + ' - ' + msg);
+	}
+
+      await fetchLockedRoomsFromSharePoint();
+
+      showResultBanner({
+        success: true,
+        isOverwrite,
+        roomLabel: payload.roomLabel,
+        passCount: passC,
+        failCount: failC,
+        naCount: naC,
+        inspector: payload.inspector,
+        checkDateVN: payload.checkDateVN,
+      });
+    }catch(e){
+      toast('Lỗi: '+e.message+' — đã lưu local','err');
+    }
+  }
+  else{
+    showResultBanner({
+      success: true,
+      isOverwrite: false,
+      roomLabel: payload.roomLabel,
+      passCount: passC,
+      failCount: failC,
+      naCount: naC,
+      inspector: payload.inspector,
+      checkDateVN: payload.checkDateVN,
+      offlineOnly: true,
+    });
+  }
+
+  resetForm();
+  buildRoomSel();
+  btn.disabled=false;
+  btn.innerHTML='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg> Gửi kết quả lên SharePoint';
+  renderHistory();
+}
+
+// ── CONFIRM OVERWRITE MODAL ──
+function showConfirmOverwrite(roomLabel) {
+  return new Promise(resolve => {
+    const overlay = document.createElement('div');
+    overlay.className = 'modal-overlay';
+    overlay.innerHTML = `
+      <div class="modal-sheet">
+        <div class="modal-handle"></div>
+        <div class="modal-icon">⚠️</div>
+        <div class="modal-title">Phòng đã được kiểm tra</div>
+        <div class="modal-body">
+          <strong>${esc(roomLabel)}</strong> đã có dữ liệu kiểm tra hôm nay.<br>
+          Bạn có muốn <strong>ghi đè</strong> dữ liệu cũ bằng kết quả mới không?
+        </div>
+        <div class="modal-actions">
+          <button class="modal-confirm" id="_mConfirm">✏️ Ghi đè dữ liệu cũ</button>
+          <button class="modal-cancel"  id="_mCancel">Huỷ, quay lại</button>
+        </div>
+      </div>`;
+    document.body.appendChild(overlay);
+
+    overlay.querySelector('#_mConfirm').addEventListener('click', () => {
+      overlay.remove(); resolve(true);
+    });
+    overlay.querySelector('#_mCancel').addEventListener('click', () => {
+      overlay.remove(); resolve(false);
+    });
+    // Tap ngoài = huỷ
+    overlay.addEventListener('click', e => { if (e.target === overlay) { overlay.remove(); resolve(false); }});
+  });
+}
+
+// ── RESULT BANNER ──
+function showResultBanner({ success, isOverwrite, roomLabel, passCount, failCount, naCount, inspector, checkDateVN, offlineOnly }) {
+  const hasError = failCount > 0;
+  const icon  = !success ? '❌' : hasError ? '⚠️' : '✅';
+  const title = !success ? 'Gửi thất bại'
+              : isOverwrite ? 'Đã ghi đè thành công'
+              : offlineOnly ? 'Đã lưu offline'
+              : 'Gửi thành công!';
+  const color = !success ? 'var(--red)' : hasError ? 'var(--amber)' : 'var(--green)';
+  const subLine = offlineOnly
+    ? 'Dữ liệu được lưu trên thiết bị (chưa có webhook).'
+    : isOverwrite
+      ? 'Dữ liệu cũ đã được thay thế trên SharePoint.'
+      : 'Dữ liệu đã được gửi lên SharePoint thành công.';
+
+  const overlay = document.createElement('div');
+  overlay.className = 'result-overlay';
+  overlay.innerHTML = `
+    <div class="result-card">
+      <span class="rb-icon">${icon}</span>
+      <div class="rb-title" style="color:${color}">${title}</div>
+      <div class="rb-sub">${esc(roomLabel)} · ${esc(checkDateVN)}</div>
+      <div class="rb-sub" style="margin-top:4px">👤 ${esc(inspector)}</div>
+      <div class="rb-meta">
+        <span class="rb-chip rb-pass">✓ ${passCount} đạt</span>
+        ${failCount > 0 ? `<span class="rb-chip rb-fail">✗ ${failCount} lỗi</span>` : ''}
+        ${naCount   > 0 ? `<span class="rb-chip rb-na">— ${naCount} N/A</span>` : ''}
+        ${offlineOnly   ? `<span class="rb-chip rb-warn">📴 Offline</span>` : ''}
+        ${isOverwrite   ? `<span class="rb-chip rb-warn">✏️ Ghi đè</span>` : ''}
+      </div>
+      <div class="rb-sub">${subLine}</div>
+      <button class="rb-close" id="_rbClose">Đóng</button>
+    </div>`;
+  document.body.appendChild(overlay);
+  overlay.querySelector('#_rbClose').addEventListener('click', () => overlay.remove());
+  overlay.addEventListener('click', e => { if (e.target === overlay) overlay.remove(); });
+}
+
+async function compressPhoto(dataUrl,maxKB){
+  return new Promise(res=>{
+    const img=new Image();
+    img.onload=()=>{
+      const canvas=document.createElement('canvas');
+      const max=800; let w=img.width,h=img.height;
+      if(w>max||h>max){const r=Math.min(max/w,max/h);w=Math.round(w*r);h=Math.round(h*r);}
+      canvas.width=w;canvas.height=h;
+      canvas.getContext('2d').drawImage(img,0,0,w,h);
+      let q=0.8;
+      const attempt=()=>{
+        const d=canvas.toDataURL('image/jpeg',q);
+        if(d.length/1024*0.75<=maxKB||q<=0.2){res(d.split(',')[1]);return;}
+        q-=0.1;attempt();
+      };
+      attempt();
+    };
+    img.src=dataUrl;
+  });
+}
+
+function resetForm(){
+  RC.results={};RC.notes={};RC.speeds={};RC.temps={};RC.voltages={};RC.photos=[];
+  document.getElementById('genNote').value='';
+  renderChecklist();renderPhotos();updateProgress();updateSubmitBtn();
+}
+
+// ── HISTORY ──
+function saveRecordLocal(rec){const h=loadLocal('rc4_hist')||[];h.unshift(rec);if(h.length>100)h.pop();saveLocal('rc4_hist',h);}
+function renderHistory(){
+  const h=loadLocal('rc4_hist')||[];
+  const c=document.getElementById('histBody');
+  if(!h.length){c.innerHTML='<div class="empty"><div class="empty-ico">📭</div><p>Chưa có lịch sử</p></div>';return;}
+  c.innerHTML=h.slice(0,50).map(r=>`
+    <div class="hc">
+      <div class="hc-top">
+        <div><div class="hc-room">${esc(r.roomLabel||r.room)}</div>
+        <div class="hc-time">🕐 ${r.dateStr||r.checkDateVN} · 👤 ${esc(r.inspector||'?')}</div></div>
+        <span class="sec-bdg ${r.status==='OK'?'bok':r.status==='WARNING'?'bpart':'bfail'}">
+          ${r.status==='OK'?'✓ OK':r.status==='WARNING'?'⚠ Cảnh báo':'✗ Có lỗi'}
+        </span>
+      </div>
+      <div class="hc-chips">
+        <span class="chip cp">✓ ${r.passCount??0} đạt</span>
+        <span class="chip cf">✗ ${r.failCount??0} lỗi</span>
+        ${r.naCount?`<span class="chip cn">— ${r.naCount} N/A</span>`:''}
+        ${r.photos?.length?`<span class="chip ci2">📷 ${r.photos.length}</span>`:''}
+      </div>
+      ${r.generalNote?`<div class="hc-note">${esc(r.generalNote)}</div>`:''}
+    </div>`).join('');
+}
+
+// ── ADMIN ──
+function renderAdmin(){
+  renderRoomList(); renderAdmTypeTabs(); renderSecBuilder();
+}
+function renderRoomList(){
+  const typeOptions = Object.entries(ROOM_TYPES).map(([k,v])=>
+    `<option value="${k}">${v.icon} ${v.label}</option>`
+  ).join('');
+
+  document.getElementById('rList').innerHTML=RC.rooms.map((r,i)=>`
+    <div class="r-row"><span>📍</span>
+      <input value="${esc(r.label)}" placeholder="Tên phòng" oninput="RC.rooms[${i}].label=this.value">
+      <select class="r-type-sel" onchange="RC.rooms[${i}].type=this.value">
+        ${Object.entries(ROOM_TYPES).map(([k,v])=>
+          `<option value="${k}" ${r.type===k?'selected':''}>${v.icon} ${v.label}</option>`
+        ).join('')}
+      </select>
+      <button class="del-btn" onclick="delRoom(${i})">✕</button>
+    </div>`).join('');
+  document.getElementById('rCnt').textContent=RC.rooms.length+' phòng';
+}
+function addRoom(){
+  RC.rooms.push({id:'room_'+Date.now(),label:'Phòng mới',type:'meeting'});
+  renderRoomList();
+}
+function delRoom(i){if(RC.rooms.length<=1){toast('Phải có ít nhất 1 phòng','err');return;}RC.rooms.splice(i,1);renderRoomList();}
+
+function renderAdmTypeTabs() {
+  const tabs = document.getElementById('admTypeTabs');
+  if (!tabs) return;
+  tabs.innerHTML = Object.entries(ROOM_TYPES).map(([k,v])=>
+    `<button class="adm-type-tab ${RC.adminEditType===k?'on':''}" onclick="setAdmType('${k}')">${v.icon} ${v.label}</button>`
+  ).join('');
+}
+function setAdmType(type) {
+  RC.adminEditType = type;
+  renderAdmTypeTabs();
+  renderSecBuilder();
+}
+
+function renderSecBuilder(){
+  const type = RC.adminEditType;
+  const sections = RC.sectionsByType[type] || [];
+  document.getElementById('sbList').innerHTML=sections.map((sec,si)=>`
+    <div class="sb-sec">
+      <div class="sb-hd">
+        <span class="sb-em" onclick="chEmoji('${type}',${si})">${sec.emoji||'📋'}</span>
+        <input value="${esc(sec.label)}" placeholder="Tên nhóm" oninput="RC.sectionsByType['${type}'][${si}].label=this.value">
+        <button class="del-sec" onclick="delSec('${type}',${si})">Xoá</button>
+      </div>
+      <div class="sb-items">
+        <div class="sb-cols"><span></span><span>Tên mục</span><span>Ghi chú</span><span>Loại</span><span></span></div>
+        ${sec.items.map((it,ii)=>`
+          <div class="sb-row">
+            <input class="em-in" value="${esc(it.icon||'🔹')}" maxlength="2" oninput="RC.sectionsByType['${type}'][${si}].items[${ii}].icon=this.value">
+            <input value="${esc(it.label)}" placeholder="Tên mục" oninput="RC.sectionsByType['${type}'][${si}].items[${ii}].label=this.value">
+            <input value="${esc(it.note||'')}" placeholder="Ghi chú" oninput="RC.sectionsByType['${type}'][${si}].items[${ii}].note=this.value">
+            <select onchange="RC.sectionsByType['${type}'][${si}].items[${ii}].type=this.value">
+              <option value="check"   ${it.type==='check'  ?'selected':''}>✓ Check</option>
+              <option value="speed"   ${it.type==='speed'  ?'selected':''}>⚡ Mbps</option>
+              <option value="temp"    ${it.type==='temp'   ?'selected':''}>🌡 °C</option>
+              <option value="voltage" ${it.type==='voltage'?'selected':''}>⚡ Volt</option>
+            </select>
+            <button class="del-btn" onclick="delItem('${type}',${si},${ii})">✕</button>
+          </div>`).join('')}
+        <button class="add-item" onclick="addItem('${type}',${si})">＋ Thêm mục</button>
+      </div>
+    </div>`).join('');
+  document.getElementById('sCnt').textContent=sections.length+' nhóm ('+( ROOM_TYPES[type]?.label||type)+')';
+}
+function addSec(){
+  const type = RC.adminEditType;
+  if (!RC.sectionsByType[type]) RC.sectionsByType[type] = [];
+  RC.sectionsByType[type].push({
+    id:'sec_'+Date.now(),
+    label:'Nhóm mới',
+    emoji:'📋',
+    items:[{id:'item_'+Date.now(),icon:'🔹',label:'Mục kiểm tra',note:'',type:'check'}]
+  });
+  renderSecBuilder();
+}
+function delSec(type,i){
+  const secs = RC.sectionsByType[type]||[];
+  if(secs.length<=1){toast('Phải có ít nhất 1 nhóm','err');return;}
+  secs.splice(i,1); renderSecBuilder();
+}
+function addItem(type,si){
+  RC.sectionsByType[type][si].items.push({id:'item_'+Date.now(),icon:'🔹',label:'Mục mới',note:'',type:'check'});
+  renderSecBuilder();
+}
+function delItem(type,si,ii){
+  const items = RC.sectionsByType[type][si].items;
+  if(items.length<=1){toast('Mỗi nhóm cần ít nhất 1 mục','err');return;}
+  items.splice(ii,1); renderSecBuilder();
+}
+function chEmoji(type,si){
+  const e=prompt('Nhập emoji:',RC.sectionsByType[type][si].emoji||'📋');
+  if(e){RC.sectionsByType[type][si].emoji=e.trim().slice(0,2);renderSecBuilder();}
+}
+
+async function adminSave(){
+  const btn=document.getElementById('saveCfgBtn');
+  btn.disabled=true;btn.textContent='⏳ Đang lưu…';
+  saveLocalSchema(); buildRoomSel(); renderChecklist();
+  toast('✅ Đã lưu cấu hình local','ok');
+  btn.disabled=false;btn.textContent='💾 Lưu cấu hình';
+}
+
+function exportCfg(){
+  const roomsJson = JSON.stringify(RC.rooms,null,2);
+  const secsByTypeJson = JSON.stringify(RC.sectionsByType,null,2);
+  const out =
+    '// DEF_ROOMS\nconst DEF_ROOMS = '+roomsJson+';\n\n'+
+    '// DEF_SECTIONS_BY_TYPE\nconst DEF_SECTIONS_BY_TYPE = '+secsByTypeJson+';';
+  const d=document.createElement('div');
+  d.style.cssText='position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);display:flex;align-items:flex-end';
+  d.innerHTML='<div style="width:100%;max-width:500px;margin:0 auto;background:#111827;border:1px solid #2a3f5f;border-radius:22px 22px 0 0;padding:22px 20px 36px">'
+    +'<div style="width:38px;height:4px;background:#2a3f5f;border-radius:2px;margin:0 auto 18px"></div>'
+    +'<div style="font-size:15px;font-weight:800;margin-bottom:12px">📤 Xuất cấu hình</div>'
+    +'<textarea readonly id="_expTa" style="width:100%;height:180px;background:#1a2236;border:1px solid #1e2d45;border-radius:10px;color:#7a8aa0;font-size:10px;font-family:monospace;padding:12px;outline:none;resize:none">'+out.replace(/</g,'&lt;')+'</textarea>'
+    +'<button onclick="navigator.clipboard.writeText(document.getElementById(\'_expTa\').value).then(()=>{this.textContent=\'✅ Đã copy!\';setTimeout(()=>this.textContent=\'📋 Copy\',2000)})" style="width:100%;padding:14px;border-radius:11px;border:none;background:linear-gradient(135deg,#4d9fff,#2dd4bf);color:#0b0f1a;font-size:14px;font-weight:800;font-family:Outfit,sans-serif;cursor:pointer;margin-top:10px">📋 Copy toàn bộ</button>'
+    +'<button onclick="this.closest(\'div\').parentElement.remove()" style="width:100%;padding:12px;border-radius:11px;border:1px solid #1e2d45;background:transparent;color:#7a8aa0;font-size:13px;font-family:Outfit,sans-serif;cursor:pointer;margin-top:8px">Đóng</button>'
+    +'</div>';
+  d.onclick=e=>{if(e.target===d)d.remove();};
+  document.body.appendChild(d);
+}
+
+// ── UTILS ──
+function tab(name){
+  ['check','hist'].forEach(n=>{
+    document.getElementById('tb-'+n).classList.toggle('on',n===name);
+    document.getElementById('pn-'+n).classList.toggle('on',n===name);
+  });
+  if(name==='hist') renderHistory();
+}
+function show(id){document.querySelectorAll('.scr').forEach(s=>s.classList.remove('on'));document.getElementById(id).classList.add('on');}
+function setSplash(m){const e=document.getElementById('splashMsg');if(e)e.textContent=m;}
+function toast(msg,type='info'){
+  const c=document.getElementById('toasts');
+  const el=document.createElement('div'); el.className=`toast ${type}`; el.textContent=msg;
+  c.appendChild(el); setTimeout(()=>el.remove(),4000);
+}
+function esc(s){if(!s)return '';return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms));}
+function saveLocal(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch{}}
+function loadLocal(k){try{const v=localStorage.getItem(k);return v?JSON.parse(v):null;}catch{return null;}}
+function saveLocalSchema(){
+  saveLocal('rc4_rooms', RC.rooms);
+  saveLocal('rc4_secs_bytype', RC.sectionsByType);
+}
+function loadLocalSchema(){
+  RC.rooms = JSON.parse(JSON.stringify(DEF_ROOMS));
+  RC.sectionsByType = JSON.parse(JSON.stringify(DEF_SECTIONS_BY_TYPE));
+}
+function loadScript(src){return new Promise((res,rej)=>{const s=document.createElement('script');s.src=src;s.onload=res;s.onerror=rej;document.head.appendChild(s);});}
+function startClock(){
+  const up=()=>{
+    const n=new Date();
+    const c=document.getElementById('clk');const d=document.getElementById('clkd');
+    if(c)c.textContent=n.toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
+    if(d)d.textContent=n.toLocaleDateString('vi-VN',{weekday:'short',day:'2-digit',month:'2-digit'});
+  };
+  up();setInterval(up,1000);
+}
+</script>
+</body>
+</html>
