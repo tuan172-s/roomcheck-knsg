@@ -501,8 +501,7 @@ input[type=file]{display:none}
 
   <div class="tabs">
     <div class="tab on" id="tb-check" onclick="tab('check')">✅ Kiểm tra</div>
-    <div class="tab" id="tb-hist"  onclick="tab('hist')">📁 Lịch sử</div>
-  </div>
+    </div>
 
   <!-- CHECK -->
   <div class="pane on" id="pn-check">
@@ -530,12 +529,7 @@ input[type=file]{display:none}
     </div>
   </div>
 
-  <!-- HISTORY -->
-  <div class="pane" id="pn-hist">
-    <div class="hist-body" id="histBody"></div>
-  </div>
-
-</div><!-- /s-main -->
+  </div><!-- /s-main -->
 
 </div><!-- /app -->
 <div class="toast-stack" id="toasts"></div>
@@ -562,7 +556,7 @@ const ROOM_TYPES = {
 };
 
 const DEF_ROOMS = [
-  {id:'EVO',      label:'Phòng họp EVO-Hội trường',        type:'meeting'},
+  {id:'EVO',      label:'Phòng họp EVO',        type:'meeting'},
   {id:'ISO L1',   label:'Phòng họp ISO Lầu 1',  type:'meeting'},
   {id:'BOD',      label:'Phòng họp BOD',         type:'meeting'},
   {id:'Nipper',   label:'Phòng họp Nipper',      type:'meeting'},
