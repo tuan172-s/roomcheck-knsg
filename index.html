@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="RoomCheck">
-<title>RoomCheck – Kiểm tra phòng</title>
+<title>RoomCheck – Kiểm tra phòng họp</title>
 <link rel="manifest" href="manifest.json">
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -809,15 +809,29 @@ function closeRoomDropdown() {
 function selectRoom(id, e) {
   e.stopPropagation();
 
+  if (_activeRoomId === id) {
+    closeRoomDropdown();
+    return;
+  }
+
+  const oldType = getActiveRoomType();
   _activeRoomId = id;
+  const newType = getActiveRoomType();
 
   closeRoomDropdown();
   renderRoomDropdown();
   updateLockedRoomUI();
   updateRoomTypeTag();
 
-  // Không renderChecklist ở đây để không mất tick
-  updateProgress();
+  // Nếu chỉ sửa lại tên phòng cùng loại (VD Nipper -> BOD), giữ nguyên tick/ảnh đã nhập.
+  // Nếu đổi sang loại khác (VD Phòng họp -> Phòng Server), render lại checklist theo đúng loại phòng.
+  if (oldType !== newType) {
+    renderChecklist();
+  } else {
+    updateSecUI();
+    updateProgress();
+    updateSubmitBtn();
+  }
 }
 
 function onRoomChange() {
@@ -854,7 +868,6 @@ function updateRoomTypeTag() {
 
 // ── CHECKLIST RENDER ──
 function renderChecklist() {
-  RC.results={}; RC.notes={}; RC.speeds={}; RC.temps={}; RC.voltages={};
   const body = document.getElementById('clBody');
   body.innerHTML = '';
   const sections = getActiveSections();
@@ -875,7 +888,36 @@ function renderChecklist() {
       <div class="sec-items" id="si_${sec.id}">${sec.items.map(it=>renderItem(it)).join('')}</div>`;
     body.appendChild(el);
   });
+  hydrateChecklistUI();
+  updateSecUI();
   updateProgress();
+}
+
+function hydrateChecklistUI() {
+  // Khôi phục trạng thái đã tick/đã nhập sau khi render lại checklist.
+  Object.entries(RC.results || {}).forEach(([id, val]) => {
+    ['pass','fail','na'].forEach(v => {
+      const p = v === 'pass' ? 'tp' : v === 'fail' ? 'tf' : 'tn';
+      document.getElementById(p + '_' + id)?.classList.toggle('on', val === v);
+    });
+    const fw = document.getElementById('fn_' + id);
+    if (fw) fw.style.display = val === 'fail' ? 'block' : 'none';
+    const noteEl = document.getElementById('fnt_' + id);
+    if (noteEl) noteEl.value = RC.notes[id] || '';
+  });
+
+  Object.entries(RC.speeds || {}).forEach(([id, val]) => {
+    const input = document.getElementById('sp_' + id);
+    if (input) { input.value = val; onSpd(id); }
+  });
+  Object.entries(RC.temps || {}).forEach(([id, val]) => {
+    const input = document.getElementById('tmp_' + id);
+    if (input) { input.value = val; onTemp(id); }
+  });
+  Object.entries(RC.voltages || {}).forEach(([id, val]) => {
+    const input = document.getElementById('vlt_' + id);
+    if (input) { input.value = val; onVoltage(id); }
+  });
 }
 
 function renderItem(it) {
